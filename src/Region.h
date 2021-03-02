@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <vector>
 #include <string>
-#include "Army.h"
+#include "Player.h"
 using namespace std;
 #pragma once
 
@@ -10,12 +10,11 @@ class Region
 private:
 	int num_borders;
 	vector<string> borders;
-	vector<Army>* occupants;
+	Player* commander;
 
 public:
-	Region(int, vector<string>, vector<Army>*);
+	Region(int, vector<string>, Player*);
 
-	void updateOccupants(vector<Army>* newOccupants);
-
+	
 };
 
