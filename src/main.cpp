@@ -4,12 +4,14 @@
 #include "Player.h"
 #include "Region.h"
 
+using namespace std;
+
 int main()
 {
 	//game setup
 	int numPlayers;
-	std:cout << "Enter a number (2-6) of players.\n";
-	std:cin >> numPlayers;
+	cout << "Enter a number (2-6) of players.\n";
+	cin >> numPlayers;
 	vector<Player> players;
 	for (int i = 0; i < numPlayers; i++)
 	{
@@ -25,9 +27,9 @@ int main()
 		for (int i = 0; i < numPlayers; i++)
 		{
 			// place troops
-			std:cout << "It's player " << to_string(i) << "'s turn. Place your troops.";
+			cout << "It's player " << to_string(i) << "'s turn. Place your troops.";
 			string troopPlacement;
-			std:cin >> troopPlacement;
+			cin >> troopPlacement;
 
 
 			// attack regions
