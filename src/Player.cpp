@@ -6,11 +6,10 @@ Player::Player(int numPlayers, vector<Card>* deck)
 	// Initial army size depends on number of players
 	switch (numPlayers) 
 	{
-	case 2: this->numTroops = 40;
-	case 3: this->numTroops = 35;
-	case 4: this->numTroops = 30;
-	case 5: this->numTroops = 25;
-	case 6: this->numTroops = 20;
+	case 2: this->numTroops = 40; break;
+	case 3: this->numTroops = 35; break;
+	case 4: this->numTroops = 30; break;
+	case 5: this->numTroops = 25; break;
 	}
 	
 	this->ownedRegions = vector<Region>();
@@ -51,7 +50,27 @@ vector<Card> Player::getHand()
 	return hand;
 }
 
-void Player::updateHand(vector<Card> cards)
+
+//UPDATE 3/14 JOSH:
+//changed to add card to a vector of cards
+
+// TODO: add method to 
+void Player::addCard(Card card)
 {
-	this->hand = cards;
+	vector<Card> currentCards;
+	this->getHand() = currentCards;
+	currentCards.push_back(card);
+	this->hand = currentCards;
+}
+
+//UPDATE 3/14 JOSH
+//added method to remove card
+
+// TODO: add method to check if card exists in deck
+void Player::removeCard(Card card)
+{
+	vector<Card> currentCards;
+	this->getHand() = currentCards;
+	int index = find(currentCards.begin(), currentCards.end(), card);
+	this->hand = currentCards.erase(index);
 }
