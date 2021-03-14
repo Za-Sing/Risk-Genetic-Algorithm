@@ -19,7 +19,7 @@ Player::Player(int numPlayers, vector<Card>* deck)
 	for (int i = 0; i < 3; ++i) {
 		int randIndex = rand() % deck->size(); // Pick random card
 		this->hand.push_back(deck->at(randIndex)); // Add card to hand
-		deck->erase(deck->begin() + i); // Remove card from deck
+		deck->erase(deck->begin() + randIndex); // Remove card from deck
 	}
 }
 
