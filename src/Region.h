@@ -9,6 +9,7 @@ class Region
 {
 private:
 	int num_borders;
+	int troops;
 	vector<string> borders;
 	Player* commander;
 
