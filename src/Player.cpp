@@ -1,7 +1,7 @@
 #include "Player.h"
 
-// Create a player with the default troop size and 3 random cards
-Player::Player(int numPlayers, vector<Card>* deck)
+// Create a player with the default troop size
+Player::Player(int numPlayers)
 {
 	// Initial army size depends on number of players
 	switch (numPlayers) 
@@ -13,13 +13,7 @@ Player::Player(int numPlayers, vector<Card>* deck)
 	}
 	
 	this->ownedRegions = vector<Region>();
-	
-	// Pick 3 random cards
-	for (int i = 0; i < 3; ++i) {
-		int randIndex = rand() % deck->size(); // Pick random card
-		this->hand.push_back(deck->at(randIndex)); // Add card to hand
-		deck->erase(deck->begin() + randIndex); // Remove card from deck
-	}
+	this->hand = vector<Card>();
 }
 
 
@@ -51,26 +45,17 @@ vector<Card> Player::getHand()
 }
 
 
-//UPDATE 3/14 JOSH:
-//changed to add card to a vector of cards
-
-// TODO: add method to 
-void Player::addCard(Card card)
+// This method will draw and remove a card from the deck and add it to the player's hand
+void Player::drawCard(vector<Card>* deck)
 {
-	vector<Card> currentCards;
-	this->getHand() = currentCards;
-	currentCards.push_back(card);
-	this->hand = currentCards;
+	int randIndex = rand() % deck->size(); // Pick random card
+	this->hand.push_back(deck->at(randIndex)); // Add card to hand
+	deck->erase(deck->begin() + randIndex); // Remove card from deck
 }
 
-//UPDATE 3/14 JOSH
-//added method to remove card
-
-// TODO: add method to check if card exists in deck
+// This method removes a specific card from the hand
 void Player::removeCard(Card card)
 {
-	vector<Card> currentCards;
-	this->getHand() = currentCards;
-	int index = find(currentCards.begin(), currentCards.end(), card);
-	this->hand = currentCards.erase(index);
+	vector<Card>::iterator index = find(this->hand.begin(), this->hand.end(), card);
+	this->hand.erase(index);
 }

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef PLAYER_H
+#define PLAYER_H
 
 #include <vector>
 #include "Card.h"
@@ -14,12 +15,14 @@ private:
 	vector<Card> hand;
 
 public:
-	Player(int numPlayers, vector<Card>* deck);
+	Player(int numPlayers);
 	int getTotalArmySize();
 	void updateArmySize(int size);
 	vector<Region> getOwnedRegions();
 	void updateOwnedRegions(vector<Region> regions);
 	vector<Card> getHand();
-	void updateHand(vector<Card> cards);
+	void drawCard(vector<Card>* deck);
+	void removeCard(Card card);
 };
 
+#endif // !PLAYER_H

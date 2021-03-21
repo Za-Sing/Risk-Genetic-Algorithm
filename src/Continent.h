@@ -1,3 +1,6 @@
+#ifndef CONTINENT_H
+#define CONTINENT_H
+
 #include <stdlib.h>
 #include <vector>
 #include <string>
@@ -16,3 +19,4 @@ class Continent
 
 };
 
+#endif // !CONTINENT_H

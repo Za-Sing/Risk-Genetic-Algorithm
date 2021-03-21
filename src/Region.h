@@ -1,3 +1,6 @@
+#ifndef REGION_H
+#define REGION_H
+
 #include <stdlib.h>
 #include <vector>
 #include <string>
@@ -19,3 +22,4 @@ public:
 	
 };
 
+#endif // !REGION_H
