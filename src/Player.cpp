@@ -1,7 +1,7 @@
 #include "Player.h"
 
 // Create a player with the default troop size
-Player::Player(int numPlayers, vector<Card>* deck)
+Player::Player(int numPlayers)
 {
 	// Initial army size depends on number of players
 	switch (numPlayers) 

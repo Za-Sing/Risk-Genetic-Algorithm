@@ -1,4 +1,5 @@
-#pragma once
+#ifndef PLAYER_H
+#define PLAYER_H
 
 #include <vector>
 #include "Card.h"
@@ -24,3 +25,4 @@ public:
 	void removeCard(Card card);
 };
 
+#endif // !PLAYER_H

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CARD_H
+#define CARD_H
 
 // Enumeration for all possible territories
 typedef enum TERRITORY {
@@ -21,3 +22,4 @@ typedef struct Card
 	TROOP troop;
 };
 
+#endif

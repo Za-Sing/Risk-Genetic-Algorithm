@@ -1,17 +1,19 @@
-//Josh initial code - 3/14 4p
-
 /*
-Brisk is for encapsulating the main file. In it, there is the initial pre-game setup for territory claiming
-and reinforcing. It is also used for accessing game data at will, and for updating the status of the game.
-
+* Brisk is for encapsulating the main game loop. In it, there is the initial pre-game setup for territory claiming
+* and reinforcing. It is also used for accessing game data at will, and for updating the status of the game.
 */
-
-#include "Player.h"
 #include "Brisk.h"
+#include <stdio.h>
+#include <iostream>
 
 using namespace std;
 
-void beginningClaim(vector<Player> players) {
+Brisk::Brisk()
+{
+
+}
+
+void Brisk::beginningClaim(vector<Player> players) {
 
 	numPlayers = players.size();
 
@@ -36,14 +38,14 @@ void beginningClaim(vector<Player> players) {
 		//if empty regions exist
 		if (regionsLeft != 0) {
 			//print and take player's region choice
-			cout << "Player " << to_string(currentPlayer + 1) << ", Please choose next region to occupy.\n";
+			printf("Player %s, please choose next region to occupy.\n", to_string(currentPlayer + 1));
 			cin >> regionChoice;
 
 			// TODO: once region is implemented, update each region to be owned by the player that chooses it
 			// make sure the region is removed from the selectable pool of regions
 
 			//remove troop from player's troop count
-			players[currentPlayer].updateArmySize(players[currentPayer].getTotalArmySize() - 1);
+			players[currentPlayer].updateArmySize(players[currentPlayer].getTotalArmySize() - 1);
 
 			//remove region left
 			regionsLeft -= 1;
@@ -56,16 +58,10 @@ void beginningClaim(vector<Player> players) {
 				// TODO: once region is implemented, update each region the player puts a troop on to.
 				
 				//remove troop from player's troop count
-				players[currentPlayer].updateArmySize(players[currentPayer].getTotalArmySize() - 1);
+				players[currentPlayer].updateArmySize(players[currentPlayer].getTotalArmySize() - 1);
 			}
 		}
-		
-
-
 	}
-
-
-
 }
 
 // TODO: implement game data access methods
