@@ -1,25 +1,21 @@
 #ifndef BRISK_H
 #define BRISK_H
 
-#include <algorithm>
-#include <iostream>
-#include <fstream>
-#include <stdio.h>
+//#include "Player.h"
+#include "Region.h"
 #include <string>
-#include "Player.h"
-#include "Card.h"
+#include <vector>
 
+using namespace std;
 class Brisk
 {
 private:
 	int numTurns, numPlayers, currentPlayer, regionsLeft;
-	int regionChoice;
-	bool succPlace;
-	vector<Card>* deck;
-	void initDeck(string filename);
+	string regionChoice;
 public:
+	vector<Region> board;
 	Brisk();
-	void beginningClaim(vector<Player> players);
+	//void beginningClaim(vector<Player> players);
 };
 
 #endif // !BRISK_H

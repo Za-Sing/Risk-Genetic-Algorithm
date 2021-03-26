@@ -1,9 +1,10 @@
+/*
 #ifndef PLAYER_H
 #define PLAYER_H
 
-#include "Region.h"
 #include <vector>
 #include "Card.h"
+#include "Region.h"
 using namespace std;
 
 
@@ -26,3 +27,4 @@ public:
 };
 
 #endif // !PLAYER_H
+*/
