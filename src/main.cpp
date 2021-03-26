@@ -16,7 +16,7 @@ int main()
 	vector<Player> players;
 	for (int i = 0; i < numPlayers; i++)
 	{
-		Player newPlayer = Player();
+		Player newPlayer = Player(numPlayers);
 		players.push_back(newPlayer);
 	}
 
@@ -34,7 +34,7 @@ int main()
 			// place troops
 			cout << "It's player " << to_string(i) << "'s turn. Place your troops.";
 			string troopPlacement;
-			cin >> troopPlacement
+			cin >> troopPlacement;
 
 
 			// attack regions
