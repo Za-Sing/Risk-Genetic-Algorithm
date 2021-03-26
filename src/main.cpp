@@ -1,9 +1,8 @@
 #include <iostream>
 #include <vector>
 #include <string>
-#include "Player.h"
-#include "Region.h"
 #include "Brisk.h"
+#include "Player.h"
 
 using namespace std;
 
@@ -16,7 +15,9 @@ int main()
 	vector<Player> players;
 	for (int i = 0; i < numPlayers; i++)
 	{
+
 		Player newPlayer = Player(numPlayers);
+
 		players.push_back(newPlayer);
 	}
 
