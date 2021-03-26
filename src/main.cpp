@@ -15,7 +15,9 @@ int main()
 	vector<Player> players;
 	for (int i = 0; i < numPlayers; i++)
 	{
-		Player newPlayer = Player(3);
+
+		Player newPlayer = Player(numPlayers);
+
 		players.push_back(newPlayer);
 	}
 

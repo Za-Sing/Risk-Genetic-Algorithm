@@ -13,7 +13,8 @@ class Brisk
 {
 private:
 	int numTurns, numPlayers, currentPlayer, regionsLeft;
-	string regionChoice;
+	int regionChoice;
+	bool succPlace;
 	vector<Card>* deck;
 	void initDeck(string filename);
 public:
