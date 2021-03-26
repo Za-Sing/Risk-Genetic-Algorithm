@@ -60,11 +60,17 @@ void Brisk::beginningClaim(vector<Player> players) {
 		//if empty regions exist
 		if (regionsLeft != 0) {
 			//print and take player's region choice
-			printf("Player %s, please choose next region to occupy.\n", to_string(currentPlayer + 1));
+			printf("Player %s, please choose next region ID for region to occupy.\n", to_string(currentPlayer + 1));
 			cin >> regionChoice;
 
-			// TODO: once region is implemented, update each region to be owned by the player that chooses it
+			// TODONE: once region is implemented, update each region to be owned by the player that chooses it
 			// make sure the region is removed from the selectable pool of regions
+
+			vector<Region> currentRegions = players[currentPlayer].getOwnedRegions();
+			currentRegions.push_back(board[regionChoice]);
+			board[regionChoice].addTroops(1);
+			board[regionChoice].updateCommander_id(currentPlayer);
+			players[currentPlayer].updateOwnedRegions(currentRegions);
 
 			//remove troop from player's troop count
 			players[currentPlayer].updateArmySize(players[currentPlayer].getTotalArmySize() - 1);
@@ -77,8 +83,25 @@ void Brisk::beginningClaim(vector<Player> players) {
 			//if the player has troops left to place
 			if (players[currentPlayer].getTotalArmySize() > 0) {
 
-				// TODO: once region is implemented, update each region the player puts a troop on to.
-				
+				printf("Player %s, please add a troop to one of your owned regions.\n", to_string(currentPlayer + 1));
+
+				// TODONE: once region is implemented, update each region the player puts a troop on to.
+
+				succPlace = false;
+				while (succPlace == false) {
+
+					cin >> regionChoice;
+
+					// check that they own the region
+					if (board[regionChoice].getCommander_id() == currentPlayer) {
+						board[regionChoice].addTroops(1);
+						succPlace = true;
+					}
+					else {
+						cout << "Invalid choice! Please choose a region you own.";
+					}
+				}
+
 				//remove troop from player's troop count
 				players[currentPlayer].updateArmySize(players[currentPlayer].getTotalArmySize() - 1);
 			}
