@@ -1,21 +1,19 @@
-/*
 #include "Player.h"
 
 // Create a player with the default troop size
 Player::Player(int numPlayers)
 {
 	// Initial army size depends on number of players
-
 	switch (numPlayers) 
 	{
-	case 2: numTroops = 40; break;
-	case 3: numTroops = 35; break;
-	case 4: numTroops = 30; break;
-	case 5: numTroops = 25; break;
+	case 2: this->numTroops = 40; break;
+	case 3: this->numTroops = 35; break;
+	case 4: this->numTroops = 30; break;
+	case 5: this->numTroops = 25; break;
 	}
 	
-	ownedRegions = vector<Region>();
-	hand = vector<Card>();
+	this->ownedRegions = vector<Region>();
+	this->hand = vector<Card>();
 }
 
 
@@ -61,4 +59,3 @@ void Player::removeCard(Card card)
 	vector<Card>::iterator index = find(this->hand.begin(), this->hand.end(), card);
 	this->hand.erase(index);
 }
-*/

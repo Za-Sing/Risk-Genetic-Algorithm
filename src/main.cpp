@@ -2,30 +2,28 @@
 #include <vector>
 #include <string>
 #include <sstream>
-#include "Player.h"
-#include "Region.h"
 #include "Brisk.h"
+#include "Player.h"
 
 using namespace std;
 
 int main()
 {
 	//game setup
+	Brisk game = Brisk();
+
 	int numPlayers;
 	cout << "Enter a number (2-5) of players.\n";
 	cin >> numPlayers;
-	//vector<Player> players;
-	Brisk game = Brisk();
-	
-	int other = game.board.at(1).getBorder_ids().at(2);
-	printf("%i\n", other);
-	/*
+	vector<Player> players;
 	for (int i = 0; i < numPlayers; i++)
 	{
+
 		Player newPlayer = Player(numPlayers);
+
 		players.push_back(newPlayer);
 	}
-	*/
+
 	// TODO: hard code deck
 
 
@@ -38,20 +36,15 @@ int main()
 		for (int i = 0; i < numPlayers; i++)
 		{
 			//calculate player's new troops
-			/*
 			vector<Region> ownedRegions = players.at(i).getOwnedRegions();
 			int numRegions = ownedRegions.size();
 			int newTroops = numRegions / 3;
-			*/
-			int newTroops = 20;
+			
 			// place troops
 			printf("It's player %i's turn. You have %i new troops to place.\nInput your troop placement in the form: <Region ID> <# of new troops>.\n", i, newTroops);
 			string troopPlacement;
 			getline(cin, troopPlacement);
 			while (getline(cin, troopPlacement) && newTroops != 0) {
-
-				//DEBUG:
-				printf("%i\n", game.board.at(1).getTroops());
 
 
 				vector<int> splitInt;
@@ -75,8 +68,7 @@ int main()
 			}
 
 			// attack regions
-				printf("%i\n", game.board.at(1).getTroops());
-				printf("attacking time");
+			
 
 			// move troops
 		}
@@ -89,4 +81,4 @@ int main()
 
 		++roundIndex; // end of round
 	}
-} 
+}
