@@ -1,9 +1,8 @@
 #include <iostream>
 #include <vector>
 #include <string>
-#include "Player.h"
-#include "Region.h"
 #include "Brisk.h"
+#include "Player.h"
 
 using namespace std;
 
@@ -16,7 +15,7 @@ int main()
 	vector<Player> players;
 	for (int i = 0; i < numPlayers; i++)
 	{
-		Player newPlayer = Player();
+		Player newPlayer = Player(3);
 		players.push_back(newPlayer);
 	}
 
@@ -34,7 +33,7 @@ int main()
 			// place troops
 			cout << "It's player " << to_string(i) << "'s turn. Place your troops.";
 			string troopPlacement;
-			cin >> troopPlacement
+			cin >> troopPlacement;
 
 
 			// attack regions

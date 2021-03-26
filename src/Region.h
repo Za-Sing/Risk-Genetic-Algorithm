@@ -4,9 +4,11 @@
 #include <stdlib.h>
 #include <vector>
 #include <string>
-#include "Player.h"
+
 using namespace std;
-#pragma once
+
+// Declare this to avoid circular dependency errors
+class Player;
 
 class Region
 {
@@ -18,8 +20,6 @@ private:
 
 public:
 	Region(int, vector<string>, Player*);
-
-	
 };
 
 #endif // !REGION_H
