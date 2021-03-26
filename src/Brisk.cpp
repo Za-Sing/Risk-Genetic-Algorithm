@@ -3,10 +3,32 @@
 * and reinforcing. It is also used for accessing game data at will, and for updating the status of the game.
 */
 #include "Brisk.h"
-#include <stdio.h>
-#include <iostream>
 
 using namespace std;
+
+// Initialize the card deck from a file
+void Brisk::initDeck(string filename) {
+	ifstream file;
+	file.open(filename);
+	string line;
+	deck = new vector<Card>();
+	// Read through the file
+	while (getline(file, line)) {
+		Card card;
+		// Read in the enum property for territory
+		card.territory = static_cast<TERRITORY>(stoi(line));
+		// Read next line
+		if (!getline(file, line))
+			break;
+		// Assign troop type
+		card.troop = static_cast<TROOP>(stoi(line));
+		// Add card to deck
+		deck->push_back(card);
+	}
+	// Shuffle the deck now that it is initialized
+	random_shuffle(deck->begin(), deck->end());
+	file.close();
+}
 
 Brisk::Brisk()
 {
