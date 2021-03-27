@@ -11,20 +11,27 @@ int main()
 {
 	//game setup
 	Brisk game = Brisk();
-
+	
 	int numPlayers;
-	cout << "Enter a number (2-5) of players.\n";
-	cin >> numPlayers;
+	string input;
+	printf("Enter a number (3-5) of players.\n");
+	getline(cin, input);
+	numPlayers = stoi(input);
+	// Make sure the range is correct
+	while (numPlayers < 3 || numPlayers > 5) {
+		printf("Please enter a number between 3 & 5.\n");
+		getline(cin, input);
+		numPlayers = stoi(input);
+	}
+
+	// Initialize Players vector
 	vector<Player> players;
-	for (int i = 0; i < numPlayers; i++)
-	{
-
+	for (int i = 0; i < numPlayers; i++) {
 		Player newPlayer = Player(numPlayers);
-
 		players.push_back(newPlayer);
 	}
 
-	// TODO: hard code deck
+	
 
 
 
