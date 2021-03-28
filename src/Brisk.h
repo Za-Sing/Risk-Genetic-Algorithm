@@ -12,8 +12,8 @@
 class Brisk
 {
 private:
-	int numTurns, numPlayers, currentPlayer, regionsLeft;
-	int regionChoice;
+	const int NUM_REGIONS = 42;
+	int numTurns, numPlayers, currentPlayer, regionsLeft, regionChoice;
 	bool succPlace;
 	vector<Card>* deck;
 	void initDeck(string filename);
