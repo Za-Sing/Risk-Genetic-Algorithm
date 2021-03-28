@@ -4,7 +4,7 @@ Turn Sequence:
 --Handle card bonus
 --Handle continent bonus
 --Parse input [DONE]
---Verify legality
+--Verify legality [DONE]
 --Update board [DONE]
 
 -Attack
