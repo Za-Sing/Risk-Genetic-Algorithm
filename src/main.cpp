@@ -90,16 +90,31 @@ int main()
 			
 
 			// move troops
-			string troopMovement;
-			printf("Move your troops. Enter in the form <Origin Region ID> <Target Region ID> <# of Troops>.\n");
-			getline(cin, troopMovement);
-			vector<int> splitInt;
-			stringstream ss(troopMovement);
-			string element;
-			while (getline(ss, element, ' '))
+			bool inputing = true;
+			bool chainExists = false;
+			while (inputing)
 			{
-				splitInt.push_back(stoi(element));
+				string troopMovement;
+				printf("Move your troops. Enter in the form <Origin Region ID> <Target Region ID> <# of Troops>.\n");
+				getline(cin, troopMovement);
+				vector<int> splitInt;
+				stringstream ss(troopMovement);
+				string element;
+				while (getline(ss, element, ' '))
+				{
+					splitInt.push_back(stoi(element));
+				}
+				if (game.board.at(splitInt.at(0)).getCommander_id != currentPlayer || game.board.at(splitInt.at(1)).getCommander_id != currentPlayer)
+				{
+					printf("You don't own at least one of those regions.");
+					continue;
+				}
+				else
+				{
+					//TODO: check for chain
+				}
 			}
+			
 		}
 
 
