@@ -7,6 +7,46 @@
 
 using namespace std;
 
+void placeTroops(int currentPlayer, vector<Player> *players, Brisk* game)
+{
+	//calculate player's new troops
+	vector<Region> ownedRegions = players->at(currentPlayer).getOwnedRegions();
+	int numRegions = ownedRegions.size();
+	int newTroops = numRegions / 3;
+
+	// place troops
+	printf("It's player %i's turn. You have %i new troops to place.\nInput your troop placement in the form: <Region ID> <# of new troops>.\n", currentPlayer, newTroops);
+	string troopPlacement;
+	getline(cin, troopPlacement);
+	while (getline(cin, troopPlacement) && newTroops != 0) {
+
+
+		vector<int> splitInt;
+		stringstream ss(troopPlacement);
+		string element;
+		while (getline(ss, element, ' '))
+		{
+			splitInt.push_back(stoi(element));
+		}
+		if (game->board.at(splitInt.at(0)).getCommander_id() != currentPlayer)
+		{
+			printf("You don't control that region.");
+			continue;
+		}
+		if (splitInt.at(1) <= newTroops)
+		{
+			game->board.at(splitInt.at(0)).addTroops(splitInt.at(1));
+			newTroops -= splitInt.at(1);
+			printf("%i new troops left to place.\n", newTroops);
+		}
+		else
+		{
+			printf("You don't have that many troops to place.\n");
+		}
+
+	}
+}
+
 int main()
 {
 	//game setup
@@ -41,44 +81,10 @@ int main()
 	int roundIndex = 0;
 	while (inPlay)
 	{
-		for (int i = 0; i < numPlayers; i++)
+		for (int currentPlayer = 0; currentPlayer < numPlayers; currentPlayer++)
 		{
-			//calculate player's new troops
-			vector<Region> ownedRegions = players.at(i).getOwnedRegions();
-			int numRegions = ownedRegions.size();
-			int newTroops = numRegions / 3;
+			placeTroops(currentPlayer, &players, &game);
 			
-			// place troops
-			printf("It's player %i's turn. You have %i new troops to place.\nInput your troop placement in the form: <Region ID> <# of new troops>.\n", i, newTroops);
-			string troopPlacement;
-			getline(cin, troopPlacement);
-			while (getline(cin, troopPlacement) && newTroops != 0) {
-
-
-				vector<int> splitInt;
-				stringstream ss(troopPlacement);
-				string element;
-				while (getline(ss, element, ' '))
-				{
-					splitInt.push_back(stoi(element));
-				}
-				if (game.board.at(splitInt.at(0)).getCommander_id() != i)
-				{
-					printf("You don't control that region.");
-					continue;
-				}
-				if (splitInt.at(1) <= newTroops)
-				{
-					game.board.at(splitInt.at(0)).addTroops(splitInt.at(1));
-					newTroops -= splitInt.at(1);
-					printf("%i new troops left to place.\n", newTroops);
-				}
-				else
-				{
-					printf("You don't have that many troops to place.\n");
-				}
-
-			}
 
 			// attack regions
 			
