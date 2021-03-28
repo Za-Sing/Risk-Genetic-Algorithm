@@ -7,8 +7,6 @@
 
 using namespace std;
 
-// Declare this to avoid circular dependency errors
-class Player;
 
 class Region
 {
@@ -17,7 +15,6 @@ private:
 	int num_borders;
 	int troops;
 	vector<int> border_ids;
-	//Player* commander;
 	int commander_id;
 	string name;
 
@@ -39,8 +36,6 @@ public:
 	void updateCommander_id(int commander_id);
 
 	int getCommander_id();
-
-
 };
 
 #endif // !REGION_H
