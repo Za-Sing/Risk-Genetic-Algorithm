@@ -32,7 +32,8 @@ int main()
 	}
 
 	
-
+	game.beginningClaim(players);
+	// TODO: hard code deck
 
 
     //main game loop
@@ -61,6 +62,11 @@ int main()
 				{
 					splitInt.push_back(stoi(element));
 				}
+				if (game.board.at(splitInt.at(0)).getCommander_id() != i)
+				{
+					printf("You don't control that region.");
+					continue;
+				}
 				if (splitInt.at(1) <= newTroops)
 				{
 					game.board.at(splitInt.at(0)).addTroops(splitInt.at(1));
@@ -78,6 +84,16 @@ int main()
 			
 
 			// move troops
+			string troopMovement;
+			printf("Move your troops. Enter in the form <Origin Region ID> <Target Region ID> <# of Troops>.\n");
+			getline(cin, troopMovement);
+			vector<int> splitInt;
+			stringstream ss(troopMovement);
+			string element;
+			while (getline(ss, element, ' '))
+			{
+				splitInt.push_back(stoi(element));
+			}
 		}
 
 
