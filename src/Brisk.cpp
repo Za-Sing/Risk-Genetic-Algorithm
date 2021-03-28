@@ -32,7 +32,6 @@ void Brisk::initDeck(string filename) {
 
 Brisk::Brisk()
 {
-	vector<int> test;
 	//initialize board (vector of regions)
 	board.push_back(Region(0, "Alaska", vector<int>{1, 3}));
 	board.push_back(Region(1, "Northwest_Territory", vector<int>{0, 3, 4, 2}));
