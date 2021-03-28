@@ -12,7 +12,7 @@ Region::Region(int id, string name, vector<int> border_ids)
 
 //getters and setters
 
-// ID's, names, and boarders will not be changed after initialization
+// ID's, names, and borders will not be changed after initialization
 // so they do not have setters (they should also probably be constants).
 int Region::getID()
 {
