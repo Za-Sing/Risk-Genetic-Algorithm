@@ -104,7 +104,7 @@ void Brisk::beginningClaim(vector<Player> players) {
 		//if empty regions exist
 		if (regionsLeft != 0) {
 			//print and take player's region choice
-			printf("Player %s, please choose next region ID for region to occupy.\n", to_string(currentPlayer + 1));
+			printf("Player %i, please choose next region ID for region to occupy.\n", currentPlayer);
 			cin >> regionChoice;
 
 			// TODONE: once region is implemented, update each region to be owned by the player that chooses it
@@ -127,7 +127,7 @@ void Brisk::beginningClaim(vector<Player> players) {
 			//if the player has troops left to place
 			if (players[currentPlayer].getTotalArmySize() > 0) {
 
-				printf("Player %s, please add a troop to one of your owned regions.\n", to_string(currentPlayer + 1));
+				printf("Player %i, please add a troop to one of your owned regions.\n", currentPlayer);
 
 				// TODONE: once region is implemented, update each region the player puts a troop on to.
 
@@ -230,5 +230,37 @@ void Brisk::attackSequence(vector<Player> players)
 }
 
 // TODO: implement game data access methods
+
+/*
+* Recursive method to be used in troop movement phase.
+* Returns true if the current player controls a connected
+* "chain" of regions from the beginning to the end of the
+* troop movement.
+*/
+bool Brisk::isChain(int startID, int endID, int currentPlayer, vector<bool> visited)
+{
+	visited.at(startID) = true;
+	for (int i = 0; i < board.at(startID).getBorder_ids().size(); i++)
+	{
+		if (visited.at(board.at(startID).getBorder_ids().at(i)))
+		{
+			continue;
+		}
+		if (board.at(board.at(startID).getBorder_ids().at(i)).getCommander_id() != currentPlayer)
+		{
+			continue;
+		}
+		if (board.at(startID).getBorder_ids().at(i) == endID)
+		{
+			return true;
+		}
+		if (isChain(board.at(startID).getBorder_ids().at(i), endID, currentPlayer, visited))
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
 
 // TODO: implement game status update methods
