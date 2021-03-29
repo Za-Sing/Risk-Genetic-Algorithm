@@ -163,26 +163,21 @@ void Brisk::beginningClaim(vector<Player> players) {
 */
 bool Brisk::isChain(int startID, int endID, int currentPlayer, vector<bool> visited)
 {
-	printf("hello %i\n", startID);
 	visited.at(startID) = true;
 	for (int i = 0; i < board.at(startID).getBorder_ids().size(); i++)
 	{
 		if (visited.at(board.at(startID).getBorder_ids().at(i)))
 		{
 			continue;
-			printf("%i tesing one \n", i);
 		}
 		if (board.at(board.at(startID).getBorder_ids().at(i)).getCommander_id() != currentPlayer)
 		{
 			continue;
-			printf("%i tesing two \n", i);
 		}
 		if (board.at(startID).getBorder_ids().at(i) == endID)
 		{
-			printf("%i tesing three \n", i);
 			return true;
 		}
-		printf("%i tesing four \n", i);
 		if (isChain(board.at(startID).getBorder_ids().at(i), endID, currentPlayer, visited))
 		{
 			return true;

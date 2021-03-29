@@ -74,10 +74,11 @@ int main()
 	}
 
 	
-	//game.beginningClaim(players);
+	game.beginningClaim(players);
 	// TODO: hard code deck
 
 	//Debug input
+	/*
 	game.board.at(0).updateTroops(10);
 	game.board.at(0).updateCommander_id(0);
 	game.board.at(1).updateTroops(10);
@@ -92,7 +93,7 @@ int main()
 	game.board.at(5).updateCommander_id(1);
 	game.board.at(6).updateTroops(10);
 	game.board.at(6).updateCommander_id(0);
-	
+	*/
 
     //main game loop
 	bool inPlay = true;
@@ -101,7 +102,7 @@ int main()
 	{
 		for (int currentPlayer = 0; currentPlayer < numPlayers; currentPlayer++)
 		{
-			//placeTroops(currentPlayer, &players, &game);
+			placeTroops(currentPlayer, &players, &game);
 			
 
 			// attack regions
@@ -139,7 +140,6 @@ int main()
 							game.board.at(splitInt.at(0)).addTroops(-splitInt.at(2));
 							game.board.at(splitInt.at(1)).addTroops(splitInt.at(2));
 							inputing = false;
-							printf("coolio.\n");
 						}
 						else
 						{
