@@ -154,6 +154,82 @@ void Brisk::beginningClaim(vector<Player> players) {
 	}
 }
 
+// This handles the attack/defend sequence
+void Brisk::attackSequence(vector<Player> players)
+{
+	string input;
+	bool badChoice = true;
+
+	// Get the region to be attacked
+	printf("Player %i, which region would you like to attack?\n", currentPlayer);
+	getline(cin, input);
+	attackTo = stoi(input);
+
+	// Make sure the player doesn't already own this region
+	while (badChoice == true) {
+		for (int i = 0; i < players[currentPlayer].getOwnedRegions().size(); ++i) {
+			if (players[currentPlayer].getOwnedRegions()[i].getID() == attackTo) {
+				printf("You already own this region! Please select again.\n");
+				getline(cin, input);
+				attackTo = stoi(input);
+				badChoice = true;
+			}
+			else {
+				badChoice = false;
+			}
+		}
+	}
+	badChoice = true;
+
+	// Now get the region from which to attack
+	printf("Where would you like to attack from?");
+	getline(cin, input);
+	attackFrom = stoi(input);
+
+	// Make sure the player owns this region, and that it borders the region to be attacked
+	while (badChoice == true) {
+		for (int i = 0; i < players[currentPlayer].getOwnedRegions().size(); ++i) {
+			if (players[currentPlayer].getOwnedRegions()[i].getID() != attackFrom) {
+				printf("You do not own this region! Please select again.\n");
+				getline(cin, input);
+				attackFrom = stoi(input);
+				badChoice = true;
+			}
+			else {
+				badChoice = false;
+			}
+			vector<int> borders = players[currentPlayer].getOwnedRegions()[i].getBorder_ids();
+			if (count(borders.begin(), borders.end(), attackTo) != 0) {
+				printf("This region does not border the one you wish to attack! Please select again.\n");
+				getline(cin, input);
+				attackFrom = stoi(input);		
+				badChoice = true;
+			}
+			else {
+				badChoice = false;
+			}
+		}
+	}
+	badChoice = true;
+
+	// Now get number of troops to attack with
+	printf("How many troops would you like to use?\n");
+	getline(cin, input);
+	int attackTroops = stoi(input);
+
+	// Make sure the player has enough troops
+	while (badChoice == true) {
+		if (board[attackFrom].getTroops() - attackTroops < 1) {
+			printf("You must leave at least 1 troop! Please select again.\n");
+			getline(cin, input);
+			attackTroops = stoi(input);
+		}
+		else {
+			badChoice = false;
+		}
+	}
+}
+
 // TODO: implement game data access methods
 
 // TODO: implement game status update methods

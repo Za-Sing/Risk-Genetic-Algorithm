@@ -8,10 +8,10 @@ Turn Sequence:
 --Update board [DONE]
 
 -Attack
---Select region to attack
---Select region from which to attack
---Select number of troops to attack with
---Verify legality of above steps
+--Select region to attack [DONE]
+--Select region from which to attack [DONE]
+--Select number of troops to attack with [DONE]
+--Verify legality of above steps [DONE]
 --Role dice and update troop numbers
 --Check for success
 --Check if a player is eliminated

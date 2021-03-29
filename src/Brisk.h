@@ -13,13 +13,14 @@ class Brisk
 {
 private:
 	const int NUM_REGIONS = 42;
-	int numTurns, numPlayers, currentPlayer, regionsLeft, regionChoice;
+	int numTurns, numPlayers, currentPlayer, regionsLeft, regionChoice, attackFrom, attackTo;
 	bool succPlace;
 	vector<Card>* deck;
 	void initDeck(string filename);
 public:
 	Brisk();
 	void beginningClaim(vector<Player> players);
+	void attackSequence(vector<Player> players);
 	vector<Region> board;
 };
 
