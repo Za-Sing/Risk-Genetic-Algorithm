@@ -1,6 +1,7 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
+#include <algorithm>
 #include "Region.h"
 #include <vector>
 #include "Card.h"
@@ -22,7 +23,7 @@ public:
 	void updateOwnedRegions(vector<Region> regions);
 	vector<Card> getHand();
 	void drawCard(vector<Card>* deck);
-	void removeCard(Card card);
+	void playCard(vector<Card> set, vector<Card>* deck);
 };
 
 #endif // !PLAYER_H
