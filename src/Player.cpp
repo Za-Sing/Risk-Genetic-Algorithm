@@ -53,9 +53,15 @@ void Player::drawCard(vector<Card>* deck)
 	deck->erase(deck->begin() + randIndex); // Remove card from deck
 }
 
-// This method removes a specific card from the hand
-void Player::removeCard(Card card)
+// This method plays a set of three cards and adds them back to the deck
+void Player::playCard(vector<Card> set, vector<Card>* deck)
 {
-	vector<Card>::iterator index = find(this->hand.begin(), this->hand.end(), card);
-	this->hand.erase(index);
+	// Find each card, remove it from the hand, and add it to the deck
+	for (int i = 0; i < 3; ++i) {
+		vector<Card>::iterator index = find(this->hand.begin(), this->hand.end(), set[i]);
+		this->hand.erase(index);
+		deck->push_back(set[i]);
+	}
+	// Re-shuffle the deck
+	random_shuffle(deck->begin(), deck->end());
 }
