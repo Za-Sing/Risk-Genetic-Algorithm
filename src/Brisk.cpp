@@ -198,10 +198,10 @@ void Brisk::attackSequence(vector<Player> players)
 				badChoice = false;
 			}
 			vector<int> borders = players[currentPlayer].getOwnedRegions()[i].getBorder_ids();
-			if (count(borders.begin(), borders.end(), attackTo) != 0) {
+			if (badChoice != true && count(borders.begin(), borders.end(), attackTo) != 0) {
 				printf("This region does not border the one you wish to attack! Please select again.\n");
 				getline(cin, input);
-				attackFrom = stoi(input);		
+				attackFrom = stoi(input);
 				badChoice = true;
 			}
 			else {
