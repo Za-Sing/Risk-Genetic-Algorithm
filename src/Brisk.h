@@ -20,6 +20,7 @@ private:
 public:
 	Brisk();
 	void beginningClaim(vector<Player> players);
+	bool isChain(int startID, int endID, int currentPlayer, vector<bool> visited);
 	vector<Region> board;
 };
 
