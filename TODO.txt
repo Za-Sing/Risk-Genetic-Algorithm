@@ -19,8 +19,8 @@ Turn Sequence:
 --Handle card bonus when a player is eliminated
 --Prompt to continue or retreat
 
--Move Troops
---Parse input
---Verify legality
----Use board to verify that a valid chain of regions exists
---Update board
+-Move Troops [DONE]
+--Parse input [DONE]
+--Verify legality [DONE]
+---Use board to verify that a valid chain of regions exists [DONE]
+--Update board [DONE]
