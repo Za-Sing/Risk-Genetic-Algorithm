@@ -21,21 +21,21 @@ private:
 public:
 	Region(int, string, vector<int>);
 
-	int getID();
+	int getID() const;
 
-	string getName();
+	string getName() const;
 
-	vector<int> getBorder_ids();
+	vector<int> getBorder_ids() const;
 
 	void updateTroops(int numTroops);
 
 	void addTroops(int numTroops);
 
-	int getTroops();
+	int getTroops() const;
 
 	void updateCommander_id(int commander_id);
 
-	int getCommander_id();
+	int getCommander_id() const;
 };
 
 #endif // !REGION_H

@@ -1,8 +1,12 @@
+In Brisk:
+--Change the players vector to be a pointer to a vector of pointers
+--Make appropriate updates to reflect above change
+
 Turn Sequence:
 
 -Place New Troops
---Handle card bonus
---Handle continent bonus
+--Handle card bonus [DONE]
+--Handle continent bonus [DONE]
 --Parse input [DONE]
 --Verify legality [DONE]
 --Update board [DONE]

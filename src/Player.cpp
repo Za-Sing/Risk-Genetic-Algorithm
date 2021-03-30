@@ -54,14 +54,126 @@ void Player::drawCard(vector<Card>* deck)
 }
 
 // This method plays a set of three cards and adds them back to the deck
-void Player::playCard(vector<Card> set, vector<Card>* deck)
+void Player::playCards(vector<Card>* deck, string comboType)
 {
-	// Find each card, remove it from the hand, and add it to the deck
-	for (int i = 0; i < 3; ++i) {
-		vector<Card>::iterator index = find(this->hand.begin(), this->hand.end(), set[i]);
-		this->hand.erase(index);
-		deck->push_back(set[i]);
+	// Handle each possible combination of cards
+	
+	if (comboType == "3inf") {
+		int cardsPlayed = 0, i = 0;
+		while (cardsPlayed < 3) {
+			if (hand[i].troop == TROOP::Infantry) {
+				deck->push_back(hand[i]);
+				hand.erase(hand.begin() + i);
+				++cardsPlayed;
+			}
+			++i;
+		}
 	}
+	else if (comboType == "3cav") {
+		int cardsPlayed = 0, i = 0;
+		while (cardsPlayed < 3) {
+			if (hand[i].troop == TROOP::Cavalry) {
+				deck->push_back(hand[i]);
+				hand.erase(hand.begin() + i);
+				++cardsPlayed;
+			}
+			++i;
+		}
+	}
+	else if (comboType == "3art") {
+		int cardsPlayed = 0, i = 0;
+		while (cardsPlayed < 3) {
+			if (hand[i].troop == TROOP::Artillery) {
+				deck->push_back(hand[i]);
+				hand.erase(hand.begin() + i);
+				++cardsPlayed;
+			}
+			++i;
+		}
+	}
+	else if (comboType == "2inf1wild") {
+		int cardsPlayed = 0, infPlayed = 0, i = 0;
+		bool wildPlayed = false;
+		while (cardsPlayed < 3) {
+			if (hand[i].troop == TROOP::Infantry && infPlayed < 2) {
+				deck->push_back(hand[i]);
+				hand.erase(hand.begin() + i);
+				++cardsPlayed;
+				++infPlayed;
+			}
+			if (hand[i].troop == TROOP::WiLD && !wildPlayed) {
+				deck->push_back(hand[i]);
+				hand.erase(hand.begin() + i);
+				++cardsPlayed;
+				wildPlayed = true;
+			}
+			++i;
+		}
+	}
+	else if (comboType == "2cav1wild") {
+		int cardsPlayed = 0, cavPlayed = 0, i = 0;
+		bool wildPlayed = false;
+		while (cardsPlayed < 3) {
+			if (hand[i].troop == TROOP::Cavalry && cavPlayed < 2) {
+				deck->push_back(hand[i]);
+				hand.erase(hand.begin() + i);
+				++cardsPlayed;
+				++cavPlayed;
+			}
+			if (hand[i].troop == TROOP::WiLD && !wildPlayed) {
+				deck->push_back(hand[i]);
+				hand.erase(hand.begin() + i);
+				++cardsPlayed;
+				wildPlayed = true;
+			}
+			++i;
+		}
+	}
+	else if (comboType == "2art1wild") {
+		int cardsPlayed = 0, artPlayed = 0, i = 0;
+		bool wildPlayed = false;
+		while (cardsPlayed < 3) {
+			if (hand[i].troop == TROOP::Artillery && artPlayed < 2) {
+				deck->push_back(hand[i]);
+				hand.erase(hand.begin() + i);
+				++cardsPlayed;
+				++artPlayed;
+			}
+			if (hand[i].troop == TROOP::WiLD && !wildPlayed) {
+				deck->push_back(hand[i]);
+				hand.erase(hand.begin() + i);
+				++cardsPlayed;
+				wildPlayed = true;
+			}
+			++i;
+		}
+	}
+	else if (comboType == "1ofeach") {
+		int cardsPlayed = 0, i = 0;
+		bool infPlayed = false, cavPlayed = false, artPlayed = false;
+		while (cardsPlayed < 3) {
+			if (hand[i].troop == TROOP::Infantry && !infPlayed) {
+				deck->push_back(hand[i]);
+				hand.erase(hand.begin() + i);
+				++cardsPlayed;
+				infPlayed = true;
+			}
+			if (hand[i].troop == TROOP::Cavalry && !cavPlayed) {
+				deck->push_back(hand[i]);
+				hand.erase(hand.begin() + i);
+				++cardsPlayed;
+				cavPlayed = true;
+			}
+			if (hand[i].troop == TROOP::Artillery && !artPlayed) {
+				deck->push_back(hand[i]);
+				hand.erase(hand.begin() + i);
+				++cardsPlayed;
+				artPlayed = true;
+			}
+			++i;
+		}
+	}
+
 	// Re-shuffle the deck
 	random_shuffle(deck->begin(), deck->end());
 }
