@@ -1,3 +1,7 @@
+In Brisk:
+--Change the players vector to be a pointer to a vector of pointers
+--Make appropriate updates to reflect above change
+
 Turn Sequence:
 
 -Place New Troops
