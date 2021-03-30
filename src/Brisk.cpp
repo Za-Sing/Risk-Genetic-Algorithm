@@ -80,6 +80,201 @@ Brisk::Brisk()
 	initDeck("../Resources/card_deck.txt");
 }
 
+// Helper function to handle player card bonus
+int Brisk::cardBonus(Player currentPlayer) 
+{
+	int newTroops = 0;
+	vector<Card> currentHand = currentPlayer.getHand();
+	// Determine what types of cards the player has
+	int numInf = 0, numCav = 0, numArt = 0, numWild = 0;
+	for (int i = 0; i < currentHand.size(); ++i) {
+		if (currentHand[i].troop == TROOP::Infantry)
+			++numInf;
+		if (currentHand[i].troop == TROOP::Cavalry)
+			++numCav;
+		if (currentHand[i].troop == TROOP::Artillery)
+			++numArt;
+		if (currentHand[i].troop == TROOP::WiLD)
+			++numWild;
+	}
+	// Now determine what combinations they have
+	string comboType = "";
+	if (numInf >= 3)
+		comboType = "3inf";
+	if (numCav >= 3)
+		comboType = "3cav";
+	if (numArt >= 3)
+		comboType = "3art";
+	if (numInf == 2 && numWild >= 1)
+		comboType = "2inf1wild";
+	if (numCav == 2 && numWild >= 1)
+		comboType = "2cav1wild";
+	if (numArt == 2 && numWild >= 1)
+		comboType = "2art1wild";
+	if (numInf >= 1 && numCav >= 1 && numArt >= 1)
+		comboType = "1ofeach";
+
+	if (comboType != "") {
+		if (currentHand.size() >= 5) {
+			printf("You have five cards, so a set must be traded in.\n");
+			currentPlayer.playCards(deck, comboType);
+			switch (setsTraded) {
+			case 0: newTroops += 4; ++setsTraded; break;
+			case 1: newTroops += 6; ++setsTraded; break;
+			case 2: newTroops += 8; ++setsTraded; break;
+			case 3: newTroops += 10; ++setsTraded; break;
+			case 4: newTroops += 12; ++setsTraded; break;
+			case 5: newTroops += 15; ++setsTraded; break;
+			}
+		}
+		else {
+			string choice;
+			bool choiceMade = false;
+			printf("Would you like to trade a set of cards? Enter y or n.\n");
+			while (getline(cin, choice) && !choiceMade) {
+				if (choice == "y") {
+					currentPlayer.playCards(deck, comboType);
+					switch (setsTraded) {
+					case 0: newTroops += 4; ++setsTraded; break;
+					case 1: newTroops += 6; ++setsTraded; break;
+					case 2: newTroops += 8; ++setsTraded; break;
+					case 3: newTroops += 10; ++setsTraded; break;
+					case 4: newTroops += 12; ++setsTraded; break;
+					case 5: newTroops += 15; ++setsTraded; break;
+					}
+					choiceMade = true;
+				}
+				else if (choice == "n") {
+					choiceMade = true;
+				}
+				else {
+					printf("Please enter y or n.\n");
+				}
+			}
+		}
+	}
+	return newTroops;
+}
+
+// Helper function to check if a player gets a continent bonus
+int Brisk::continentBonus(vector<Region> ownedRegions) 
+{
+	int numRegions = ownedRegions.size();
+	int newTroops = 0;
+
+	// Check if player owns North America
+	int matches = 0;
+	for (int i = 0; i < NORTH_AMERICA.size(); ++i) {
+		for (int j = 0; j < numRegions; ++j) {
+			if (ownedRegions[j].getID() == NORTH_AMERICA.at(i).getID()) {
+				++matches;
+			}
+		}
+	}
+	if (matches == NORTH_AMERICA.size()) {
+		newTroops += 5;
+	}
+
+	// Check if player owns South America
+	matches = 0;
+	for (int i = 0; i < SOUTH_AMERICA.size(); ++i) {
+		for (int j = 0; j < numRegions; ++j) {
+			if (ownedRegions[j].getID() == SOUTH_AMERICA.at(i).getID()) {
+				++matches;
+			}
+		}
+	}
+	if (matches == SOUTH_AMERICA.size()) {
+		newTroops += 2;
+	}
+
+	// Check if player owns Europe
+	matches = 0;
+	for (int i = 0; i < EUROPE.size(); ++i) {
+		for (int j = 0; j < numRegions; ++j) {
+			if (ownedRegions[j].getID() == EUROPE.at(i).getID()) {
+				++matches;
+			}
+		}
+	}
+	if (matches == EUROPE.size()) {
+		newTroops += 5;
+	}
+
+	// Check if player owns Asia
+	matches = 0;
+	for (int i = 0; i < ASIA.size(); ++i) {
+		for (int j = 0; j < numRegions; ++j) {
+			if (ownedRegions[j].getID() == ASIA.at(i).getID()) {
+				++matches;
+			}
+		}
+	}
+	if (matches == ASIA.size()) {
+		newTroops += 7;
+	}
+
+	// Check if player owns Africa
+	matches = 0;
+	for (int i = 0; i < AFRICA.size(); ++i) {
+		for (int j = 0; j < numRegions; ++j) {
+			if (ownedRegions[j].getID() == AFRICA.at(i).getID()) {
+				++matches;
+			}
+		}
+	}
+	if (matches == AFRICA.size()) {
+		newTroops += 3;
+	}
+
+	// Check if player owns Australia
+	matches = 0;
+	for (int i = 0; i < AUSTRALIA.size(); ++i) {
+		for (int j = 0; j < numRegions; ++j) {
+			if (ownedRegions[j].getID() == AUSTRALIA.at(i).getID()) {
+				++matches;
+			}
+		}
+	}
+	if (matches == AUSTRALIA.size()) {
+		newTroops += 2;
+	}
+
+	return newTroops;
+}
+
+/*
+* Recursive method to be used in troop movement phase.
+* Returns true if the current player controls a connected
+* "chain" of regions from the beginning to the end of the
+* troop movement.
+*/
+bool Brisk::isChain(int startID, int endID, int currentPlayer, vector<bool> visited)
+{
+	visited.at(startID) = true;
+	for (int i = 0; i < board.at(startID).getBorder_ids().size(); i++)
+	{
+		if (visited.at(board.at(startID).getBorder_ids().at(i)))
+		{
+			continue;
+		}
+		if (board.at(board.at(startID).getBorder_ids().at(i)).getCommander_id() != currentPlayer)
+		{
+			continue;
+		}
+		if (board.at(startID).getBorder_ids().at(i) == endID)
+		{
+			return true;
+		}
+		if (isChain(board.at(startID).getBorder_ids().at(i), endID, currentPlayer, visited))
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
 void Brisk::beginningClaim(vector<Player> players) {
 
 	numPlayers = players.size();
@@ -160,85 +355,11 @@ void Brisk::placeTroops(int currentPlayer, vector<Player>* players)
 	int numRegions = ownedRegions.size();
 	int newTroops = numRegions / 3;
 
+	// Check if the player gets a card bonus
+	newTroops += cardBonus(players->at(currentPlayer));
+
 	// Check if the player gets a continent bonus
-
-	// Check if player owns North America
-	int matches = 0;
-	for (int i = 0; i < NORTH_AMERICA.size(); ++i) {
-		for (int j = 0; j < numRegions; ++j) {
-			if (ownedRegions[j].getID() == NORTH_AMERICA.at(i).getID()) {
-				++matches;
-			}
-		}
-	}
-	if (matches == NORTH_AMERICA.size()) {
-		newTroops += 5;
-	}
-
-	// Check if player owns South America
-	int matches = 0;
-	for (int i = 0; i < SOUTH_AMERICA.size(); ++i) {
-		for (int j = 0; j < numRegions; ++j) {
-			if (ownedRegions[j].getID() == SOUTH_AMERICA.at(i).getID()) {
-				++matches;
-			}
-		}
-	}
-	if (matches == SOUTH_AMERICA.size()) {
-		newTroops += 2;
-	}
-
-	// Check if player owns Europe
-	int matches = 0;
-	for (int i = 0; i < EUROPE.size(); ++i) {
-		for (int j = 0; j < numRegions; ++j) {
-			if (ownedRegions[j].getID() == EUROPE.at(i).getID()) {
-				++matches;
-			}
-		}
-	}
-	if (matches == EUROPE.size()) {
-		newTroops += 5;
-	}
-
-	// Check if player owns Asia
-	int matches = 0;
-	for (int i = 0; i < ASIA.size(); ++i) {
-		for (int j = 0; j < numRegions; ++j) {
-			if (ownedRegions[j].getID() == ASIA.at(i).getID()) {
-				++matches;
-			}
-		}
-	}
-	if (matches == ASIA.size()) {
-		newTroops += 7;
-	}
-
-	// Check if player owns Africa
-	int matches = 0;
-	for (int i = 0; i < AFRICA.size(); ++i) {
-		for (int j = 0; j < numRegions; ++j) {
-			if (ownedRegions[j].getID() == AFRICA.at(i).getID()) {
-				++matches;
-			}
-		}
-	}
-	if (matches == AFRICA.size()) {
-		newTroops += 3;
-	}
-
-	// Check if player owns Australia
-	int matches = 0;
-	for (int i = 0; i < AUSTRALIA.size(); ++i) {
-		for (int j = 0; j < numRegions; ++j) {
-			if (ownedRegions[j].getID() == AUSTRALIA.at(i).getID()) {
-				++matches;
-			}
-		}
-	}
-	if (matches == AUSTRALIA.size()) {
-		newTroops += 2;
-	}
+	newTroops += continentBonus(ownedRegions);
 
 	// Now place troops
 	printf("It's player %i's turn. You have %i new troops to place.\nInput your troop placement in the form: <Region ID> <# of new troops>.\n", currentPlayer, newTroops);
@@ -351,36 +472,6 @@ void Brisk::attackSequence(vector<Player> players)
 
 // TODO: implement game data access methods
 
-/*
-* Recursive method to be used in troop movement phase.
-* Returns true if the current player controls a connected
-* "chain" of regions from the beginning to the end of the
-* troop movement.
-*/
-bool Brisk::isChain(int startID, int endID, int currentPlayer, vector<bool> visited)
-{
-	visited.at(startID) = true;
-	for (int i = 0; i < board.at(startID).getBorder_ids().size(); i++)
-	{
-		if (visited.at(board.at(startID).getBorder_ids().at(i)))
-		{
-			continue;
-		}
-		if (board.at(board.at(startID).getBorder_ids().at(i)).getCommander_id() != currentPlayer)
-		{
-			continue;
-		}
-		if (board.at(startID).getBorder_ids().at(i) == endID)
-		{
-			return true;
-		}
-		if (isChain(board.at(startID).getBorder_ids().at(i), endID, currentPlayer, visited))
-		{
-			return true;
-		}
-	}
 
-	return false;
-}
 
 // TODO: implement game status update methods

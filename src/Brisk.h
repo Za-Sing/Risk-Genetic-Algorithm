@@ -45,15 +45,17 @@ private:
 	const vector<Region> AUSTRALIA = { Region(38, "Indonesia", vector<int>{31, 39, 40}), Region(39, "New_Guinea", vector<int>{38, 41}),
 		Region(40, "Western_Australia", vector<int>{38, 41}), Region(41, "Eastern_Australia", vector<int>{39, 40}) };
 	
-	int numTurns, numPlayers, currentPlayer, regionsLeft, regionChoice, attackFrom, attackTo;
+	int numTurns, numPlayers, currentPlayer, regionsLeft, regionChoice, attackFrom, attackTo, setsTraded = 0;
 	bool succPlace;
 	vector<Card>* deck;
 	void initDeck(string filename);
 public:
 	Brisk();
+	int continentBonus(vector<Region> ownedRegions);
+	int cardBonus(Player currentPlayer);
+	bool isChain(int startID, int endID, int currentPlayer, vector<bool> visited);
 	void beginningClaim(vector<Player> players);
 	void placeTroops(int currentPlayer, vector<Player>* players);
-	bool isChain(int startID, int endID, int currentPlayer, vector<bool> visited);
 	void attackSequence(vector<Player> players);
 	vector<Region> board;
 };
