@@ -2,7 +2,7 @@ Turn Sequence:
 
 -Place New Troops
 --Handle card bonus
---Handle continent bonus
+--Handle continent bonus [DONE]
 --Parse input [DONE]
 --Verify legality [DONE]
 --Update board [DONE]

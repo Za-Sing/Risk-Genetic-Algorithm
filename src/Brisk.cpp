@@ -160,7 +160,87 @@ void Brisk::placeTroops(int currentPlayer, vector<Player>* players)
 	int numRegions = ownedRegions.size();
 	int newTroops = numRegions / 3;
 
-	// place troops
+	// Check if the player gets a continent bonus
+
+	// Check if player owns North America
+	int matches = 0;
+	for (int i = 0; i < NORTH_AMERICA.size(); ++i) {
+		for (int j = 0; j < numRegions; ++j) {
+			if (ownedRegions[j].getID() == NORTH_AMERICA.at(i).getID()) {
+				++matches;
+			}
+		}
+	}
+	if (matches == NORTH_AMERICA.size()) {
+		newTroops += 5;
+	}
+
+	// Check if player owns South America
+	int matches = 0;
+	for (int i = 0; i < SOUTH_AMERICA.size(); ++i) {
+		for (int j = 0; j < numRegions; ++j) {
+			if (ownedRegions[j].getID() == SOUTH_AMERICA.at(i).getID()) {
+				++matches;
+			}
+		}
+	}
+	if (matches == SOUTH_AMERICA.size()) {
+		newTroops += 2;
+	}
+
+	// Check if player owns Europe
+	int matches = 0;
+	for (int i = 0; i < EUROPE.size(); ++i) {
+		for (int j = 0; j < numRegions; ++j) {
+			if (ownedRegions[j].getID() == EUROPE.at(i).getID()) {
+				++matches;
+			}
+		}
+	}
+	if (matches == EUROPE.size()) {
+		newTroops += 5;
+	}
+
+	// Check if player owns Asia
+	int matches = 0;
+	for (int i = 0; i < ASIA.size(); ++i) {
+		for (int j = 0; j < numRegions; ++j) {
+			if (ownedRegions[j].getID() == ASIA.at(i).getID()) {
+				++matches;
+			}
+		}
+	}
+	if (matches == ASIA.size()) {
+		newTroops += 7;
+	}
+
+	// Check if player owns Africa
+	int matches = 0;
+	for (int i = 0; i < AFRICA.size(); ++i) {
+		for (int j = 0; j < numRegions; ++j) {
+			if (ownedRegions[j].getID() == AFRICA.at(i).getID()) {
+				++matches;
+			}
+		}
+	}
+	if (matches == AFRICA.size()) {
+		newTroops += 3;
+	}
+
+	// Check if player owns Australia
+	int matches = 0;
+	for (int i = 0; i < AUSTRALIA.size(); ++i) {
+		for (int j = 0; j < numRegions; ++j) {
+			if (ownedRegions[j].getID() == AUSTRALIA.at(i).getID()) {
+				++matches;
+			}
+		}
+	}
+	if (matches == AUSTRALIA.size()) {
+		newTroops += 2;
+	}
+
+	// Now place troops
 	printf("It's player %i's turn. You have %i new troops to place.\nInput your troop placement in the form: <Region ID> <# of new troops>.\n", currentPlayer, newTroops);
 	string troopPlacement;
 	getline(cin, troopPlacement);
