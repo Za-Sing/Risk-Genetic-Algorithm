@@ -1,6 +1,6 @@
 In Brisk:
---Change the players vector to be a pointer to a vector of pointers
---Make appropriate updates to reflect above change
+--Change the players vector to be a pointer to a vector of pointers [DONE]
+--Make appropriate updates to reflect above change [DONE]
 
 Turn Sequence:
 
