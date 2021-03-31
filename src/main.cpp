@@ -34,6 +34,8 @@ int main()
 
 	
 	game.beginningClaim(players);
+	printf("%i\n", players.at(0).getOwnedRegions().size());
+
 	// TODO: hard code deck
 
 	//Debug input
