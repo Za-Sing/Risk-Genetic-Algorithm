@@ -23,7 +23,7 @@ public:
 	void updateOwnedRegions(vector<Region> regions);
 	vector<Card> getHand();
 	void drawCard(vector<Card>* deck);
-	void playCards(vector<Card>* deck, string comboType);
+	void playCards(vector<Card>* deck, vector<int> returnedCards);
 };
 
 #endif // !PLAYER_H

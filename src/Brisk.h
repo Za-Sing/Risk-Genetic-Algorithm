@@ -16,7 +16,7 @@ private:
 	const int NUM_REGIONS = 42;
 	
 	// Declare the continents here
-	const vector<Region> NORTH_AMERICA = { Region(0, "Alaska", vector<int>{1, 3}), Region(1, "Northwest_Territory", vector<int>{0, 3, 4, 2}),
+	const vector<Region> NORTH_AMERICA = { Region(0, "Alaska", vector<int>{1, 3, 24}), Region(1, "Northwest_Territory", vector<int>{0, 3, 4, 2}),
 		Region(2, "Greenland", vector<int>{1, 4, 5, 13}), Region(3, "Alberta", vector<int>{0, 1, 4, 6}),
 		Region(4, "Ontario", vector<int>{1, 2, 5, 7, 6, 3}), Region(5, "Eastern_Canada", vector<int>{4, 2, 7}),
 		Region(6, "Western_United_States", vector<int>{3, 4, 7, 8}), Region(7, "Eastern_United_States", vector<int>{6, 4, 5, 8}),
@@ -52,7 +52,7 @@ private:
 public:
 	Brisk();
 	int continentBonus(vector<Region> ownedRegions);
-	int cardBonus(Player* currentPlayer);
+	int cardBonus(Player* currentPlayer, vector<int>* plusTwoRegions, int turn);
 	bool isChain(int startID, int endID, int currentPlayer, vector<bool> visited);
 	void beginningClaim(vector<Player*>* players);
 	void placeTroops(int currentPlayer, vector<Player*>* players);
