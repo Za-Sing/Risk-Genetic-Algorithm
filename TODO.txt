@@ -16,12 +16,13 @@ Turn Sequence:
 --Select region from which to attack [DONE]
 --Select number of troops to attack with [DONE]
 --Verify legality of above steps [DONE]
---Role dice and update troop numbers
---Check for success
---Check if a player is eliminated
---Update board, player's regions, and player's cards upon success
+--Role dice and update troop numbers [DONE]
+--Check for success [DONE]
+--Check if a player is eliminated [DONE]
+--Update board, player's regions upon success [DONE]
+--Update player's cards upon success
 --Handle card bonus when a player is eliminated
---Prompt to continue or retreat
+--Prompt to continue or retreat [DONE]
 
 -Move Troops [DONE]
 --Parse input [DONE]
