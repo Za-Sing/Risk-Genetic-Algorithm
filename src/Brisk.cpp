@@ -298,19 +298,29 @@ void Brisk::beginningClaim(vector<Player> players) {
 
 		//if empty regions exist
 		if (regionsLeft != 0) {
-			//print and take player's region choice
-			printf("Player %i, please choose next region ID for region to occupy.\n", currentPlayer);
-			cin >> regionChoice;
 
-			// once region is implemented, update each region to be owned by the player that chooses it
-			// make sure the region is removed from the selectable pool of regions
+			//set exit condition to false
+			succPlaceRegion = false;
+			//loop until exit condition is true
+			while (succPlaceRegion == false) {
+				//print and take player's region choice
+				printf("Player %i, please choose next region ID for region to occupy.\n", currentPlayer);
+				cin >> regionChoice;
 
-			vector<Region> currentRegions = players[currentPlayer].getOwnedRegions();
-			currentRegions.push_back(board[regionChoice]);
-			board[regionChoice].addTroops(1);
-			board[regionChoice].updateCommander_id(currentPlayer);
-			players[currentPlayer].updateOwnedRegions(currentRegions);
+				// update each region to be owned by the player that chooses it
+				// the region is removed from the selectable pool of regions
 
+				//if the region chosen has not been claimed
+				if (board[regionChoice].getCommander_id() != -1) {
+					vector<Region> currentRegions = players[currentPlayer].getOwnedRegions();
+					currentRegions.push_back(board[regionChoice]);
+					board[regionChoice].addTroops(1);
+					board[regionChoice].updateCommander_id(currentPlayer);
+					players[currentPlayer].updateOwnedRegions(currentRegions);
+				} else {
+					cout << "Invalid choice! That region has already been claimed by the enemy.";
+				}
+			}
 			//remove troop from player's troop count
 			players[currentPlayer].updateArmySize(players[currentPlayer].getTotalArmySize() - 1);
 
@@ -326,15 +336,15 @@ void Brisk::beginningClaim(vector<Player> players) {
 
 				// update each region the player puts a troop on to.
 
-				succPlace = false;
-				while (succPlace == false) {
+				succPlaceTroop = false;
+				while (succPlaceTroop == false) {
 
 					cin >> regionChoice;
 
 					// check that they own the region
 					if (board[regionChoice].getCommander_id() == currentPlayer) {
 						board[regionChoice].addTroops(1);
-						succPlace = true;
+						succPlaceTroop = true;
 					}
 					else {
 						cout << "Invalid choice! Please choose a region you own.";

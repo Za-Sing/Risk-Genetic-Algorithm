@@ -46,7 +46,7 @@ private:
 		Region(40, "Western_Australia", vector<int>{38, 41}), Region(41, "Eastern_Australia", vector<int>{39, 40}) };
 	
 	int numTurns, numPlayers, currentPlayer, regionsLeft, regionChoice, attackFrom, attackTo, setsTraded = 0;
-	bool succPlace;
+	bool succPlaceRegion, succPlaceTroop;
 	vector<Card>* deck;
 	void initDeck(string filename);
 public:
