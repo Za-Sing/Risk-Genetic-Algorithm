@@ -329,7 +329,7 @@ void Brisk::beginningClaim(vector<Player*>* players) {
 	//claim new territories until territories gone
 
 	//go for the number of regions left to choose from
-	for (int i = 0; i < numTurns; i++) {
+	for (int i = 0; i < numTurns * numPlayers; i++) {
 		//cycle through players
 		currentPlayer = (i % numPlayers);
 
