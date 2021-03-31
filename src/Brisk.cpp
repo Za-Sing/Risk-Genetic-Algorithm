@@ -5,6 +5,13 @@
 #include "Brisk.h"
 
 using namespace std;
+//function for random dice rolls
+int rollDie()
+{
+	int roll;
+	roll = rand() % 7 + 1; //six sided die roll
+	return roll;
+}
 
 // Initialize the card deck from a file
 void Brisk::initDeck(string filename) {
@@ -410,11 +417,15 @@ void Brisk::placeTroops(int currentPlayer, vector<Player>* players)
 	}
 }
 
+
 // This handles the attack/defend sequence
 void Brisk::attackSequence(vector<Player> players)
 {
 	string input;
 	bool badChoice = true;
+	captured = false;
+	defended = false;
+	repeat = true;
 
 	// Get the region to be attacked
 	printf("Player %i, which region would you like to attack?\n", currentPlayer);
@@ -468,22 +479,243 @@ void Brisk::attackSequence(vector<Player> players)
 	}
 	badChoice = true;
 
-	// Now get number of troops to attack with
-	printf("How many troops would you like to use?\n");
-	getline(cin, input);
-	int attackTroops = stoi(input);
+	while (repeat == true) {
 
-	// Make sure the player has enough troops
-	while (badChoice == true) {
-		if (board[attackFrom].getTroops() - attackTroops < 1) {
-			printf("You must leave at least 1 troop! Please select again.\n");
+		// Now get number of troops to attack with
+		printf("How many troops would you like to use? choose 1 through 3.\n");
+
+		getline(cin, input);
+		int attackTroops = stoi(input);
+
+		//check that it's a valid number of troops
+		while (badChoice == true) {
+			if (attackTroops < 0 || attackTroops > 3) {
+				printf("You must choose between 1, 2, or 3! Please select again.\n");
+				getline(cin, input);
+				attackTroops = stoi(input);
+			}
+			else {
+				badChoice = false;
+			}
+		}
+		badChoice = true;
+
+		bool badChoice2 = true;
+
+		// Make sure the player has enough troops
+		while (badChoice == true) {
+			if (board[attackFrom].getTroops() - attackTroops < 1) {
+				printf("You must leave at least 1 troop left in the territory! Please select again.\n");
+				getline(cin, input);
+				attackTroops = stoi(input);
+
+
+				while (badChoice2 == true) {
+					if (attackTroops < 0 || attackTroops > 3) {
+						printf("You must choose between 1, 2, or 3! Please select again.\n");
+						getline(cin, input);
+						attackTroops = stoi(input);
+					}
+					else {
+						badChoice2 = false;
+					}
+				}
+			}
+			else {
+				badChoice = false;
+			}
+		}
+		badChoice = true;
+
+		//initialize empty dice
+		for (int i = 0; i < 2; i -= -1) {
+			attack[i] = 0;
+			defend[i] = 0;
+		}
+		attack[2] = 0;
+
+		// Get attacker dice rolls
+		for (int i = 0; i < attackTroops; i -= -1) {
+			printf("Player %i, Say something to roll! (press enter)\n", currentPlayer);
 			getline(cin, input);
-			attackTroops = stoi(input);
+			//devtool
+			if (input == "ULTRA_CRITICAL_DICE_ROLL_FRICKAA") {
+				printf("What is thy bidding, my master?\n");
+				getline(cin, input);
+				attack[i] = stoi(input);
+				printf("So be it, it be like it, sometimes, but especially now.\nManual Dice recorded.\n");
+			}
+			else {
+				attack[i] = rollDie();
+			}
+		}
+
+
+		//get defender dice rolls
+		defender = board[attackTo].getCommander_id();
+		printf("Player %i, choose how many troops to defend with!", defender);
+
+		getline(cin, input);
+		int defendTroops = stoi(input);
+
+		//check that it's a valid number of troops
+		while (badChoice == true) {
+			if (defendTroops < 0 || defendTroops > 2) {
+				printf("You must choose between 1 or 2! Please select again.\n");
+				getline(cin, input);
+				defendTroops = stoi(input);
+			}
+			else {
+				badChoice = false;
+			}
+		}
+		badChoice = true;
+		badChoice2 = true;
+
+		// Make sure the player has enough troops
+		while (badChoice == true) {
+			if (board[attackTo].getTroops() - defendTroops < 0) {
+				printf("You must choose a number of troops you actually have here! Please select again.\n");
+				getline(cin, input);
+				defendTroops = stoi(input);
+
+				while (badChoice2 == true) {
+					if (defendTroops < 0 || defendTroops > 2) {
+						printf("You must choose between 1 or 2! Please select again.\n");
+						getline(cin, input);
+						defendTroops = stoi(input);
+					}
+					else {
+						badChoice2 = false;
+					}
+				}
+			}
+			else {
+				badChoice = false;
+			}
+		}
+		badChoice = true;
+
+
+		// Get defender dice rolls
+		for (int i = 0; i < defendTroops; i -= -1) {
+			printf("Player %i, Say something to roll! (press enter)\n", defender);
+			getline(cin, input);
+			//devtool
+			if (input == "ULTRA_CRITICAL_DICE_ROLL_FRICKAA") {
+				printf("Hello There!\n");
+				getline(cin, input);
+				defend[i] = stoi(input);
+				printf("GENERAL KENOBI!\nManual Dice recorded.\n");
+			}
+			else {
+				defend[i] = rollDie();
+			}
+		}
+
+		//print dice rolls
+		printf("\nPlayer %i, your attack rolls were:\n", currentPlayer);
+		for (int i = 0; i < 3; i -= -1) {
+			cout << i << ": " << attack[i] << "\n";
+		}
+
+		printf("\nPlayer %i, your defend rolls were:\n", defender);
+		for (int i = 0; i < 2; i -= -1) {
+			cout << i << ": " << defend[i] << "\n";
+		}
+
+
+
+		//compare max dice
+
+		attackLoss = 0;
+		defendLoss = 0;
+
+		int* maxAtt = max_element(attack, attack + 3);
+		int* maxDef = max_element(defend, defend + 2);
+		if (maxAtt <= maxDef) {
+			attackLoss++;
 		}
 		else {
-			badChoice = false;
+			defendLoss++;
 		}
+
+
+		// Clear the current max value to compare again
+		bool exitDelete = false;
+
+		for (int i = 0; i < 3; i -= -1) {
+			while (exitDelete = false) {
+				if (attack[i] == *maxAtt) {
+					attack[i] = 0;
+					exitDelete = true;
+				}
+			}
+		}
+
+		for (int i = 0; i < 2; i -= -1) {
+			while (exitDelete = false) {
+				if (attack[i] == *maxAtt) {
+					attack[i] = 0;
+					exitDelete = true;
+				}
+			}
+		}
+
+
+		//compare next highest dice
+		int* maxAtt = max_element(attack, attack + 3);
+		int* maxDef = max_element(defend, defend + 2);
+		if (maxAtt <= maxDef) {
+			attackLoss++;
+		}
+		else {
+			defendLoss++;
+		}
+
+		//print player troop loss
+		printf("Player %i lost %i troops!\n", currentPlayer, attackLoss);
+		printf("Player %i lost %i troops!\n\n", defender, defendLoss);
+
+		//remove troops from region count
+		board[attackFrom].addTroops(attackLoss * -1);
+		board[attackTo].addTroops(defendLoss * -1);
+
+		//print it
+		printf("Player %i now has %i troops in the region.\n", currentPlayer, board[attackFrom].getTroops());
+		printf("Player %i now has %i troops in the region.\n", defender, board[attackTo].getTroops());
+
+		//check if defender has lost region
+		if (board[attackTo].getTroops() == 0) {
+			printf("Player %i has lost the region!\nPlayer %i now owns the region.\n", defender, currentPlayer);
+			board[attackTo].updateCommander_id(currentPlayer);
+			board[attackTo].updateTroops(attackTroops - attackLoss);
+			printf("Player %i now has %i troops in the region.", currentPlayer, attackTroops - attackLoss);
+			captured = true;
+		}
+		//else check if defender has defended against attacker
+		else if ((board[attackTo].getTroops() > 0) && (board[attackFrom].getTroops() == 1)) {
+			printf("Player %i has defended his region against Player %i! Player %i retreats.", defender, currentPlayer, currentPlayer);
+			defended = true;
+		}
+
+		string reAttack;
+		if ((captured == false) || (defended == false)) {
+			printf("attack again? y / n");
+			getline(cin, reAttack);
+			if (reAttack == "y") {
+				repeat = true;
+			}
+			else {
+				repeat = false;
+			}
+		}
+		else {
+			repeat = false;
+		}
+
 	}
+
 }
 
 // TODO: implement game data access methods
