@@ -353,9 +353,10 @@ void Brisk::placeTroops(int currentPlayer, vector<Player>* players)
 	//calculate player's new troops
 	vector<Region> ownedRegions = players->at(currentPlayer).getOwnedRegions();
 	int numRegions = ownedRegions.size();
-	int newTroops = numRegions / 3;
+	int newTroops = numRegions / 3;		//Fix to align with rules
 
 	// Check if the player gets a card bonus
+	
 	newTroops += cardBonus(players->at(currentPlayer));
 
 	// Check if the player gets a continent bonus
