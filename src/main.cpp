@@ -36,23 +36,6 @@ int main()
 	game.beginningClaim(players);
 	// TODO: hard code deck
 
-	//Debug input
-	/*
-	game.board.at(0).updateTroops(10);
-	game.board.at(0).updateCommander_id(0);
-	game.board.at(1).updateTroops(10);
-	game.board.at(1).updateCommander_id(0); 
-	game.board.at(2).updateTroops(10);
-	game.board.at(2).updateCommander_id(0); 
-	game.board.at(3).updateTroops(10);
-	game.board.at(3).updateCommander_id(1);
-	game.board.at(4).updateTroops(10);
-	game.board.at(4).updateCommander_id(1);
-	game.board.at(5).updateTroops(10);
-	game.board.at(5).updateCommander_id(1);
-	game.board.at(6).updateTroops(10);
-	game.board.at(6).updateCommander_id(0);
-	*/
 
     //main game loop
 	bool inPlay = true;
