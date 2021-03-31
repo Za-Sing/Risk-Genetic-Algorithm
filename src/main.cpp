@@ -26,10 +26,10 @@ int main()
 	}
 
 	// Initialize Players vector
-	vector<Player> players;
+	vector<Player*>* players = new vector<Player*>();
 	for (int i = 0; i < numPlayers; i++) {
-		Player newPlayer = Player(numPlayers);
-		players.push_back(newPlayer);
+		Player* newPlayer = new Player(numPlayers);
+		players->push_back(newPlayer);
 	}
 
 	
@@ -61,7 +61,7 @@ int main()
 	{
 		for (int currentPlayer = 0; currentPlayer < numPlayers; currentPlayer++)
 		{
-			game.placeTroops(currentPlayer, &players);
+			game.placeTroops(currentPlayer, players);
 			
 
 			// attack regions
@@ -126,4 +126,9 @@ int main()
 
 		++roundIndex; // end of round
 	}
+	// De-allocate memory
+	for (int i = 0; i < players->size(); ++i) {
+		delete players->at(i);
+	}
+	delete players;
 }
