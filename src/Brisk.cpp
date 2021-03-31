@@ -125,6 +125,7 @@ int Brisk::cardBonus(Player currentPlayer)
 			case 3: newTroops += 10; ++setsTraded; break;
 			case 4: newTroops += 12; ++setsTraded; break;
 			case 5: newTroops += 15; ++setsTraded; break;
+			default: newTroops += (setsTraded - 2) * 5;
 			}
 		}
 		else {
@@ -141,6 +142,7 @@ int Brisk::cardBonus(Player currentPlayer)
 					case 3: newTroops += 10; ++setsTraded; break;
 					case 4: newTroops += 12; ++setsTraded; break;
 					case 5: newTroops += 15; ++setsTraded; break;
+					default: newTroops += (setsTraded - 2) * 5;
 					}
 					choiceMade = true;
 				}
