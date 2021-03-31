@@ -33,7 +33,7 @@ void Brisk::initDeck(string filename) {
 Brisk::Brisk()
 {
 	//initialize board (vector of regions)
-	board.push_back(Region(0, "Alaska", vector<int>{1, 3}));
+	board.push_back(Region(0, "Alaska", vector<int>{1, 3, 24}));
 	board.push_back(Region(1, "Northwest_Territory", vector<int>{0, 3, 4, 2}));
 	board.push_back(Region(2, "Greenland", vector<int>{1, 4, 5, 13}));
 	board.push_back(Region(3, "Alberta", vector<int>{0, 1, 4, 6}));
@@ -81,7 +81,7 @@ Brisk::Brisk()
 }
 
 // Helper function to handle player card bonus
-int Brisk::cardBonus(Player currentPlayer) 
+int Brisk::cardBonus(Player currentPlayer, vector<int>* plusTwoRegions, int turn) 
 {
 	int newTroops = 0;
 	vector<Card> currentHand = currentPlayer.getHand();
@@ -117,7 +117,24 @@ int Brisk::cardBonus(Player currentPlayer)
 	if (comboType != "") {
 		if (currentHand.size() >= 5) {
 			printf("You have five cards, so a set must be traded in.\n");
-			currentPlayer.playCards(deck, comboType);
+			printf("Which cards would you like to trade in?\n");
+			string cards;
+			getline(cin, cards);
+			vector<int> returnedCards;
+			stringstream ss(cards);
+			string element;
+			while (getline(ss, element, ' '))
+			{
+				returnedCards.push_back(stoi(element));
+			}
+			for (int i = 0; i < 3; i++)
+			{
+				if (board.at(currentPlayer.getHand().at(i).territory).getCommander_id() == turn)
+				{
+					plusTwoRegions->push_back(board.at(currentPlayer.getHand().at(i).territory).getID());
+				}
+			}
+			currentPlayer.playCards(deck, returnedCards);
 			switch (setsTraded) {
 			case 0: newTroops += 4; ++setsTraded; break;
 			case 1: newTroops += 6; ++setsTraded; break;
@@ -134,7 +151,24 @@ int Brisk::cardBonus(Player currentPlayer)
 			printf("Would you like to trade a set of cards? Enter y or n.\n");
 			while (getline(cin, choice) && !choiceMade) {
 				if (choice == "y") {
-					currentPlayer.playCards(deck, comboType);
+					printf("Which cards would you like to trade in?\n");
+					string cards;
+					getline(cin, cards);
+					vector<int> returnedCards;
+					stringstream ss(cards);
+					string element;
+					while (getline(ss, element, ' '))
+					{
+						returnedCards.push_back(stoi(element));
+					}
+					for (int i = 0; i < 3; i++)
+					{
+						if (board.at(currentPlayer.getHand().at(i).territory).getCommander_id() == turn)
+						{
+							plusTwoRegions->push_back(board.at(currentPlayer.getHand().at(i).territory).getID());
+						}
+					}
+					currentPlayer.playCards(deck, returnedCards);
 					switch (setsTraded) {
 					case 0: newTroops += 4; ++setsTraded; break;
 					case 1: newTroops += 6; ++setsTraded; break;
@@ -356,10 +390,26 @@ void Brisk::placeTroops(int currentPlayer, vector<Player>* players)
 	vector<Region> ownedRegions = players->at(currentPlayer).getOwnedRegions();
 	int numRegions = ownedRegions.size();
 	int newTroops = numRegions / 3;		//Fix to align with rules
+	
+	printf("Your hand: ");
+	vector<Card> hand = players->at(currentPlayer).getHand();
+	for (int i = 0; i < hand.size(); i++)
+	{
+		int cardRegion = hand.at(i).territory;
+		int cardTroopType = hand.at(i).troop;
+		printf("%i %i    \n", cardRegion, cardTroopType);
+	}
+	
 
 	// Check if the player gets a card bonus
 	
-	newTroops += cardBonus(players->at(currentPlayer));
+	vector<int> plusTwoRegions;
+	newTroops += cardBonus(players->at(currentPlayer), &plusTwoRegions, currentPlayer);
+	for (int i = 0; i < plusTwoRegions.size(); i++)
+	{
+		board.at(plusTwoRegions.at(i)).addTroops(2);
+	}
+
 
 	// Check if the player gets a continent bonus
 	newTroops += continentBonus(ownedRegions);

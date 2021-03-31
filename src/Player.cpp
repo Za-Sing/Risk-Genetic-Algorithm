@@ -54,10 +54,15 @@ void Player::drawCard(vector<Card>* deck)
 }
 
 // This method plays a set of three cards and adds them back to the deck
-void Player::playCards(vector<Card>* deck, string comboType)
+void Player::playCards(vector<Card>* deck, vector<int> returnedCards)
 {
+	for (int i = 0; i < 3; i++)
+	{
+		deck->push_back(hand.at(returnedCards.at(i)));
+		hand.erase(hand.begin() + returnedCards.at(i));
+	}
 	// Handle each possible combination of cards
-	
+	/*
 	if (comboType == "3inf") {
 		int cardsPlayed = 0, i = 0;
 		while (cardsPlayed < 3) {
@@ -173,6 +178,7 @@ void Player::playCards(vector<Card>* deck, string comboType)
 			++i;
 		}
 	}
+	*/
 
 	// Re-shuffle the deck
 	random_shuffle(deck->begin(), deck->end());
