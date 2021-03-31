@@ -6,7 +6,7 @@ Region::Region(int id, string name, vector<int> border_ids)
 	this->name = name;
 	this->border_ids = border_ids;
 	troops = 0;
-	commander_id = 99;
+	commander_id = -1;
 
 }
 
