@@ -129,9 +129,9 @@ int Brisk::cardBonus(Player* currentPlayer, vector<int>* plusTwoRegions, int tur
 			}
 			for (int i = 0; i < 3; i++)
 			{
-				if (board.at(currentPlayer.getHand().at(i).territory).getCommander_id() == turn)
+				if (board.at(currentPlayer->getHand().at(i).territory).getCommander_id() == turn)
 				{
-					plusTwoRegions->push_back(board.at(currentPlayer.getHand().at(i).territory).getID());
+					plusTwoRegions->push_back(board.at(currentPlayer->getHand().at(i).territory).getID());
 				}
 			}
 			currentPlayer->playCards(deck, returnedCards);
@@ -163,9 +163,9 @@ int Brisk::cardBonus(Player* currentPlayer, vector<int>* plusTwoRegions, int tur
 					}
 					for (int i = 0; i < 3; i++)
 					{
-						if (board.at(currentPlayer.getHand().at(i).territory).getCommander_id() == turn)
+						if (board.at(currentPlayer->getHand().at(i).territory).getCommander_id() == turn)
 						{
-							plusTwoRegions->push_back(board.at(currentPlayer.getHand().at(i).territory).getID());
+							plusTwoRegions->push_back(board.at(currentPlayer->getHand().at(i).territory).getID());
 						}
 					}
 					currentPlayer->playCards(deck, returnedCards);
@@ -393,7 +393,7 @@ void Brisk::placeTroops(int currentPlayer, vector<Player*>* players)
 	int newTroops = numRegions / 3;		//Fix to align with rules
 	
 	printf("Your hand: ");
-	vector<Card> hand = players->at(currentPlayer).getHand();
+	vector<Card> hand = players->at(currentPlayer)->getHand();
 	for (int i = 0; i < hand.size(); i++)
 	{
 		int cardRegion = hand.at(i).territory;
