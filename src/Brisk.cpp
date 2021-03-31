@@ -307,18 +307,24 @@ void Brisk::beginningClaim(vector<Player> players) {
 				printf("Player %i, please choose next region ID for region to occupy.\n", currentPlayer);
 				cin >> regionChoice;
 
+
 				// update each region to be owned by the player that chooses it
 				// the region is removed from the selectable pool of regions
 
+				//Error catching for invalid region
+				if ((regionChoice < 0) || (regionChoice > 41)){
+					cout << "Invalid choice! Please choose a real region ID.\n\n\n";
+				}
 				//if the region chosen has not been claimed
-				if (board[regionChoice].getCommander_id() != -1) {
+				else if (board[regionChoice].getCommander_id() == -1) {
 					vector<Region> currentRegions = players[currentPlayer].getOwnedRegions();
 					currentRegions.push_back(board[regionChoice]);
 					board[regionChoice].addTroops(1);
 					board[regionChoice].updateCommander_id(currentPlayer);
 					players[currentPlayer].updateOwnedRegions(currentRegions);
-				} else {
-					cout << "Invalid choice! That region has already been claimed by the enemy.";
+				}
+				else {
+					cout << "Invalid choice! That region has already been claimed.\n\n\n";
 				}
 			}
 			//remove troop from player's troop count
