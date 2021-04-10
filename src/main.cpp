@@ -26,33 +26,16 @@ int main()
 	}
 
 	// Initialize Players vector
-	vector<Player> players;
+	vector<Player*>* players = new vector<Player*>();
 	for (int i = 0; i < numPlayers; i++) {
-		Player newPlayer = Player(numPlayers);
-		players.push_back(newPlayer);
+		Player* newPlayer = new Player(numPlayers);
+		players->push_back(newPlayer);
 	}
 
 	
 	game.beginningClaim(players);
 	// TODO: hard code deck
 
-	//Debug input
-	/*
-	game.board.at(0).updateTroops(10);
-	game.board.at(0).updateCommander_id(0);
-	game.board.at(1).updateTroops(10);
-	game.board.at(1).updateCommander_id(0); 
-	game.board.at(2).updateTroops(10);
-	game.board.at(2).updateCommander_id(0); 
-	game.board.at(3).updateTroops(10);
-	game.board.at(3).updateCommander_id(1);
-	game.board.at(4).updateTroops(10);
-	game.board.at(4).updateCommander_id(1);
-	game.board.at(5).updateTroops(10);
-	game.board.at(5).updateCommander_id(1);
-	game.board.at(6).updateTroops(10);
-	game.board.at(6).updateCommander_id(0);
-	*/
 
     //main game loop
 	bool inPlay = true;
@@ -61,7 +44,7 @@ int main()
 	{
 		for (int currentPlayer = 0; currentPlayer < numPlayers; currentPlayer++)
 		{
-			game.placeTroops(currentPlayer, &players);
+			game.placeTroops(currentPlayer, players);
 			
 
 			// attack regions
@@ -126,4 +109,9 @@ int main()
 
 		++roundIndex; // end of round
 	}
+	// De-allocate memory
+	for (int i = 0; i < players->size(); ++i) {
+		delete players->at(i);
+	}
+	delete players;
 }

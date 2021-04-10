@@ -40,7 +40,7 @@ void Brisk::initDeck(string filename) {
 Brisk::Brisk()
 {
 	//initialize board (vector of regions)
-	board.push_back(Region(0, "Alaska", vector<int>{1, 3}));
+	board.push_back(Region(0, "Alaska", vector<int>{1, 3, 24}));
 	board.push_back(Region(1, "Northwest_Territory", vector<int>{0, 3, 4, 2}));
 	board.push_back(Region(2, "Greenland", vector<int>{1, 4, 5, 13}));
 	board.push_back(Region(3, "Alberta", vector<int>{0, 1, 4, 6}));
@@ -88,10 +88,10 @@ Brisk::Brisk()
 }
 
 // Helper function to handle player card bonus
-int Brisk::cardBonus(Player currentPlayer) 
+int Brisk::cardBonus(Player* currentPlayer, vector<int>* plusTwoRegions, int turn) 
 {
 	int newTroops = 0;
-	vector<Card> currentHand = currentPlayer.getHand();
+	vector<Card> currentHand = currentPlayer->getHand();
 	// Determine what types of cards the player has
 	int numInf = 0, numCav = 0, numArt = 0, numWild = 0;
 	for (int i = 0; i < currentHand.size(); ++i) {
@@ -124,7 +124,24 @@ int Brisk::cardBonus(Player currentPlayer)
 	if (comboType != "") {
 		if (currentHand.size() >= 5) {
 			printf("You have five cards, so a set must be traded in.\n");
-			currentPlayer.playCards(deck, comboType);
+			printf("Which cards would you like to trade in?\n");
+			string cards;
+			getline(cin, cards);
+			vector<int> returnedCards;
+			stringstream ss(cards);
+			string element;
+			while (getline(ss, element, ' '))
+			{
+				returnedCards.push_back(stoi(element));
+			}
+			for (int i = 0; i < 3; i++)
+			{
+				if (board.at(currentPlayer->getHand().at(i).territory).getCommander_id() == turn)
+				{
+					plusTwoRegions->push_back(board.at(currentPlayer->getHand().at(i).territory).getID());
+				}
+			}
+			currentPlayer->playCards(deck, returnedCards);
 			switch (setsTraded) {
 			case 0: newTroops += 4; ++setsTraded; break;
 			case 1: newTroops += 6; ++setsTraded; break;
@@ -132,6 +149,7 @@ int Brisk::cardBonus(Player currentPlayer)
 			case 3: newTroops += 10; ++setsTraded; break;
 			case 4: newTroops += 12; ++setsTraded; break;
 			case 5: newTroops += 15; ++setsTraded; break;
+			default: newTroops += (setsTraded - 2) * 5;
 			}
 		}
 		else {
@@ -140,7 +158,25 @@ int Brisk::cardBonus(Player currentPlayer)
 			printf("Would you like to trade a set of cards? Enter y or n.\n");
 			while (getline(cin, choice) && !choiceMade) {
 				if (choice == "y") {
-					currentPlayer.playCards(deck, comboType);
+					printf("Which cards would you like to trade in?\n");
+					string cards;
+					getline(cin, cards);
+					vector<int> returnedCards;
+					stringstream ss(cards);
+					string element;
+					while (getline(ss, element, ' '))
+					{
+						returnedCards.push_back(stoi(element));
+					}
+					for (int i = 0; i < 3; i++)
+					{
+						if (board.at(currentPlayer->getHand().at(i).territory).getCommander_id() == turn)
+						{
+							plusTwoRegions->push_back(board.at(currentPlayer->getHand().at(i).territory).getID());
+						}
+					}
+					currentPlayer->playCards(deck, returnedCards);
+
 					switch (setsTraded) {
 					case 0: newTroops += 4; ++setsTraded; break;
 					case 1: newTroops += 6; ++setsTraded; break;
@@ -148,6 +184,7 @@ int Brisk::cardBonus(Player currentPlayer)
 					case 3: newTroops += 10; ++setsTraded; break;
 					case 4: newTroops += 12; ++setsTraded; break;
 					case 5: newTroops += 15; ++setsTraded; break;
+					default: newTroops += (setsTraded - 2) * 5;
 					}
 					choiceMade = true;
 				}
@@ -282,9 +319,9 @@ bool Brisk::isChain(int startID, int endID, int currentPlayer, vector<bool> visi
 	return false;
 }
 
-void Brisk::beginningClaim(vector<Player> players) {
+void Brisk::beginningClaim(vector<Player*>* players) {
 
-	numPlayers = players.size();
+	numPlayers = players->size();
 
 	//find number of turns total after regions are chosen
 	switch (numPlayers)
@@ -299,7 +336,7 @@ void Brisk::beginningClaim(vector<Player> players) {
 	//claim new territories until territories gone
 
 	//go for the number of regions left to choose from
-	for (int i = 0; i < numTurns; i++) {
+	for (int i = 0; i < numTurns * numPlayers; i++) {
 		//cycle through players
 		currentPlayer = (i % numPlayers);
 
@@ -314,6 +351,12 @@ void Brisk::beginningClaim(vector<Player> players) {
 				printf("Player %i, please choose next region ID for region to occupy.\n", currentPlayer);
 				cin >> regionChoice;
 
+			  vector<Region> currentRegions = players->at(currentPlayer)->getOwnedRegions();
+			  currentRegions.push_back(board[regionChoice]);
+			  board[regionChoice].addTroops(1);
+			  board[regionChoice].updateCommander_id(currentPlayer);
+			  players->at(currentPlayer)->updateOwnedRegions(currentRegions);
+      }
 
 				// update each region to be owned by the player that chooses it
 				// the region is removed from the selectable pool of regions
@@ -335,7 +378,7 @@ void Brisk::beginningClaim(vector<Player> players) {
 				}
 			}
 			//remove troop from player's troop count
-			players[currentPlayer].updateArmySize(players[currentPlayer].getTotalArmySize() - 1);
+			players->at(currentPlayer)->updateArmySize(players->at(currentPlayer)->getTotalArmySize() - 1);
 
 			//remove region left
 			regionsLeft--;
@@ -343,7 +386,7 @@ void Brisk::beginningClaim(vector<Player> players) {
 		//else if there are no regions left
 		else {
 			//if the player has troops left to place
-			if (players[currentPlayer].getTotalArmySize() > 0) {
+			if (players->at(currentPlayer)->getTotalArmySize() > 0) {
 
 				printf("Player %i, please add a troop to one of your owned regions.\n", currentPlayer);
 
@@ -365,21 +408,38 @@ void Brisk::beginningClaim(vector<Player> players) {
 				}
 
 				//remove troop from player's troop count
-				players[currentPlayer].updateArmySize(players[currentPlayer].getTotalArmySize() - 1);
+				players->at(currentPlayer)->updateArmySize(players->at(currentPlayer)->getTotalArmySize() - 1);
 			}
 		}
 	}
 }
 
-void Brisk::placeTroops(int currentPlayer, vector<Player>* players)
+void Brisk::placeTroops(int currentPlayer, vector<Player*>* players)
 {
 	//calculate player's new troops
-	vector<Region> ownedRegions = players->at(currentPlayer).getOwnedRegions();
+	vector<Region> ownedRegions = players->at(currentPlayer)->getOwnedRegions();
 	int numRegions = ownedRegions.size();
-	int newTroops = numRegions / 3;
+	int newTroops = numRegions / 3;		//Fix to align with rules
+	
+	printf("Your hand: ");
+	vector<Card> hand = players->at(currentPlayer)->getHand();
+	for (int i = 0; i < hand.size(); i++)
+	{
+		int cardRegion = hand.at(i).territory;
+		int cardTroopType = hand.at(i).troop;
+		printf("%i %i    \n", cardRegion, cardTroopType);
+	}
+	
 
 	// Check if the player gets a card bonus
-	newTroops += cardBonus(players->at(currentPlayer));
+	
+	vector<int> plusTwoRegions;
+	newTroops += cardBonus(players->at(currentPlayer), &plusTwoRegions, currentPlayer);
+	for (int i = 0; i < plusTwoRegions.size(); i++)
+	{
+		board.at(plusTwoRegions.at(i)).addTroops(2);
+	}
+
 
 	// Check if the player gets a continent bonus
 	newTroops += continentBonus(ownedRegions);
@@ -419,7 +479,7 @@ void Brisk::placeTroops(int currentPlayer, vector<Player>* players)
 
 
 // This handles the attack/defend sequence
-void Brisk::attackSequence(vector<Player> players)
+void Brisk::attackSequence(vector<Player*>* players)
 {
 	string input;
 	bool badChoice = true;
@@ -434,8 +494,8 @@ void Brisk::attackSequence(vector<Player> players)
 
 	// Make sure the player doesn't already own this region
 	while (badChoice == true) {
-		for (int i = 0; i < players[currentPlayer].getOwnedRegions().size(); ++i) {
-			if (players[currentPlayer].getOwnedRegions()[i].getID() == attackTo) {
+		for (int i = 0; i < players->at(currentPlayer)->getOwnedRegions().size(); ++i) {
+			if (players->at(currentPlayer)->getOwnedRegions()[i].getID() == attackTo) {
 				printf("You already own this region! Please select again.\n");
 				getline(cin, input);
 				attackTo = stoi(input);
@@ -455,8 +515,8 @@ void Brisk::attackSequence(vector<Player> players)
 
 	// Make sure the player owns this region, and that it borders the region to be attacked
 	while (badChoice == true) {
-		for (int i = 0; i < players[currentPlayer].getOwnedRegions().size(); ++i) {
-			if (players[currentPlayer].getOwnedRegions()[i].getID() != attackFrom) {
+		for (int i = 0; i < players->at(currentPlayer)->getOwnedRegions().size(); ++i) {
+			if (players->at(currentPlayer)->getOwnedRegions()[i].getID() != attackFrom) {
 				printf("You do not own this region! Please select again.\n");
 				getline(cin, input);
 				attackFrom = stoi(input);
@@ -465,7 +525,7 @@ void Brisk::attackSequence(vector<Player> players)
 			else {
 				badChoice = false;
 			}
-			vector<int> borders = players[currentPlayer].getOwnedRegions()[i].getBorder_ids();
+			vector<int> borders = players->at(currentPlayer)->getOwnedRegions()[i].getBorder_ids();
 			if (badChoice != true && count(borders.begin(), borders.end(), attackTo) != 0) {
 				printf("This region does not border the one you wish to attack! Please select again.\n");
 				getline(cin, input);
