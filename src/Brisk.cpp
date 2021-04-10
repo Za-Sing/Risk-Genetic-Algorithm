@@ -664,8 +664,8 @@ void Brisk::attackSequence(vector<Player> players)
 
 
 		//compare next highest dice
-		int* maxAtt = max_element(attack, attack + 3);
-		int* maxDef = max_element(defend, defend + 2);
+		maxAtt = max_element(attack, attack + 3);
+		maxDef = max_element(defend, defend + 2);
 		if (maxAtt <= maxDef) {
 			attackLoss++;
 		}
