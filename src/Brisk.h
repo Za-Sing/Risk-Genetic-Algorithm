@@ -7,6 +7,7 @@
 #include <sstream>
 #include <stdio.h>
 #include <string>
+#include <random>
 #include "Player.h"
 #include "Card.h"
 
@@ -45,8 +46,10 @@ private:
 	const vector<Region> AUSTRALIA = { Region(38, "Indonesia", vector<int>{31, 39, 40}), Region(39, "New_Guinea", vector<int>{38, 41}),
 		Region(40, "Western_Australia", vector<int>{38, 41}), Region(41, "Eastern_Australia", vector<int>{39, 40}) };
 	
-	int numTurns, numPlayers, currentPlayer, regionsLeft, regionChoice, attackFrom, attackTo, setsTraded = 0;
-	bool succPlace;
+	int numTurns, numPlayers, currentPlayer, regionsLeft, regionChoice, attackFrom, attackTo, setsTraded = 0, defender, attackLoss, defendLoss;
+	int attack[3];
+	int defend[2];
+	bool succPlaceRegion, succPlaceTroop, captured, defended, repeat;
 	vector<Card>* deck;
 	void initDeck(string filename);
 public:
