@@ -5,6 +5,13 @@
 #include "Brisk.h"
 
 using namespace std;
+//function for random dice rolls
+int rollDie()
+{
+	int roll;
+	roll = rand() % 7 + 1; //six sided die roll
+	return roll;
+}
 
 // Initialize the card deck from a file
 void Brisk::initDeck(string filename) {
@@ -329,27 +336,43 @@ void Brisk::beginningClaim(vector<Player*>* players) {
 	//claim new territories until territories gone
 
 	//go for the number of regions left to choose from
-	for (int i = 0; i < numTurns * numPlayers; i++) {
+		for (int i = 0; i < numTurns; i++) {
 		//cycle through players
 		currentPlayer = (i % numPlayers);
 
 		//if empty regions exist
 		if (regionsLeft != 0) {
-			//print and take player's region choice
-			printf("Player %i, please choose next region ID for region to occupy.\n", currentPlayer);
-			cin >> regionChoice;
 
-			// once region is implemented, update each region to be owned by the player that chooses it
-			// make sure the region is removed from the selectable pool of regions
+			//set exit condition to false
+			succPlaceRegion = false;
+			//loop until exit condition is true
+			while (succPlaceRegion == false) {
+				//print and take player's region choice
+				printf("Player %i, please choose next region ID for region to occupy.\n", currentPlayer);
+				cin >> regionChoice;
 
-			vector<Region> currentRegions = players->at(currentPlayer)->getOwnedRegions();
-			currentRegions.push_back(board[regionChoice]);
-			board[regionChoice].addTroops(1);
-			board[regionChoice].updateCommander_id(currentPlayer);
-			players->at(currentPlayer)->updateOwnedRegions(currentRegions);
 
+				// update each region to be owned by the player that chooses it
+				// the region is removed from the selectable pool of regions
+
+				//Error catching for invalid region
+				if ((regionChoice < 0) || (regionChoice > 41)){
+					cout << "Invalid choice! Please choose a real region ID.\n\n\n";
+				}
+				//if the region chosen has not been claimed
+				else if (board[regionChoice].getCommander_id() == -1) {
+					vector<Region> currentRegions = players[currentPlayer].getOwnedRegions();
+					currentRegions.push_back(board[regionChoice]);
+					board[regionChoice].addTroops(1);
+					board[regionChoice].updateCommander_id(currentPlayer);
+					players[currentPlayer].updateOwnedRegions(currentRegions);
+				}
+				else {
+					cout << "Invalid choice! That region has already been claimed.\n\n\n";
+				}
+			}
 			//remove troop from player's troop count
-			players->at(currentPlayer)->updateArmySize(players->at(currentPlayer)->getTotalArmySize() - 1);
+			players[currentPlayer].updateArmySize(players[currentPlayer].getTotalArmySize() - 1);
 
 			//remove region left
 			regionsLeft--;
@@ -357,21 +380,21 @@ void Brisk::beginningClaim(vector<Player*>* players) {
 		//else if there are no regions left
 		else {
 			//if the player has troops left to place
-			if (players->at(currentPlayer)->getTotalArmySize() > 0) {
+			if (players[currentPlayer].getTotalArmySize() > 0) {
 
 				printf("Player %i, please add a troop to one of your owned regions.\n", currentPlayer);
 
 				// update each region the player puts a troop on to.
 
-				succPlace = false;
-				while (succPlace == false) {
+				succPlaceTroop = false;
+				while (succPlaceTroop == false) {
 
 					cin >> regionChoice;
 
 					// check that they own the region
 					if (board[regionChoice].getCommander_id() == currentPlayer) {
 						board[regionChoice].addTroops(1);
-						succPlace = true;
+						succPlaceTroop = true;
 					}
 					else {
 						cout << "Invalid choice! Please choose a region you own.";
@@ -379,7 +402,7 @@ void Brisk::beginningClaim(vector<Player*>* players) {
 				}
 
 				//remove troop from player's troop count
-				players->at(currentPlayer)->updateArmySize(players->at(currentPlayer)->getTotalArmySize() - 1);
+				players[currentPlayer].updateArmySize(players[currentPlayer].getTotalArmySize() - 1);
 			}
 		}
 	}
@@ -449,10 +472,13 @@ void Brisk::placeTroops(int currentPlayer, vector<Player*>* players)
 }
 
 // This handles the attack/defend sequence
-void Brisk::attackSequence(vector<Player*>* players)
+void Brisk::attackSequence(vector<Player> players)
 {
 	string input;
 	bool badChoice = true;
+	captured = false;
+	defended = false;
+	repeat = true;
 
 	// Get the region to be attacked
 	printf("Player %i, which region would you like to attack?\n", currentPlayer);
@@ -461,8 +487,8 @@ void Brisk::attackSequence(vector<Player*>* players)
 
 	// Make sure the player doesn't already own this region
 	while (badChoice == true) {
-		for (int i = 0; i < players->at(currentPlayer)->getOwnedRegions().size(); ++i) {
-			if (players->at(currentPlayer)->getOwnedRegions()[i].getID() == attackTo) {
+		for (int i = 0; i < players[currentPlayer].getOwnedRegions().size(); ++i) {
+			if (players[currentPlayer].getOwnedRegions()[i].getID() == attackTo) {
 				printf("You already own this region! Please select again.\n");
 				getline(cin, input);
 				attackTo = stoi(input);
@@ -482,8 +508,8 @@ void Brisk::attackSequence(vector<Player*>* players)
 
 	// Make sure the player owns this region, and that it borders the region to be attacked
 	while (badChoice == true) {
-		for (int i = 0; i < players->at(currentPlayer)->getOwnedRegions().size(); ++i) {
-			if (players->at(currentPlayer)->getOwnedRegions()[i].getID() != attackFrom) {
+		for (int i = 0; i < players[currentPlayer].getOwnedRegions().size(); ++i) {
+			if (players[currentPlayer].getOwnedRegions()[i].getID() != attackFrom) {
 				printf("You do not own this region! Please select again.\n");
 				getline(cin, input);
 				attackFrom = stoi(input);
@@ -492,7 +518,7 @@ void Brisk::attackSequence(vector<Player*>* players)
 			else {
 				badChoice = false;
 			}
-			vector<int> borders = players->at(currentPlayer)->getOwnedRegions()[i].getBorder_ids();
+			vector<int> borders = players[currentPlayer].getOwnedRegions()[i].getBorder_ids();
 			if (badChoice != true && count(borders.begin(), borders.end(), attackTo) != 0) {
 				printf("This region does not border the one you wish to attack! Please select again.\n");
 				getline(cin, input);
@@ -506,22 +532,243 @@ void Brisk::attackSequence(vector<Player*>* players)
 	}
 	badChoice = true;
 
-	// Now get number of troops to attack with
-	printf("How many troops would you like to use?\n");
-	getline(cin, input);
-	int attackTroops = stoi(input);
+	while (repeat == true) {
 
-	// Make sure the player has enough troops
-	while (badChoice == true) {
-		if (board[attackFrom].getTroops() - attackTroops < 1) {
-			printf("You must leave at least 1 troop! Please select again.\n");
+		// Now get number of troops to attack with
+		printf("How many troops would you like to use? choose 1 through 3.\n");
+
+		getline(cin, input);
+		int attackTroops = stoi(input);
+
+		//check that it's a valid number of troops
+		while (badChoice == true) {
+			if (attackTroops < 0 || attackTroops > 3) {
+				printf("You must choose between 1, 2, or 3! Please select again.\n");
+				getline(cin, input);
+				attackTroops = stoi(input);
+			}
+			else {
+				badChoice = false;
+			}
+		}
+		badChoice = true;
+
+		bool badChoice2 = true;
+
+		// Make sure the player has enough troops
+		while (badChoice == true) {
+			if (board[attackFrom].getTroops() - attackTroops < 1) {
+				printf("You must leave at least 1 troop left in the territory! Please select again.\n");
+				getline(cin, input);
+				attackTroops = stoi(input);
+
+
+				while (badChoice2 == true) {
+					if (attackTroops < 0 || attackTroops > 3) {
+						printf("You must choose between 1, 2, or 3! Please select again.\n");
+						getline(cin, input);
+						attackTroops = stoi(input);
+					}
+					else {
+						badChoice2 = false;
+					}
+				}
+			}
+			else {
+				badChoice = false;
+			}
+		}
+		badChoice = true;
+
+		//initialize empty dice
+		for (int i = 0; i < 2; i -= -1) {
+			attack[i] = 0;
+			defend[i] = 0;
+		}
+		attack[2] = 0;
+
+		// Get attacker dice rolls
+		for (int i = 0; i < attackTroops; i -= -1) {
+			printf("Player %i, Say something to roll! (press enter)\n", currentPlayer);
 			getline(cin, input);
-			attackTroops = stoi(input);
+			//devtool
+			if (input == "ULTRA_CRITICAL_DICE_ROLL_FRICKAA") {
+				printf("What is thy bidding, my master?\n");
+				getline(cin, input);
+				attack[i] = stoi(input);
+				printf("So be it, it be like it, sometimes, but especially now.\nManual Dice recorded.\n");
+			}
+			else {
+				attack[i] = rollDie();
+			}
+		}
+
+
+		//get defender dice rolls
+		defender = board[attackTo].getCommander_id();
+		printf("Player %i, choose how many troops to defend with!", defender);
+
+		getline(cin, input);
+		int defendTroops = stoi(input);
+
+		//check that it's a valid number of troops
+		while (badChoice == true) {
+			if (defendTroops < 0 || defendTroops > 2) {
+				printf("You must choose between 1 or 2! Please select again.\n");
+				getline(cin, input);
+				defendTroops = stoi(input);
+			}
+			else {
+				badChoice = false;
+			}
+		}
+		badChoice = true;
+		badChoice2 = true;
+
+		// Make sure the player has enough troops
+		while (badChoice == true) {
+			if (board[attackTo].getTroops() - defendTroops < 0) {
+				printf("You must choose a number of troops you actually have here! Please select again.\n");
+				getline(cin, input);
+				defendTroops = stoi(input);
+
+				while (badChoice2 == true) {
+					if (defendTroops < 0 || defendTroops > 2) {
+						printf("You must choose between 1 or 2! Please select again.\n");
+						getline(cin, input);
+						defendTroops = stoi(input);
+					}
+					else {
+						badChoice2 = false;
+					}
+				}
+			}
+			else {
+				badChoice = false;
+			}
+		}
+		badChoice = true;
+
+
+		// Get defender dice rolls
+		for (int i = 0; i < defendTroops; i -= -1) {
+			printf("Player %i, Say something to roll! (press enter)\n", defender);
+			getline(cin, input);
+			//devtool
+			if (input == "ULTRA_CRITICAL_DICE_ROLL_FRICKAA") {
+				printf("Hello There!\n");
+				getline(cin, input);
+				defend[i] = stoi(input);
+				printf("GENERAL KENOBI!\nManual Dice recorded.\n");
+			}
+			else {
+				defend[i] = rollDie();
+			}
+		}
+
+		//print dice rolls
+		printf("\nPlayer %i, your attack rolls were:\n", currentPlayer);
+		for (int i = 0; i < 3; i -= -1) {
+			cout << i << ": " << attack[i] << "\n";
+		}
+
+		printf("\nPlayer %i, your defend rolls were:\n", defender);
+		for (int i = 0; i < 2; i -= -1) {
+			cout << i << ": " << defend[i] << "\n";
+		}
+
+
+
+		//compare max dice
+
+		attackLoss = 0;
+		defendLoss = 0;
+
+		int* maxAtt = max_element(attack, attack + 3);
+		int* maxDef = max_element(defend, defend + 2);
+		if (maxAtt <= maxDef) {
+			attackLoss++;
 		}
 		else {
-			badChoice = false;
+			defendLoss++;
 		}
+
+
+		// Clear the current max value to compare again
+		bool exitDelete = false;
+
+		for (int i = 0; i < 3; i -= -1) {
+			while (exitDelete == false) {
+				if (attack[i] == *maxAtt) {
+					attack[i] = 0;
+					exitDelete = true;
+				}
+			}
+		}
+
+		for (int i = 0; i < 2; i -= -1) {
+			while (exitDelete == false) {
+				if (attack[i] == *maxAtt) {
+					attack[i] = 0;
+					exitDelete = true;
+				}
+			}
+		}
+
+
+		//compare next highest dice
+		maxAtt = max_element(attack, attack + 3);
+		maxDef = max_element(defend, defend + 2);
+		if (maxAtt <= maxDef) {
+			attackLoss++;
+		}
+		else {
+			defendLoss++;
+		}
+
+		//print player troop loss
+		printf("Player %i lost %i troops!\n", currentPlayer, attackLoss);
+		printf("Player %i lost %i troops!\n\n", defender, defendLoss);
+
+		//remove troops from region count
+		board[attackFrom].addTroops(attackLoss * -1);
+		board[attackTo].addTroops(defendLoss * -1);
+
+		//print it
+		printf("Player %i now has %i troops in the region.\n", currentPlayer, board[attackFrom].getTroops());
+		printf("Player %i now has %i troops in the region.\n", defender, board[attackTo].getTroops());
+
+		//check if defender has lost region
+		if (board[attackTo].getTroops() == 0) {
+			printf("Player %i has lost the region!\nPlayer %i now owns the region.\n", defender, currentPlayer);
+			board[attackTo].updateCommander_id(currentPlayer);
+			board[attackTo].updateTroops(attackTroops - attackLoss);
+			printf("Player %i now has %i troops in the region.", currentPlayer, attackTroops - attackLoss);
+			captured = true;
+		}
+		//else check if defender has defended against attacker
+		else if ((board[attackTo].getTroops() > 0) && (board[attackFrom].getTroops() == 1)) {
+			printf("Player %i has defended his region against Player %i! Player %i retreats.", defender, currentPlayer, currentPlayer);
+			defended = true;
+		}
+
+		string reAttack;
+		if ((captured == false) || (defended == false)) {
+			printf("attack again? y / n");
+			getline(cin, reAttack);
+			if (reAttack == "y") {
+				repeat = true;
+			}
+			else {
+				repeat = false;
+			}
+		}
+		else {
+			repeat = false;
+		}
+
 	}
+
 }
 
 // TODO: implement game data access methods
