@@ -53,8 +53,9 @@ int main()
 			cin >> attackResponse;
 			while (attackResponse == 'y')
 			{
-				cin >> attackResponse;
+				
 				game.attackSequence(players);
+				cin >> attackResponse;
 
 			}
 

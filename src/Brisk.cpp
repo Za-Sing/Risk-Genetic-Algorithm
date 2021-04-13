@@ -484,6 +484,7 @@ void Brisk::attackSequence(vector<Player*>* players)
 	// Get the region to be attacked
 	printf("Player %i, which region would you like to attack?\n", currentPlayer);
 	getline(cin, input);
+	getline(cin, input);
 	attackTo = stoi(input);
 
 	// Make sure the player doesn't already own this region
