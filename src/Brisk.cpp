@@ -473,7 +473,7 @@ void Brisk::placeTroops(int currentPlayer, vector<Player*>* players)
 }
 
 // This handles the attack/defend sequence
-void Brisk::attackSequence(vector<Player*>* players)
+void Brisk::attackSequence(vector<Player*>* players, int currentPlayer)
 {
 	string input;
 	bool badChoice = true;

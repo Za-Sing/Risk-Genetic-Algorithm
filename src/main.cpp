@@ -54,7 +54,7 @@ int main()
 			while (attackResponse == 'y')
 			{
 				cin >> attackResponse;
-				game.attackSequence(players);
+				game.attackSequence(players, currentPlayer);
 
 			}
 
