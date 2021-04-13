@@ -48,7 +48,15 @@ int main()
 			
 
 			// attack regions
-			
+			printf("Make an attack? y/n\n");
+			char attackResponse;
+			cin >> attackResponse;
+			while (attackResponse == 'y')
+			{
+				cin >> attackResponse;
+				game.attackSequence(players);
+
+			}
 
 			// move troops
 			bool inputing = true;
