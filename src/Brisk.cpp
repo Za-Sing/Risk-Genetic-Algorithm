@@ -336,7 +336,7 @@ void Brisk::beginningClaim(vector<Player*>* players) {
 	//claim new territories until territories gone
 
 	//go for the number of regions left to choose from
-		for (int i = 0; i < numTurns; i++) {
+		for (int i = 0; i < numTurns * numPlayers; i++) {
 		//cycle through players
 		currentPlayer = (i % numPlayers);
 
@@ -360,19 +360,20 @@ void Brisk::beginningClaim(vector<Player*>* players) {
 					cout << "Invalid choice! Please choose a real region ID.\n\n\n";
 				}
 				//if the region chosen has not been claimed
-				else if (board[regionChoice].getCommander_id() == -1) {
-					vector<Region> currentRegions = players[currentPlayer].getOwnedRegions();
+				else if (board[regionChoice].getCommander_id() == 99) {
+					vector<Region> currentRegions = players->at(currentPlayer)->getOwnedRegions();
 					currentRegions.push_back(board[regionChoice]);
 					board[regionChoice].addTroops(1);
 					board[regionChoice].updateCommander_id(currentPlayer);
-					players[currentPlayer].updateOwnedRegions(currentRegions);
+					players->at(currentPlayer)->updateOwnedRegions(currentRegions);
+					succPlaceRegion = true;
 				}
 				else {
 					cout << "Invalid choice! That region has already been claimed.\n\n\n";
 				}
 			}
 			//remove troop from player's troop count
-			players[currentPlayer].updateArmySize(players[currentPlayer].getTotalArmySize() - 1);
+			players->at(currentPlayer)->updateArmySize(players->at(currentPlayer)->getTotalArmySize() - 1);
 
 			//remove region left
 			regionsLeft--;
@@ -380,7 +381,7 @@ void Brisk::beginningClaim(vector<Player*>* players) {
 		//else if there are no regions left
 		else {
 			//if the player has troops left to place
-			if (players[currentPlayer].getTotalArmySize() > 0) {
+			if (players->at(currentPlayer)->getTotalArmySize() > 0) {
 
 				printf("Player %i, please add a troop to one of your owned regions.\n", currentPlayer);
 
@@ -402,7 +403,7 @@ void Brisk::beginningClaim(vector<Player*>* players) {
 				}
 
 				//remove troop from player's troop count
-				players[currentPlayer].updateArmySize(players[currentPlayer].getTotalArmySize() - 1);
+				players->at(currentPlayer)->updateArmySize(players->at(currentPlayer)->getTotalArmySize() - 1);
 			}
 		}
 	}
@@ -472,7 +473,7 @@ void Brisk::placeTroops(int currentPlayer, vector<Player*>* players)
 }
 
 // This handles the attack/defend sequence
-void Brisk::attackSequence(vector<Player> players)
+void Brisk::attackSequence(vector<Player*>* players)
 {
 	string input;
 	bool badChoice = true;
@@ -487,8 +488,8 @@ void Brisk::attackSequence(vector<Player> players)
 
 	// Make sure the player doesn't already own this region
 	while (badChoice == true) {
-		for (int i = 0; i < players[currentPlayer].getOwnedRegions().size(); ++i) {
-			if (players[currentPlayer].getOwnedRegions()[i].getID() == attackTo) {
+		for (int i = 0; i < players->at(currentPlayer)->getOwnedRegions().size(); ++i) {
+			if (players->at(currentPlayer)->getOwnedRegions()[i].getID() == attackTo) {
 				printf("You already own this region! Please select again.\n");
 				getline(cin, input);
 				attackTo = stoi(input);
@@ -508,8 +509,8 @@ void Brisk::attackSequence(vector<Player> players)
 
 	// Make sure the player owns this region, and that it borders the region to be attacked
 	while (badChoice == true) {
-		for (int i = 0; i < players[currentPlayer].getOwnedRegions().size(); ++i) {
-			if (players[currentPlayer].getOwnedRegions()[i].getID() != attackFrom) {
+		for (int i = 0; i < players->at(currentPlayer)->getOwnedRegions().size(); ++i) {
+			if (players->at(currentPlayer)->getOwnedRegions()[i].getID() != attackFrom) {
 				printf("You do not own this region! Please select again.\n");
 				getline(cin, input);
 				attackFrom = stoi(input);
@@ -518,7 +519,7 @@ void Brisk::attackSequence(vector<Player> players)
 			else {
 				badChoice = false;
 			}
-			vector<int> borders = players[currentPlayer].getOwnedRegions()[i].getBorder_ids();
+			vector<int> borders = players->at(currentPlayer)->getOwnedRegions()[i].getBorder_ids();
 			if (badChoice != true && count(borders.begin(), borders.end(), attackTo) != 0) {
 				printf("This region does not border the one you wish to attack! Please select again.\n");
 				getline(cin, input);
