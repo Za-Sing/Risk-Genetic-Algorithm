@@ -416,6 +416,8 @@ void Brisk::placeTroops(int currentPlayer, vector<Player*>* players)
 	int numRegions = ownedRegions.size();
 	int newTroops = numRegions / 3;		//Fix to align with rules
 	
+
+
 	printf("Your hand: ");
 	vector<Card> hand = players->at(currentPlayer)->getHand();
 	for (int i = 0; i < hand.size(); i++)
@@ -484,6 +486,7 @@ void Brisk::attackSequence(vector<Player*>* players, int currentPlayer)
 	// Get the region to be attacked
 	printf("Player %i, which region would you like to attack?\n", currentPlayer);
 	getline(cin, input);
+	getline(cin, input);
 	attackTo = stoi(input);
 
 	// Make sure the player doesn't already own this region
@@ -509,26 +512,30 @@ void Brisk::attackSequence(vector<Player*>* players, int currentPlayer)
 
 	// Make sure the player owns this region, and that it borders the region to be attacked
 	while (badChoice == true) {
-		for (int i = 0; i < players->at(currentPlayer)->getOwnedRegions().size(); ++i) {
-			if (players->at(currentPlayer)->getOwnedRegions()[i].getID() != attackFrom) {
-				printf("You do not own this region! Please select again.\n");
-				getline(cin, input);
-				attackFrom = stoi(input);
-				badChoice = true;
-			}
-			else {
-				badChoice = false;
-			}
-			vector<int> borders = players->at(currentPlayer)->getOwnedRegions()[i].getBorder_ids();
-			if (badChoice != true && count(borders.begin(), borders.end(), attackTo) != 0) {
-				printf("This region does not border the one you wish to attack! Please select again.\n");
-				getline(cin, input);
-				attackFrom = stoi(input);
-				badChoice = true;
-			}
-			else {
-				badChoice = false;
-			}
+		
+		vector<int> ownedRegionIDs;
+		for (int i = 0; i < players->at(currentPlayer)->getOwnedRegions().size(); ++i)
+		{
+			ownedRegionIDs.push_back(players->at(currentPlayer)->getOwnedRegions().at(i).getID());
+		}
+		
+		if (count(ownedRegionIDs.begin(), ownedRegionIDs.end(), attackFrom))
+		{
+			badChoice = false;
+		}
+		else
+		{
+			printf("You do not own this region! Please select again.\n");
+		}
+		vector<int> borders = board[attackFrom].getBorder_ids();
+		if (!badChoice && count(borders.begin(), borders.end(), attackTo) == 0) {
+			printf("This region does not border the one you wish to attack! Please select again.\n");
+			getline(cin, input);
+			attackFrom = stoi(input);
+			badChoice = true;
+		}
+		else {
+			badChoice = false;
 		}
 	}
 	badChoice = true;
