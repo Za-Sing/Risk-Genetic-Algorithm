@@ -9,6 +9,7 @@
 #include <string>
 #include "Player.h"
 #include "Card.h"
+#include <ctime>
 
 class Brisk
 {
@@ -48,7 +49,7 @@ private:
 	int numTurns, numPlayers, currentPlayer, regionsLeft, regionChoice, attackFrom, attackTo, setsTraded = 0, defender, attackLoss, defendLoss;
 	int attack[3];
 	int defend[2];
-	bool succPlaceRegion, succPlaceTroop, captured, defended, repeat;
+	bool succPlaceRegion, succPlaceTroop, captured, defended, repeat, exiDelete;
 	vector<Card>* deck;
 	void initDeck(string filename);
 public:
