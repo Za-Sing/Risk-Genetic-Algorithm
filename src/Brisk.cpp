@@ -9,7 +9,7 @@ using namespace std;
 int rollDie()
 {
 	int roll;
-	roll = rand() % 7 + 1; //six sided die roll
+	roll = rand() % 7; //six sided die roll
 	return roll;
 }
 
@@ -614,7 +614,7 @@ void Brisk::attackSequence(vector<Player*>* players, int currentPlayer)
 
 		//get defender dice rolls
 		defender = board[attackTo].getCommander_id();
-		printf("Player %i, choose how many troops to defend with!", defender);
+		printf("Player %i, choose how many troops to defend with!\n", defender);
 
 		getline(cin, input);
 		int defendTroops = stoi(input);
@@ -676,63 +676,46 @@ void Brisk::attackSequence(vector<Player*>* players, int currentPlayer)
 
 		//print dice rolls
 		printf("\nPlayer %i, your attack rolls were:\n", currentPlayer);
-		for (int i = 0; i < 3; i -= -1) {
-			cout << i << ": " << attack[i] << "\n";
+		for (int i = 0; i < attackTroops; i -= -1) {
+			cout << i + 1 << ": " << attack[i] << "\n";
 		}
 
 		printf("\nPlayer %i, your defend rolls were:\n", defender);
-		for (int i = 0; i < 2; i -= -1) {
-			cout << i << ": " << defend[i] << "\n";
+		for (int i = 0; i < defendTroops; i -= -1) {
+			cout << i + 1 << ": " << defend[i] << "\n";
 		}
 
-
+		printf("Made it here!\n");
 
 		//compare max dice
 
 		attackLoss = 0;
 		defendLoss = 0;
 
-		int* maxAtt = max_element(attack, attack + 3);
-		int* maxDef = max_element(defend, defend + 2);
-		if (maxAtt <= maxDef) {
-			attackLoss++;
-		}
-		else {
+		int n = sizeof(attack) / sizeof(attack[0]);
+		int m = sizeof(defend) / sizeof(defend[0]);
+
+		sort(attack, attack + n);
+		sort(defend, defend + m);
+
+		if (attack[3] > defend[2]) {
 			defendLoss++;
 		}
+		else {
+			attackLoss++;
+		}
 
-
-		// Clear the current max value to compare again
-		bool exitDelete = false;
-
-		for (int i = 0; i < 3; i -= -1) {
-			while (exitDelete == false) {
-				if (attack[i] == *maxAtt) {
-					attack[i] = 0;
-					exitDelete = true;
+		if (attackTroops == 2 || attackTroops == 3) {
+			if (defendTroops == 2) {
+				if (attack[2] > defend[1]) {
+					defendLoss++;
+				}
+				else {
+					attackLoss++;
 				}
 			}
 		}
 
-		for (int i = 0; i < 2; i -= -1) {
-			while (exitDelete == false) {
-				if (attack[i] == *maxAtt) {
-					attack[i] = 0;
-					exitDelete = true;
-				}
-			}
-		}
-
-
-		//compare next highest dice
-		maxAtt = max_element(attack, attack + 3);
-		maxDef = max_element(defend, defend + 2);
-		if (maxAtt <= maxDef) {
-			attackLoss++;
-		}
-		else {
-			defendLoss++;
-		}
 
 		//print player troop loss
 		printf("Player %i lost %i troops!\n", currentPlayer, attackLoss);
