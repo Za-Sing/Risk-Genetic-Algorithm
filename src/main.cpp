@@ -57,6 +57,7 @@ int main()
 				game.attackSequence(players, currentPlayer);
 				cin >> attackResponse;
 
+
 			}
 
 			// move troops
