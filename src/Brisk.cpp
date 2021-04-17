@@ -9,7 +9,7 @@ using namespace std;
 int rollDie()
 {
 	int roll;
-	roll = rand() % 7 + 1; //six sided die roll
+	roll = rand() % 6 + 1; //six sided die roll
 	return roll;
 }
 
@@ -321,6 +321,10 @@ bool Brisk::isChain(int startID, int endID, int currentPlayer, vector<bool> visi
 
 void Brisk::beginningClaim(vector<Player*>* players) {
 
+	//For dice roll, need only call this once so this is a good place for it.
+	srand(time(NULL));
+
+
 	numPlayers = players->size();
 
 	//find number of turns total after regions are chosen
@@ -550,7 +554,7 @@ void Brisk::attackSequence(vector<Player*>* players, int currentPlayer)
 
 		//check that it's a valid number of troops
 		while (badChoice == true) {
-			if (attackTroops < 0 || attackTroops > 3) {
+			if (attackTroops < 1 || attackTroops > 3) {
 				printf("You must choose between 1, 2, or 3! Please select again.\n");
 				getline(cin, input);
 				attackTroops = stoi(input);
@@ -572,7 +576,7 @@ void Brisk::attackSequence(vector<Player*>* players, int currentPlayer)
 
 
 				while (badChoice2 == true) {
-					if (attackTroops < 0 || attackTroops > 3) {
+					if (attackTroops < 1 || attackTroops > 3) {
 						printf("You must choose between 1, 2, or 3! Please select again.\n");
 						getline(cin, input);
 						attackTroops = stoi(input);
@@ -614,14 +618,14 @@ void Brisk::attackSequence(vector<Player*>* players, int currentPlayer)
 
 		//get defender dice rolls
 		defender = board[attackTo].getCommander_id();
-		printf("Player %i, choose how many troops to defend with!", defender);
+		printf("Player %i, choose how many troops to defend with!\n", defender);
 
 		getline(cin, input);
 		int defendTroops = stoi(input);
 
 		//check that it's a valid number of troops
 		while (badChoice == true) {
-			if (defendTroops < 0 || defendTroops > 2) {
+			if (defendTroops < 1 || defendTroops > 2) {
 				printf("You must choose between 1 or 2! Please select again.\n");
 				getline(cin, input);
 				defendTroops = stoi(input);
@@ -641,7 +645,7 @@ void Brisk::attackSequence(vector<Player*>* players, int currentPlayer)
 				defendTroops = stoi(input);
 
 				while (badChoice2 == true) {
-					if (defendTroops < 0 || defendTroops > 2) {
+					if (defendTroops < 1 || defendTroops > 2) {
 						printf("You must choose between 1 or 2! Please select again.\n");
 						getline(cin, input);
 						defendTroops = stoi(input);
@@ -676,63 +680,44 @@ void Brisk::attackSequence(vector<Player*>* players, int currentPlayer)
 
 		//print dice rolls
 		printf("\nPlayer %i, your attack rolls were:\n", currentPlayer);
-		for (int i = 0; i < 3; i -= -1) {
-			cout << i << ": " << attack[i] << "\n";
+		for (int i = 0; i < attackTroops; i -= -1) {
+			cout << i + 1 << ": " << attack[i] << "\n";
 		}
 
 		printf("\nPlayer %i, your defend rolls were:\n", defender);
-		for (int i = 0; i < 2; i -= -1) {
-			cout << i << ": " << defend[i] << "\n";
+		for (int i = 0; i < defendTroops; i -= -1) {
+			cout << i + 1 << ": " << defend[i] << "\n";
 		}
-
-
 
 		//compare max dice
 
 		attackLoss = 0;
 		defendLoss = 0;
 
-		int* maxAtt = max_element(attack, attack + 3);
-		int* maxDef = max_element(defend, defend + 2);
-		if (maxAtt <= maxDef) {
-			attackLoss++;
-		}
-		else {
+		int n = sizeof(attack) / sizeof(attack[0]);
+		int m = sizeof(defend) / sizeof(defend[0]);
+
+		sort(attack, attack + n);
+		sort(defend, defend + m);
+
+		if (attack[2] > defend[1]) {
 			defendLoss++;
 		}
+		else {
+			attackLoss++;
+		}
 
-
-		// Clear the current max value to compare again
-		bool exitDelete = false;
-
-		for (int i = 0; i < 3; i -= -1) {
-			while (exitDelete == false) {
-				if (attack[i] == *maxAtt) {
-					attack[i] = 0;
-					exitDelete = true;
+		if (attackTroops == 2 || attackTroops == 3) {
+			if (defendTroops == 2) {
+				if (attack[1] > defend[0]) {
+					defendLoss++;
+				}
+				else {
+					attackLoss++;
 				}
 			}
 		}
 
-		for (int i = 0; i < 2; i -= -1) {
-			while (exitDelete == false) {
-				if (attack[i] == *maxAtt) {
-					attack[i] = 0;
-					exitDelete = true;
-				}
-			}
-		}
-
-
-		//compare next highest dice
-		maxAtt = max_element(attack, attack + 3);
-		maxDef = max_element(defend, defend + 2);
-		if (maxAtt <= maxDef) {
-			attackLoss++;
-		}
-		else {
-			defendLoss++;
-		}
 
 		//print player troop loss
 		printf("Player %i lost %i troops!\n", currentPlayer, attackLoss);
@@ -751,18 +736,18 @@ void Brisk::attackSequence(vector<Player*>* players, int currentPlayer)
 			printf("Player %i has lost the region!\nPlayer %i now owns the region.\n", defender, currentPlayer);
 			board[attackTo].updateCommander_id(currentPlayer);
 			board[attackTo].updateTroops(attackTroops - attackLoss);
-			printf("Player %i now has %i troops in the region.", currentPlayer, attackTroops - attackLoss);
+			printf("Player %i now has %i troops in the region.\n", currentPlayer, attackTroops - attackLoss);
 			captured = true;
 		}
 		//else check if defender has defended against attacker
 		else if ((board[attackTo].getTroops() > 0) && (board[attackFrom].getTroops() == 1)) {
-			printf("Player %i has defended his region against Player %i! Player %i retreats.", defender, currentPlayer, currentPlayer);
+			printf("Player %i has defended his region against Player %i! Player %i retreats.\n", defender, currentPlayer, currentPlayer);
 			defended = true;
 		}
 
 		string reAttack;
-		if ((captured == false) || (defended == false)) {
-			printf("attack again? y / n");
+		if ((captured == false) && (defended == false)) {
+			printf("attack again? y / n\n");
 			getline(cin, reAttack);
 			if (reAttack == "y") {
 				repeat = true;

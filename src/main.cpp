@@ -55,7 +55,9 @@ int main()
 			{
 				
 				game.attackSequence(players, currentPlayer);
+				printf("Make another attack? y/n\n");
 				cin >> attackResponse;
+
 
 			}
 
@@ -65,8 +67,8 @@ int main()
 			while (inputing)
 			{
 				string troopMovement;
-				printf("Move your troops, Player%i. Enter in the form <Origin Region ID> <Target Region ID> <# of Troops>.\n", currentPlayer);
-				//getline(cin, troopMovement);
+				printf("Move your troops, Player %i. Enter in the form <Origin Region ID> <Target Region ID> <# of Troops>.\n", currentPlayer);
+				getline(cin, troopMovement);
 				getline(cin, troopMovement);
 				vector<int> splitInt;
 				stringstream ss(troopMovement);

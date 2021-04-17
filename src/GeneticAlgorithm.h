@@ -24,7 +24,7 @@ private:
 
 public:
 	GeneticAlgorithm(Brisk* game);
-	void preEvolveAttack(int generations);
+	void preEvolveAttack(int generations, int popSize, double mutationProb);
 };
 
 #endif // !GENETICALGORITHM_H
