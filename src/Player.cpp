@@ -49,6 +49,15 @@ vector<Card> Player::getHand()
 	return hand;
 }
 
+void Player::setDefeated(bool isDefeated) {
+	this->defeated = isDefeated;
+}
+
+bool Player::getDefeated() {
+	return defeated;
+}
+
+
 
 // This method will draw and remove a card from the deck and add it to the player's hand
 void Player::drawCard(vector<Card>* deck)
