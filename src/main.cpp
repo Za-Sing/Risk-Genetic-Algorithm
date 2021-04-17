@@ -13,11 +13,13 @@ int main()
 	//game setup
 	Brisk game = Brisk();
 	
-	int numPlayers;
 	string input;
 	printf("Enter a number (3-5) of players.\n");
 	getline(cin, input);
-	numPlayers = stoi(input);
+	int numPlayers = stoi(input);
+	printf("Indicate how many will be bots.\n");
+	getline(cin, input);
+	int numBots = stoi(input);
 	// Make sure the range is correct
 	while (numPlayers < 3 || numPlayers > 5) {
 		printf("Please enter a number between 3 & 5.\n");
@@ -28,14 +30,19 @@ int main()
 	// Initialize Players vector
 	vector<Player*>* players = new vector<Player*>();
 	for (int i = 0; i < numPlayers; i++) {
-		Player* newPlayer = new Player(numPlayers);
-		players->push_back(newPlayer);
+		if (numBots > 0) {
+			Player* newPlayer = new Player(numPlayers, true);
+			players->push_back(newPlayer);
+			--numBots;
+		}
+		else {
+			Player* newPlayer = new Player(numPlayers, false);
+			players->push_back(newPlayer);
+		}
 	}
 
 	
 	game.beginningClaim(players);
-	// TODO: hard code deck
-
 
     //main game loop
 	bool inPlay = true;
