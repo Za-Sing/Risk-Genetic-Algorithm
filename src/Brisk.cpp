@@ -733,7 +733,22 @@ void Brisk::attackSequence(vector<Player*>* players, int currentPlayer)
 
 		//check if defender has lost region
 		if (board[attackTo].getTroops() == 0) {
-			printf("Player %i has lost the region!\nPlayer %i now owns the region.\n", defender, currentPlayer);
+			printf("Player %i has lost the region!\nPlayer %i now owns the region.\n\n", defender, currentPlayer);
+
+			vector<Region> currentRegions = players->at(defender)->getOwnedRegions();
+			currentRegions.erase(currentRegions.begin() + attackTo);
+			players->at(defender)->updateOwnedRegions(currentRegions);
+
+			currentRegions = players->at(currentPlayer)->getOwnedRegions();
+			currentRegions.push_back(board[attackTo]);
+			players->at(currentPlayer)->updateOwnedRegions(currentRegions);
+
+			if (players->at(defender)->getOwnedRegions().size() == 0) {
+				printf("Player %i has been defeated!\n", defender);
+
+				players->at(defender)->setDefeated(true);
+			}
+
 			board[attackTo].updateCommander_id(currentPlayer);
 			board[attackTo].updateTroops(attackTroops - attackLoss);
 			printf("Player %i now has %i troops in the region.\n", currentPlayer, attackTroops - attackLoss);
