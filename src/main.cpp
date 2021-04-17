@@ -45,6 +45,7 @@ int main()
 		for (int currentPlayer = 0; currentPlayer < numPlayers; currentPlayer++)
 		{
 			game.placeTroops(currentPlayer, players);
+			bool gainedARegion = false;
 			
 
 			// attack regions
@@ -54,7 +55,7 @@ int main()
 			while (attackResponse == 'y')
 			{
 				
-				game.attackSequence(players, currentPlayer);
+				game.attackSequence(players, currentPlayer, &gainedARegion);
 				printf("Make another attack? y/n\n");
 				cin >> attackResponse;
 

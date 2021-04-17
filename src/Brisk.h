@@ -59,7 +59,7 @@ public:
 	bool isChain(int startID, int endID, int currentPlayer, vector<bool> visited);
 	void beginningClaim(vector<Player*>* players);
 	void placeTroops(int currentPlayer, vector<Player*>* players);
-	void attackSequence(vector<Player*>* players, int currentPlayer);
+	void attackSequence(vector<Player*>* players, int currentPlayer, bool* gainedARegion);
 	vector<Region> board;
 };
 
