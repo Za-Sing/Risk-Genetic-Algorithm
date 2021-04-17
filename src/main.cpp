@@ -44,73 +44,74 @@ int main()
 	{
 		for (int currentPlayer = 0; currentPlayer < numPlayers; currentPlayer++)
 		{
-			game.placeTroops(currentPlayer, players);
-			bool gainedARegion = false;
+			if (players->at(currentPlayer)->getDefeated() != false) {
+				game.placeTroops(currentPlayer, players);
+		  	bool gainedARegion = false;
 			
 
-			// attack regions
-			printf("Make an attack? y/n\n");
-			char attackResponse;
-			cin >> attackResponse;
-			while (attackResponse == 'y')
-			{
-				
-				game.attackSequence(players, currentPlayer, &gainedARegion);
-				printf("Make another attack? y/n\n");
+			  // attack regions
+			  printf("Make an attack? y/n\n");
+			  char attackResponse;
 				cin >> attackResponse;
-
-
-			}
-
-			// move troops
-			bool inputing = true;
-			bool chainExists = false;
-			while (inputing)
-			{
-				string troopMovement;
-				printf("Move your troops, Player %i. Enter in the form <Origin Region ID> <Target Region ID> <# of Troops>.\n", currentPlayer);
-				getline(cin, troopMovement);
-				getline(cin, troopMovement);
-				vector<int> splitInt;
-				stringstream ss(troopMovement);
-				string element;
-				while (getline(ss, element, ' '))
+				while (attackResponse == 'y')
 				{
-					splitInt.push_back(stoi(element));
+
+					game.attackSequence(players, currentPlayer);
+					printf("Make another attack? y/n\n");
+					cin >> attackResponse;
+
+
 				}
-				if (game.board.at(splitInt.at(0)).getCommander_id() != currentPlayer || game.board.at(splitInt.at(1)).getCommander_id() != currentPlayer)
+
+				// move troops
+				bool inputing = true;
+				bool chainExists = false;
+				while (inputing)
 				{
-					printf("You don't own at least one of those regions.\n");
-					continue;
-				}
-				else
-				{
-					
-					vector<bool> falses(game.board.size(), false);	
-					if (game.isChain(splitInt.at(0), splitInt.at(1), currentPlayer, falses))	// check for chain
+					string troopMovement;
+					printf("Move your troops, Player %i. Enter in the form <Origin Region ID> <Target Region ID> <# of Troops>.\n", currentPlayer);
+					getline(cin, troopMovement);
+					getline(cin, troopMovement);
+					vector<int> splitInt;
+					stringstream ss(troopMovement);
+					string element;
+					while (getline(ss, element, ' '))
 					{
-						if (game.board.at(splitInt.at(0)).getTroops() > splitInt.at(2))
-						{
-							game.board.at(splitInt.at(0)).addTroops(-splitInt.at(2));
-							game.board.at(splitInt.at(1)).addTroops(splitInt.at(2));
-							inputing = false;
-						}
-						else
-						{
-							printf("You don't have that many troops to move.\n");
-							continue;
-						}
-						
-
+						splitInt.push_back(stoi(element));
+					}
+					if (game.board.at(splitInt.at(0)).getCommander_id() != currentPlayer || game.board.at(splitInt.at(1)).getCommander_id() != currentPlayer)
+					{
+						printf("You don't own at least one of those regions.\n");
+						continue;
 					}
 					else
 					{
-						printf("You don't have a chain of regions along which to move troops.\n");
-						continue;
+
+						vector<bool> falses(game.board.size(), false);
+						if (game.isChain(splitInt.at(0), splitInt.at(1), currentPlayer, falses))	// check for chain
+						{
+							if (game.board.at(splitInt.at(0)).getTroops() > splitInt.at(2))
+							{
+								game.board.at(splitInt.at(0)).addTroops(-splitInt.at(2));
+								game.board.at(splitInt.at(1)).addTroops(splitInt.at(2));
+								inputing = false;
+							}
+							else
+							{
+								printf("You don't have that many troops to move.\n");
+								continue;
+							}
+
+
+						}
+						else
+						{
+							printf("You don't have a chain of regions along which to move troops.\n");
+							continue;
+						}
 					}
 				}
 			}
-			
 		}
 
 
