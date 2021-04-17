@@ -5,6 +5,7 @@
 #include "Region.h"
 #include <vector>
 #include "Card.h"
+#include "GeneticAlgorithm.h"
 using namespace std;
 
 
@@ -14,9 +15,10 @@ private:
 	int numTroops;
 	vector<Region> ownedRegions;
 	vector<Card> hand;
+	GeneticAlgorithm* ga = NULL;
 
 public:
-	Player(int numPlayers);
+	Player(int numPlayers, bool isBot);
 	int getTotalArmySize();
 	void updateArmySize(int size);
 	vector<Region> getOwnedRegions();

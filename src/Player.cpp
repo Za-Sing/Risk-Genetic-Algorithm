@@ -1,8 +1,13 @@
 #include "Player.h"
 
 // Create a player with the default troop size
-Player::Player(int numPlayers)
+Player::Player(int numPlayers, bool isBot)
 {
+	// Determine if a player is a bot running the GA
+	if (isBot) {
+		ga = new GeneticAlgorithm();
+	}
+
 	// Initial army size depends on number of players
 	switch (numPlayers) 
 	{

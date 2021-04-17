@@ -1,7 +1,7 @@
 #include "GeneticAlgorithm.h"
 
 // Constructor, randomizes all decision factors
-GeneticAlgorithm::GeneticAlgorithm(Brisk* game)
+GeneticAlgorithm::GeneticAlgorithm()
 {
 	this->game = game;
 	// Start troop factors between 0 and 15 for a reasonable starting value

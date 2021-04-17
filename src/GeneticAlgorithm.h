@@ -6,7 +6,6 @@
 class GeneticAlgorithm
 {
 private:
-	Brisk* game;
 
 	// For ATTACK decision process
 	int attackOwnTroops;
@@ -23,7 +22,7 @@ private:
 	//blank 4 now
 
 public:
-	GeneticAlgorithm(Brisk* game);
+	GeneticAlgorithm();
 	void preEvolveAttack(int generations, int popSize, double mutationProb);
 };
 
