@@ -46,11 +46,12 @@ int main()
 		{
 			if (players->at(currentPlayer)->getDefeated() != false) {
 				game.placeTroops(currentPlayer, players);
+		  	bool gainedARegion = false;
+			
 
-
-				// attack regions
-				printf("Make an attack? y/n\n");
-				char attackResponse;
+			  // attack regions
+			  printf("Make an attack? y/n\n");
+			  char attackResponse;
 				cin >> attackResponse;
 				while (attackResponse == 'y')
 				{

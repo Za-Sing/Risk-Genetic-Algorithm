@@ -479,7 +479,7 @@ void Brisk::placeTroops(int currentPlayer, vector<Player*>* players)
 }
 
 // This handles the attack/defend sequence
-void Brisk::attackSequence(vector<Player*>* players, int currentPlayer)
+void Brisk::attackSequence(vector<Player*>* players, int currentPlayer, bool *gainedARegion)
 {
 	string input;
 	bool badChoice = true;
@@ -753,7 +753,11 @@ void Brisk::attackSequence(vector<Player*>* players, int currentPlayer)
 			board[attackTo].updateTroops(attackTroops - attackLoss);
 			printf("Player %i now has %i troops in the region.\n", currentPlayer, attackTroops - attackLoss);
 			captured = true;
-		}
+			if (*gainedARegion == false)
+			{
+				players->at(currentPlayer)->drawCard(deck);
+				*gainedARegion = true;
+			}
 		//else check if defender has defended against attacker
 		else if ((board[attackTo].getTroops() > 0) && (board[attackFrom].getTroops() == 1)) {
 			printf("Player %i has defended his region against Player %i! Player %i retreats.\n", defender, currentPlayer, currentPlayer);
