@@ -63,7 +63,7 @@ int main()
 				while (attackResponse == 'y')
 				{
 
-					game.attackSequence(players, currentPlayer);
+					game.attackSequence(players, currentPlayer, &gainedARegion);
 					printf("Make another attack? y/n\n");
 					cin >> attackResponse;
 
