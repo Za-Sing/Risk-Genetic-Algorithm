@@ -15,7 +15,7 @@ private:
 	int numTroops;
 	vector<Region> ownedRegions;
 	vector<Card> hand;
-	GeneticAlgorithm* ga = NULL;
+	GeneticAlgorithm* ga;
 
 public:
 	Player(int numPlayers, bool isBot);
