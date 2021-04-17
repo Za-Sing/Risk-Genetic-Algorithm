@@ -15,7 +15,8 @@ private:
 	int numTroops;
 	vector<Region> ownedRegions;
 	vector<Card> hand;
-	GeneticAlgorithm* ga;
+	GeneticAlgorithm* ga = NULL;
+	bool defeated = false;
 
 public:
 	Player(int numPlayers, bool isBot);
@@ -26,6 +27,8 @@ public:
 	vector<Card> getHand();
 	void drawCard(vector<Card>* deck);
 	void playCards(vector<Card>* deck, vector<int> returnedCards);
+	void setDefeated(bool isDefeated);
+	bool getDefeated();
 };
 
 #endif // !PLAYER_H
