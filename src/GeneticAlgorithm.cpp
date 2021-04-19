@@ -30,8 +30,8 @@ void GeneticAlgorithm::preEvolveAttack(int generations, int popSize, double muta
 		trainingRegions[i][1].addTroops(rand() % 35 + 1);
 	}
 
-	// Will run for i generations
-	for (int i = 0; i < generations; ++i) {
+	// Will run for g generations
+	for (int g = 0; g < generations; ++g) {
 		// Create the initial population
 		if (firstGen) {
 			for (int i = 0; i < popSize; ++i) {
@@ -41,8 +41,10 @@ void GeneticAlgorithm::preEvolveAttack(int generations, int popSize, double muta
 				weightVals[i][1] = static_cast <double> (rand()) / (static_cast <double> (RAND_MAX / 1.0));
 				weightVals[i][2] = static_cast <double> (rand()) / (static_cast <double> (RAND_MAX / 1.0));
 			}
+			firstGen = false;
 		}
-		// Attack with current weights
+
+		// Attack with current parameters
 
 		// Calculate fitness
 
@@ -89,4 +91,14 @@ void GeneticAlgorithm::preEvolveAttack(int generations, int popSize, double muta
 			}
 		}
 	}
+}
+
+void GeneticAlgorithm::gaAttack()
+{
+
+}
+
+vector<int> GeneticAlgorithm::gaAttack(int attackOwnTroops, int attackEnemyTroops, double attackOwnTroopsWeight, double attackEnemyTroopsWeight, double contBonusWeight)
+{
+	return vector<int>();
 }

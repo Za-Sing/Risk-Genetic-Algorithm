@@ -479,7 +479,7 @@ void Brisk::placeTroops(int currentPlayer, vector<Player*>* players)
 }
 
 // This handles the attack/defend sequence
-void Brisk::attackSequence(vector<Player*>* players, int currentPlayer, bool *gainedARegion)
+void Brisk::attackSequence(vector<Player*>* players, int currentPlayer, bool* gainedARegion)
 {
 	string input;
 	bool badChoice = true;
@@ -516,13 +516,13 @@ void Brisk::attackSequence(vector<Player*>* players, int currentPlayer, bool *ga
 
 	// Make sure the player owns this region, and that it borders the region to be attacked
 	while (badChoice == true) {
-		
+
 		vector<int> ownedRegionIDs;
 		for (int i = 0; i < players->at(currentPlayer)->getOwnedRegions().size(); ++i)
 		{
 			ownedRegionIDs.push_back(players->at(currentPlayer)->getOwnedRegions().at(i).getID());
 		}
-		
+
 		if (count(ownedRegionIDs.begin(), ownedRegionIDs.end(), attackFrom))
 		{
 			badChoice = false;
@@ -758,29 +758,30 @@ void Brisk::attackSequence(vector<Player*>* players, int currentPlayer, bool *ga
 				players->at(currentPlayer)->drawCard(deck);
 				*gainedARegion = true;
 			}
-		//else check if defender has defended against attacker
-		else if ((board[attackTo].getTroops() > 0) && (board[attackFrom].getTroops() == 1)) {
-			printf("Player %i has defended his region against Player %i! Player %i retreats.\n", defender, currentPlayer, currentPlayer);
-			defended = true;
-		}
+			//else check if defender has defended against attacker
+			else if ((board[attackTo].getTroops() > 0) && (board[attackFrom].getTroops() == 1)) {
+				printf("Player %i has defended his region against Player %i! Player %i retreats.\n", defender, currentPlayer, currentPlayer);
+				defended = true;
+			}
 
-		string reAttack;
-		if ((captured == false) && (defended == false)) {
-			printf("attack again? y / n\n");
-			getline(cin, reAttack);
-			if (reAttack == "y") {
-				repeat = true;
+			string reAttack;
+			if ((captured == false) && (defended == false)) {
+				printf("attack again? y / n\n");
+				getline(cin, reAttack);
+				if (reAttack == "y") {
+					repeat = true;
+				}
+				else {
+					repeat = false;
+				}
 			}
 			else {
 				repeat = false;
 			}
-		}
-		else {
-			repeat = false;
+
 		}
 
 	}
-
 }
 
 // TODO: implement game data access methods
