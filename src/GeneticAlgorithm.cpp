@@ -18,10 +18,11 @@ void GeneticAlgorithm::preEvolveAttack(int generations, int popSize, double muta
 {
 	// Lots of temp vars
 	bool attackWon = false, firstGen = true;
-	vector<vector<int>> troopVals(popSize, vector<int>(2, 0)), bestTroopVals(popSize / 4, vector<int>(2, 0));
-	vector<vector<double>> weightVals(popSize, vector<double>(3, 0)), bestWeightVals(popSize / 4, vector<double>(3, 0));
-	vector<vector<double>> results(popSize, vector<double>(2, 0));
-	vector<double> fitness(popSize, 0);
+	// Last column in these vectors will be the fitness score for the (whole) individual
+	vector<vector<int>> troopVals(popSize, vector<int>(3, 0)), bestTroopVals(popSize / 4, vector<int>(2, 0));
+	vector<vector<double>> weightVals(popSize, vector<double>(4, 0)), bestWeightVals(popSize / 4, vector<double>(3, 0));
+	// First column is win bool, second column is troops used / troops returned
+	vector<vector<double>> results(popSize, vector<double>(2, 0));  
 
 	// Create a variety of Region pairs on which to train. trainingRegions[i][0] is the owned Region, trainingRegions[i][1] is the enemy Region
 	vector<vector<Region>> trainingRegions(10, vector<Region>(2, Region(0, "Alaska", vector<int>{1, 3, 24})));
@@ -58,14 +59,26 @@ void GeneticAlgorithm::preEvolveAttack(int generations, int popSize, double muta
 		for (int i = 0; i < popSize; ++i) {
 			// If the attack was won
 			if (results[i][0] == 1) {
-				fitness[i] = 1 - results[i][1];
+				troopVals[i][2] = 1 - results[i][1];
+				weightVals[i][3] = 1 - results[i][1];
 			}
 			else {
-				fitness[i] = 0;
+				troopVals[i][2] = 0;
+				weightVals[i][3] = 0;
 			}
 		}
 
 		// Select the best 25% of the population
+		// Sort the population based on the whole individual's fitness
+		sort(troopVals.begin(), troopVals.end(), 2);
+		sort(weightVals.begin(), weightVals.end(), 3);
+		for (int i = popSize - 1; i >= popSize * 3/4 - 1; --i) {
+			bestTroopVals[i][0] = troopVals[i][0];
+			bestTroopVals[i][1] = troopVals[i][1];
+			bestWeightVals[i][0] = weightVals[i][0];
+			bestWeightVals[i][1] = weightVals[i][1];
+			bestWeightVals[i][1] = weightVals[i][2];
+		}
 
 		// Perform cloning on best 25% of the population
 		int j = 1, h = 1;
@@ -128,8 +141,8 @@ void GeneticAlgorithm::gaAttack()
 
 }
 
-vector<double> GeneticAlgorithm::gaAttack(int attackOwnTroops, int attackEnemyTroops, double attackOwnTroopsWeight, 
+vector<vector<double>> GeneticAlgorithm::gaAttack(int attackOwnTroops, int attackEnemyTroops, double attackOwnTroopsWeight, 
 										double attackEnemyTroopsWeight, double contBonusWeight)
 {
-	return vector<double>();
+	return vector<vector<double>>();
 }
