@@ -50,7 +50,7 @@ void GeneticAlgorithm::preEvolveAttack(int generations, int popSize, double muta
 		// Attack with current parameters
 		vector<double> temp = vector<double>();
 		for (int i = 0; i < popSize; ++i) {
-			temp = gaAttack(trainingRegions.at(rand() % (trainingRegions.size() - 1)), trainingRegions.at(rand() % (trainingRegions.size() - 1)), 
+			temp = gaAttack(trainingRegions.at(rand() % (trainingRegions.size() - 1)).at(0), trainingRegions.at(rand() % (trainingRegions.size() - 1)).at(1), 
 							troopVals[i][0], troopVals[i][1], weightVals[i][0], weightVals[i][1], weightVals[i][2]);
 			results[i][0] = temp[0];
 			results[i][1] = temp[1];
