@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <algorithm>
+#include <ctime>
 #include "Region.h"
 
 class GeneticAlgorithm

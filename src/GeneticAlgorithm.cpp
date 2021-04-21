@@ -8,6 +8,8 @@ bool sortcol(const vector<double>& v1,
 // Constructor, randomizes all decision factors
 GeneticAlgorithm::GeneticAlgorithm()
 {
+	srand(time(NULL));
+
 	// Start troop weights between 0.0 and 1.0
 	troopRatioWeight = static_cast <double> (rand()) / (static_cast <double> (RAND_MAX / 1.0));
 	contBonusWeight = static_cast <double> (rand()) / (static_cast <double> (RAND_MAX / 1.0));
@@ -109,5 +111,25 @@ void GeneticAlgorithm::gaAttack()
 
 vector<double> GeneticAlgorithm::gaAttack(Region ownRegion, Region enemyRegion, double troopRatioWeight, double contBonusWeight)
 {
-	return vector<double>();
+	bool bonus = false, attackWon = false;
+	double attackability = 0, troopLostRatio = 0, continueProb = 0.7;
+	// Randomly set troop numbers and whether or not a successful attack would complete a cont bonus
+	int ownTroops = rand() % 35 + 2, enemyTroops = rand() % 35 + 1;
+	if ((static_cast <double> (rand()) / (static_cast <double> (RAND_MAX / 1.0)) < 0.5)) {
+		bonus = true;
+	}
+
+	// Calculate attackability score
+	attackability = (ownTroops / (double)enemyTroops) * troopRatioWeight;
+	if (bonus) {
+		attackability + contBonusWeight;
+	}
+
+	// Decide if an attack will take place
+	if (attackability >= 40.0) {
+		return vector<double>();
+	}
+	else {
+		return { 0.0, 0.0 };
+	}
 }
