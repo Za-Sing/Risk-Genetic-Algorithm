@@ -759,7 +759,8 @@ void Brisk::attackSequence(vector<Player*>* players, int currentPlayer, bool* ga
 				*gainedARegion = true;
 			}
 		}
-			//else check if defender has defended against attacker
+
+		//else check if defender has defended against attacker
 		else if ((board[attackTo].getTroops() > 0) && (board[attackFrom].getTroops() == 1)) {
 				printf("Player %i has defended his region against Player %i! Player %i retreats.\n", defender, currentPlayer, currentPlayer);
 				defended = true;

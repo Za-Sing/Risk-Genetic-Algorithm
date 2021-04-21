@@ -1,5 +1,15 @@
 #include "GeneticAlgorithm.h"
 
+
+using namespace std;
+//function for random dice rolls
+int rollDie()
+{
+	int roll;
+	roll = rand() % 6 + 1; //six sided die roll
+	return roll;
+}
+
 bool sortcol(const vector<double>& v1,
 	const vector<double>& v2) {
 	return v1[2] < v2[2];
@@ -113,8 +123,11 @@ vector<double> GeneticAlgorithm::gaAttack(Region ownRegion, Region enemyRegion, 
 {
 	bool bonus = false, attackWon = false;
 	double attackability = 0, troopLostRatio = 0, continueProb = 0.7;
+	vector<double> returnValue;
 	// Randomly set troop numbers and whether or not a successful attack would complete a cont bonus
 	int ownTroops = rand() % 35 + 2, enemyTroops = rand() % 35 + 1;
+	int attack[3];
+	int defend[2];
 	if ((static_cast <double> (rand()) / (static_cast <double> (RAND_MAX / 1.0)) < 0.5)) {
 		bonus = true;
 	}
@@ -125,9 +138,91 @@ vector<double> GeneticAlgorithm::gaAttack(Region ownRegion, Region enemyRegion, 
 		attackability + contBonusWeight;
 	}
 
+
+	int ogOwnTroops = ownTroops;
+	int ogEnemyTroops = enemyTroops;
 	// Decide if an attack will take place
 	if (attackability >= 40.0) {
-		return vector<double>();
+		while(ownTroops != 1 && enemyTroops != 0){
+
+			//initialize empty dice
+			for (int i = 0; i < 2; i-=-1) {
+				attack[i] = 0;
+				defend[i] = 0;
+			}
+			attack[2] = 0;
+
+			int attackingTroops = 3;
+
+			if (ownTroops == 3) {
+				attackingTroops = 2;
+			}
+			else if (ownTroops == 2) {
+				attackingTroops = 1;
+			}
+
+
+			int defendingTroops = 2;
+
+			if (enemyTroops == 1) {
+				defendingTroops = 1;
+			}
+
+			// Get attacker dice rolls
+			for (int i = 0; i < attackingTroops; i -= -1) {
+				attack[i] = rollDie();
+			}
+
+			// Get defender dice rolls
+			for (int i = 0; i < defendingTroops; i -= -1) {
+				defend[i] = rollDie();
+			}
+
+			//compare max dice
+
+			int attackLoss = 0;
+			int defendLoss = 0;
+
+			int n = sizeof(attack) / sizeof(attack[0]);
+			int m = sizeof(defend) / sizeof(defend[0]);
+
+			sort(attack, attack + n);
+			sort(defend, defend + m);
+
+			if (attack[2] > defend[1]) {
+				defendLoss++;
+			}
+			else {
+				attackLoss++;
+			}
+
+			if (ownTroops == 2 || ownTroops == 3) {
+				if (enemyTroops == 2) {
+					if (attack[1] > defend[0]) {
+						defendLoss++;
+						enemyTroops--;
+					}
+					else {
+						attackLoss++;
+						ownTroops--;
+					}
+				}
+			}
+
+		}
+
+		//pushback return value with 1 if win, 0 if loss
+		if (enemyTroops == 0) {
+			returnValue.push_back(1.0);
+		}
+		else {
+			returnValue.push_back(0.0);
+		}
+
+		//pushback return value with remaining troops / original troops
+		returnValue.push_back(ownTroops / ogOwnTroops);
+
+		return returnValue;
 	}
 	else {
 		return { 0.0, 0.0 };
