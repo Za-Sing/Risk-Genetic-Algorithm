@@ -52,8 +52,9 @@ int main()
 		for (int currentPlayer = 0; currentPlayer < numPlayers; currentPlayer++)
 		{
 			if (!players->at(currentPlayer)->getDefeated()) {
+
 				game.placeTroops(currentPlayer, players);
-		  	bool gainedARegion = false;
+		  		bool gainedARegion = false;
 			
 
 			  // attack regions
