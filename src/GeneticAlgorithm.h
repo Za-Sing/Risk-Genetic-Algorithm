@@ -10,10 +10,7 @@ class GeneticAlgorithm
 private:
 
 	// For ATTACK decision process
-	int attackOwnTroops;
-	int attackEnemyTroops;
-	double attackOwnTroopsWeight;
-	double attackEnemyTroopsWeight;
+	double troopRatioWeight;
 	bool contributeContBonus;
 	double contBonusWeight;
 
@@ -27,8 +24,7 @@ public:
 	GeneticAlgorithm();
 	void preEvolveAttack(int generations, int popSize, double mutationProb);
 	void gaAttack();
-	vector<double> gaAttack(Region ownRegion, Region enemyRegion, int attackOwnTroops, int attackEnemyTroops, double attackOwnTroopsWeight,
-		double attackEnemyTroopsWeight, double contBonusWeight);
+	vector<double> gaAttack(Region ownRegion, Region enemyRegion, double ratioWeight, double contBonusWeight);
 };
 
 #endif // !GENETICALGORITHM_H
