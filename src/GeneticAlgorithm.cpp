@@ -141,8 +141,8 @@ void GeneticAlgorithm::gaAttack()
 
 }
 
-vector<vector<double>> GeneticAlgorithm::gaAttack(int attackOwnTroops, int attackEnemyTroops, double attackOwnTroopsWeight, 
+vector<double> GeneticAlgorithm::gaAttack(int attackOwnTroops, int attackEnemyTroops, double attackOwnTroopsWeight, 
 										double attackEnemyTroopsWeight, double contBonusWeight)
 {
-	return vector<vector<double>>();
+	return vector<double>();
 }
