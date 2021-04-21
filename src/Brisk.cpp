@@ -758,27 +758,26 @@ void Brisk::attackSequence(vector<Player*>* players, int currentPlayer, bool* ga
 				players->at(currentPlayer)->drawCard(deck);
 				*gainedARegion = true;
 			}
+		}
 			//else check if defender has defended against attacker
-			else if ((board[attackTo].getTroops() > 0) && (board[attackFrom].getTroops() == 1)) {
+		else if ((board[attackTo].getTroops() > 0) && (board[attackFrom].getTroops() == 1)) {
 				printf("Player %i has defended his region against Player %i! Player %i retreats.\n", defender, currentPlayer, currentPlayer);
 				defended = true;
-			}
+		}
 
-			string reAttack;
-			if ((captured == false) && (defended == false)) {
-				printf("attack again? y / n\n");
-				getline(cin, reAttack);
-				if (reAttack == "y") {
-					repeat = true;
-				}
-				else {
-					repeat = false;
-				}
+		string reAttack;
+		if ((captured == false) && (defended == false)) {
+			printf("attack again? y / n\n");
+			getline(cin, reAttack);
+			if (reAttack == "y") {
+				repeat = true;
 			}
 			else {
 				repeat = false;
 			}
-
+		}
+		else {
+			repeat = false;
 		}
 
 	}
