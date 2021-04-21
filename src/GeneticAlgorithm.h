@@ -27,7 +27,7 @@ public:
 	GeneticAlgorithm();
 	void preEvolveAttack(int generations, int popSize, double mutationProb);
 	void gaAttack();
-	vector<double> gaAttack(int attackOwnTroops, int attackEnemyTroops, double attackOwnTroopsWeight,
+	vector<double> gaAttack(Region ownRegion, Region enemyRegion, int attackOwnTroops, int attackEnemyTroops, double attackOwnTroopsWeight,
 		double attackEnemyTroopsWeight, double contBonusWeight);
 };
 
