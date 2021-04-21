@@ -2,6 +2,7 @@
 #define GENETICALGORITHM_H
 
 #include <vector>
+#include <algorithm>
 #include "Region.h"
 
 class GeneticAlgorithm
@@ -26,7 +27,7 @@ public:
 	GeneticAlgorithm();
 	void preEvolveAttack(int generations, int popSize, double mutationProb);
 	void gaAttack();
-	vector<int> gaAttack(int attackOwnTroops, int attackEnemyTroops, double attackOwnTroopsWeight,
+	vector<double> gaAttack(Region ownRegion, Region enemyRegion, int attackOwnTroops, int attackEnemyTroops, double attackOwnTroopsWeight,
 		double attackEnemyTroopsWeight, double contBonusWeight);
 };
 
