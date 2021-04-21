@@ -10,6 +10,9 @@ class GeneticAlgorithm
 {
 private:
 
+	int rollDie();
+	bool divByFour(string s);
+
 	// For ATTACK decision process
 	double troopRatioWeight;
 	bool contributeContBonus;
