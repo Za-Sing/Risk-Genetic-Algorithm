@@ -593,14 +593,14 @@ void Brisk::attackSequence(vector<Player*>* players, int currentPlayer, bool* ga
 		badChoice = true;
 
 		//initialize empty dice
-		for (int i = 0; i < 2; i -= -1) {
+		for (int i = 0; i < 2; i++) {
 			attack[i] = 0;
 			defend[i] = 0;
 		}
 		attack[2] = 0;
 
 		// Get attacker dice rolls
-		for (int i = 0; i < attackTroops; i -= -1) {
+		for (int i = 0; i < attackTroops; i++) {
 			printf("Player %i, Say something to roll! (press enter)\n", currentPlayer);
 			getline(cin, input);
 			//devtool
@@ -663,7 +663,7 @@ void Brisk::attackSequence(vector<Player*>* players, int currentPlayer, bool* ga
 
 
 		// Get defender dice rolls
-		for (int i = 0; i < defendTroops; i -= -1) {
+		for (int i = 0; i < defendTroops; i++) {
 			printf("Player %i, Say something to roll! (press enter)\n", defender);
 			getline(cin, input);
 			//devtool
@@ -680,12 +680,12 @@ void Brisk::attackSequence(vector<Player*>* players, int currentPlayer, bool* ga
 
 		//print dice rolls
 		printf("\nPlayer %i, your attack rolls were:\n", currentPlayer);
-		for (int i = 0; i < attackTroops; i -= -1) {
+		for (int i = 0; i < attackTroops; i++) {
 			cout << i + 1 << ": " << attack[i] << "\n";
 		}
 
 		printf("\nPlayer %i, your defend rolls were:\n", defender);
-		for (int i = 0; i < defendTroops; i -= -1) {
+		for (int i = 0; i < defendTroops; i++) {
 			cout << i + 1 << ": " << defend[i] << "\n";
 		}
 

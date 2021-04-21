@@ -3,15 +3,25 @@
 
 using namespace std;
 //function for random dice rolls
-int rollDie()
+int GeneticAlgorithm::rollDie()
 {
 	int roll;
 	roll = rand() % 6 + 1; //six sided die roll
 	return roll;
 }
 
-bool sortcol(const vector<double>& v1,
-	const vector<double>& v2) {
+bool GeneticAlgorithm::divByFour(string s) {
+	int len = s.length();
+	// If there is single digit
+	if (len == 1)
+		return ((s[0] - '0') % 4 == 0);
+	// If number formed by last two digits is divisible by 4.
+	int last = s[len - 1] - '0';
+	int secondLast = s[len - 2] - '0';
+	return ((secondLast * 10 + last) % 4 == 0);
+}
+
+bool sortcol(const vector<double>& v1, const vector<double>& v2) {
 	return v1[2] < v2[2];
 }
 
@@ -26,7 +36,8 @@ GeneticAlgorithm::GeneticAlgorithm()
 }
 
 
-// Function to pre-evolve the ATTACK decision parameters
+// Function to pre-evolve the ATTACK decision parameters.
+// NOTE: population size MUST be divisible by 4 in order for proper selection, cloning and mutation to occur.
 void GeneticAlgorithm::preEvolveAttack(int generations, int popSize, double mutationProb)
 {
 	// Lots of temp vars
@@ -40,18 +51,20 @@ void GeneticAlgorithm::preEvolveAttack(int generations, int popSize, double muta
 	vector<vector<Region>> trainingRegions(10, vector<Region>(2, Region(0, "Alaska", vector<int>{1, 3, 24})));
 	for (int i = 0; i < 10; ++i) {
 		trainingRegions[i][0] = Region(0, "Alaska", vector<int>{1, 3, 24});
-		trainingRegions[i][0].addTroops(rand() % 35 + 1);
+		trainingRegions[i][0].addTroops(rand() % 35 + 2);
 		trainingRegions[i][1] = Region(1, "Northwest_Territory", vector<int>{0, 3, 4, 2});
 		trainingRegions[i][1].addTroops(rand() % 35 + 1);
 	}
 
 	// Will run for g generations
 	for (int g = 0; g < generations; ++g) {
+		printf("/*****GENERATION %d*****\\\n", g);
 		// Create the initial population
 		if (firstGen) {
 			for (int i = 0; i < popSize; ++i) {
 				weightVals[i][0] = static_cast <double> (rand()) / (static_cast <double> (RAND_MAX / 1.0));
-				weightVals[i][1] = static_cast <double> (rand()) / (static_cast <double> (RAND_MAX / 1.0));			}
+				weightVals[i][1] = static_cast <double> (rand()) / (static_cast <double> (RAND_MAX / 1.0));	
+			}
 			firstGen = false;
 		}
 
@@ -67,7 +80,7 @@ void GeneticAlgorithm::preEvolveAttack(int generations, int popSize, double muta
 		// Calculate fitness. Fitness is determined by 1 - (sent troops / return troops)
 		for (int i = 0; i < popSize; ++i) {
 			// If the attack was won
-			if (results[i][0] == 1) {
+			if (results[i][0] == 1.0) {
 				weightVals[i][2] = 1 - results[i][1];
 			}
 			else {
@@ -75,42 +88,71 @@ void GeneticAlgorithm::preEvolveAttack(int generations, int popSize, double muta
 			}
 		}
 
+		// DEBUG
+		printf("Population and fitness: \n");
+		for (int i = 0; i < popSize; ++i) {
+			printf("%d: %f %f %f\n", i, weightVals[i][0], weightVals[i][1], weightVals[i][2]);
+		}
+
 		// Select the best 25% of the population
 		// Sort the population based on the whole individual's fitness
 		sort(weightVals.begin(), weightVals.end(), sortcol);
-		for (int i = popSize - 1; i >= popSize * 3/4 - 1; --i) {
-			bestWeightVals[i][0] = weightVals[i][0];
-			bestWeightVals[i][1] = weightVals[i][1];
+		for (int i = 0; i < popSize / 4; ++i) {
+			bestWeightVals[i][0] = weightVals[popSize - 1 - i][0];
+			bestWeightVals[i][1] = weightVals[popSize - 1 - i][1];
+		}
+
+		// DEBUG
+		printf("Best 25%: \n");
+		for (int i = 0; i < popSize / 4; ++i) {
+			printf("%d: %f %f\n", i, bestWeightVals[i][0], bestWeightVals[i][1]);
 		}
 
 		// Perform cloning on best 25% of the population
-		int j = 1, h = 1;
+		int h = 0;
 		for (int i = 0; i < popSize / 4; ++i) {
 			// Each value will be cloned 4 times
-			weightVals[i][0] = bestWeightVals[0][i];
-			weightVals[i][1] = bestWeightVals[0][i];
+			weightVals[i + h][0] = bestWeightVals[i][0];
+			weightVals[i + h][1] = bestWeightVals[i][1]; ++h;
 
-			weightVals[i + h][0] = bestWeightVals[0][i];
-			weightVals[i + h][1] = bestWeightVals[0][i]; ++h;
+			weightVals[i + h][0] = bestWeightVals[i][0];
+			weightVals[i + h][1] = bestWeightVals[i][1]; ++h;
+			
+			weightVals[i + h][0] = bestWeightVals[i][0];
+			weightVals[i + h][1] = bestWeightVals[i][1]; ++h;
+			
+			weightVals[i + h][0] = bestWeightVals[i][0];
+			weightVals[i + h][1] = bestWeightVals[i][1];
+		}
 
-			weightVals[i + h][0] = bestWeightVals[0][i];
-			weightVals[i + h][1] = bestWeightVals[0][i]; ++h;
-
-			weightVals[i + h][0] = bestWeightVals[0][i];
-			weightVals[i + h][1] = bestWeightVals[0][i]; ++h;
+		// DEBUG
+		printf("Cloned population\n");
+		for (int i = 0; i < popSize; ++i) {
+			printf("%d: %f %f\n", i, weightVals[i][0], weightVals[i][1]);
 		}
 
 		// Perform mutation on all but the parents
-		for (int i = 0; i < popSize / 25; ++i) {
-			if ((static_cast <double> (rand()) / (static_cast <double> (RAND_MAX / 1.0)) < mutationProb)) {
+		for (int i = 0; i < popSize; ++i) {
+			// Skip the 25% of the population that is the parents.
+			if (divByFour(to_string(i + 4))) {
+				continue;
+			}
+			if ((static_cast <double> (rand()) / (static_cast <double> (RAND_MAX / 1.0)) <= mutationProb)) {
 				// Adds a random number between [-0.1, 0.1]
 				weightVals[i][0] += static_cast <double> (rand()) / (static_cast <double> (RAND_MAX / 0.1 - 0.1));
 			}
-			if ((static_cast <double> (rand()) / (static_cast <double> (RAND_MAX / 1.0)) < mutationProb)) {
+			if ((static_cast <double> (rand()) / (static_cast <double> (RAND_MAX / 1.0)) <= mutationProb)) {
 				// Adds a random number between [-0.1, 0.1]
 				weightVals[i][1] += static_cast <double> (rand()) / (static_cast <double> (RAND_MAX / 0.1 - 0.1));
 			}
 		}
+
+		// DEBUG
+		printf("Mutated population\n");
+		for (int i = 0; i < popSize; ++i) {
+			printf("%d: %f %f\n", i, weightVals[i][0], weightVals[i][1]);
+		}
+		printf("\\**********************/\n");
 	}
 }
 
@@ -119,34 +161,36 @@ void GeneticAlgorithm::gaAttack()
 
 }
 
+// This function is for use in pre-training. It simulates an attack sequence and then returns a boolean and the ratio of troops lost
 vector<double> GeneticAlgorithm::gaAttack(Region ownRegion, Region enemyRegion, double troopRatioWeight, double contBonusWeight)
 {
 	bool bonus = false, attackWon = false;
 	double attackability = 0, troopLostRatio = 0, continueProb = 0.7;
-	vector<double> returnValue;
+	vector<double> returnValue(2, 0);
 	// Randomly set troop numbers and whether or not a successful attack would complete a cont bonus
-	int ownTroops = rand() % 35 + 2, enemyTroops = rand() % 35 + 1;
+	int ownTroops = ownRegion.getTroops(), enemyTroops = enemyRegion.getTroops();
 	int attack[3];
 	int defend[2];
-	if ((static_cast <double> (rand()) / (static_cast <double> (RAND_MAX / 1.0)) < 0.5)) {
+	if ((static_cast <double> (rand()) / (static_cast <double> (RAND_MAX / 1.0)) <= 0.5)) {
 		bonus = true;
 	}
 
 	// Calculate attackability score
-	attackability = (ownTroops / (double)enemyTroops) * troopRatioWeight;
+	attackability = ((double) ownTroops / (double)enemyTroops) * troopRatioWeight;
 	if (bonus) {
 		attackability + contBonusWeight;
 	}
+	printf("Attackability: %f\n", attackability);
 
 
 	int ogOwnTroops = ownTroops;
 	int ogEnemyTroops = enemyTroops;
 	// Decide if an attack will take place
-	if (attackability >= 40.0) {
-		while(ownTroops != 1 && enemyTroops != 0){
+	if (attackability >= 1.0) {
+		while(ownTroops > 1 && enemyTroops > 0){
 
 			//initialize empty dice
-			for (int i = 0; i < 2; i-=-1) {
+			for (int i = 0; i < 2; i++) {
 				attack[i] = 0;
 				defend[i] = 0;
 			}
@@ -169,12 +213,12 @@ vector<double> GeneticAlgorithm::gaAttack(Region ownRegion, Region enemyRegion, 
 			}
 
 			// Get attacker dice rolls
-			for (int i = 0; i < attackingTroops; i -= -1) {
+			for (int i = 0; i < attackingTroops; i++) {
 				attack[i] = rollDie();
 			}
 
 			// Get defender dice rolls
-			for (int i = 0; i < defendingTroops; i -= -1) {
+			for (int i = 0; i < defendingTroops; i++) {
 				defend[i] = rollDie();
 			}
 
@@ -213,14 +257,14 @@ vector<double> GeneticAlgorithm::gaAttack(Region ownRegion, Region enemyRegion, 
 
 		//pushback return value with 1 if win, 0 if loss
 		if (enemyTroops == 0) {
-			returnValue.push_back(1.0);
+			returnValue[0] = 1.0;
 		}
 		else {
-			returnValue.push_back(0.0);
+			returnValue[0] = 0.0;
 		}
 
 		//pushback return value with remaining troops / original troops
-		returnValue.push_back(ownTroops / ogOwnTroops);
+		returnValue[1] = (double) ownTroops / (double) ogOwnTroops;
 
 		return returnValue;
 	}
