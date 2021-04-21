@@ -53,7 +53,7 @@ int main()
 		{
 			if (players->at(currentPlayer)->getDefeated() != false) {
 				game.placeTroops(currentPlayer, players);
-		  	bool gainedARegion = false;
+		  		bool gainedARegion = false;
 			
 
 			  // attack regions
