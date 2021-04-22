@@ -43,9 +43,11 @@ void GeneticAlgorithm::preEvolveAttack(int generations, int popSize, double muta
 	// Lots of temp vars
 	bool attackWon = false, firstGen = true;
 	// First col is troopWeight, second col is contWeight. Last column in these vectors will be the fitness score for the (whole) individual.
-	vector<vector<double>> weightVals(popSize, vector<double>(3, 0)), bestWeightVals(popSize / 4, vector<double>(2, 0));
+	vector<vector<double>> weightVals(popSize, vector<double>(3, 0)), bestWeightVals(popSize / 4, vector<double>(3, 0));
 	// First column is win bool, second column is troops used / troops returned
 	vector<vector<double>> results(popSize, vector<double>(2, 0));  
+	// A vector to hold the top ten best values over all generations
+	vector<vector<double>> globalBest(10, vector<double>(3, 0));
 
 	// Create a variety of Region pairs on which to train. trainingRegions[i][0] is the owned Region, trainingRegions[i][1] is the enemy Region
 	vector<vector<Region>> trainingRegions(1000, vector<Region>(2, Region(0, "Alaska", vector<int>{1, 3, 24})));
@@ -65,7 +67,6 @@ void GeneticAlgorithm::preEvolveAttack(int generations, int popSize, double muta
 				weightVals[i][0] = static_cast <double> (rand()) / (static_cast <double> (RAND_MAX / 1.0));
 				weightVals[i][1] = static_cast <double> (rand()) / (static_cast <double> (RAND_MAX / 1.0));	
 			}
-			firstGen = false;
 		}
 
 		// Attack with current parameters
@@ -83,8 +84,8 @@ void GeneticAlgorithm::preEvolveAttack(int generations, int popSize, double muta
 			if (results[i][0] == 1.0) {
 				weightVals[i][2] = results[i][1];
 			}
-			else {
-				weightVals[i][2] = 0;
+			if (results[i][0] == 0.0) {
+				weightVals[i][2] = 0; 
 			}
 		}
 
@@ -100,36 +101,62 @@ void GeneticAlgorithm::preEvolveAttack(int generations, int popSize, double muta
 		for (int i = 0; i < popSize / 4; ++i) {
 			bestWeightVals[i][0] = weightVals[popSize - 1 - i][0];
 			bestWeightVals[i][1] = weightVals[popSize - 1 - i][1];
+			bestWeightVals[i][2] = weightVals[popSize - 1 - i][2];
+		}
+
+		// Collect the best ten results and update them if necessary on future generations
+		if (firstGen) {
+			for (int i = 0; i < 10; ++i) {
+				globalBest[i][0] = bestWeightVals[(popSize / 4) - 1 - i][0];
+				globalBest[i][1] = bestWeightVals[(popSize / 4) - 1 - i][1];
+				globalBest[i][2] = bestWeightVals[(popSize / 4) - 1 - i][2];
+			}
+			firstGen = false;
+		}
+		else {
+			for (int i = 0; i < popSize / 4; ++i) {
+				for (int j = 0; j < 10; ++j) {
+					if (bestWeightVals[i][2] > globalBest[j][2]) {
+						globalBest[j][0] = bestWeightVals[i][0];
+						globalBest[j][1] = bestWeightVals[i][1];
+						globalBest[j][2] = bestWeightVals[i][2];
+					}
+				}
+			}
 		}
 
 		// DEBUG
-		printf("Best 25%: \n");
+		/*printf("Best 25%: \n");
 		for (int i = 0; i < popSize / 4; ++i) {
 			printf("%d: %f %f\n", i, bestWeightVals[i][0], bestWeightVals[i][1]);
-		}
+		}*/
 
 		// Perform cloning on best 25% of the population
 		int h = 0;
 		for (int i = 0; i < popSize / 4; ++i) {
 			// Each value will be cloned 4 times
 			weightVals[i + h][0] = bestWeightVals[i][0];
-			weightVals[i + h][1] = bestWeightVals[i][1]; ++h;
+			weightVals[i + h][1] = bestWeightVals[i][1];
+			weightVals[i + h][2] = bestWeightVals[i][2]; ++h;
 
 			weightVals[i + h][0] = bestWeightVals[i][0];
-			weightVals[i + h][1] = bestWeightVals[i][1]; ++h;
+			weightVals[i + h][1] = bestWeightVals[i][1]; 
+			weightVals[i + h][2] = bestWeightVals[i][2]; ++h;
 			
 			weightVals[i + h][0] = bestWeightVals[i][0];
-			weightVals[i + h][1] = bestWeightVals[i][1]; ++h;
+			weightVals[i + h][1] = bestWeightVals[i][1]; 
+			weightVals[i + h][2] = bestWeightVals[i][2]; ++h;
 			
 			weightVals[i + h][0] = bestWeightVals[i][0];
 			weightVals[i + h][1] = bestWeightVals[i][1];
+			weightVals[i + h][2] = bestWeightVals[i][2];
 		}
 
 		// DEBUG
-		printf("Cloned population\n");
+		/*printf("Cloned population\n");
 		for (int i = 0; i < popSize; ++i) {
 			printf("%d: %f %f\n", i, weightVals[i][0], weightVals[i][1]);
-		}
+		}*/
 
 		// Perform mutation on all but the parents
 		for (int i = 0; i < popSize; ++i) {
@@ -139,20 +166,31 @@ void GeneticAlgorithm::preEvolveAttack(int generations, int popSize, double muta
 			}
 			if ((static_cast <double> (rand()) / (static_cast <double> (RAND_MAX / 1.0)) <= mutationProb)) {
 				// Adds a random number between [-0.1, 0.1]
-				weightVals[i][0] += static_cast <double> (rand()) / (static_cast <double> (RAND_MAX / 0.1 - 0.1));
+				double randVal = static_cast <double> (rand()) / (static_cast <double> (RAND_MAX / 0.1 - 0.1));
+				if (weightVals[i][0] + randVal >= 0.0 && weightVals[i][0] + randVal <= 1.0) {
+					weightVals[i][0] += randVal;
+				}
 			}
 			if ((static_cast <double> (rand()) / (static_cast <double> (RAND_MAX / 1.0)) <= mutationProb)) {
 				// Adds a random number between [-0.1, 0.1]
-				weightVals[i][1] += static_cast <double> (rand()) / (static_cast <double> (RAND_MAX / 0.1 - 0.1));
+				double randVal = static_cast <double> (rand()) / (static_cast <double> (RAND_MAX / 0.1 - 0.1));
+				if (weightVals[i][1] + randVal >= 0.0 && weightVals[i][1] + randVal <= 1.0) {
+					weightVals[i][1] += randVal;
+				}
 			}
 		}
 
 		// DEBUG
-		printf("Mutated population\n");
+		/*printf("Mutated population\n");
 		for (int i = 0; i < popSize; ++i) {
 			printf("%d: %f %f\n", i, weightVals[i][0], weightVals[i][1]);
-		}
+		}*/
 		printf("\\**********************/\n");
+	}
+	//DEBUG
+	printf("GLOBAL BEST 10: \n");
+	for (int i = 0; i < 10; ++i) {
+		printf("%d: %f %f %f\n", i, globalBest[i][0], globalBest[i][1], globalBest[i][2]);
 	}
 }
 
@@ -271,6 +309,6 @@ vector<double> GeneticAlgorithm::gaAttack(Region ownRegion, Region enemyRegion, 
 		return returnValue;
 	}
 	else {
-		return { 0.0, 0.0 };
+		return { -1.0, -1.0 };
 	}
 }
