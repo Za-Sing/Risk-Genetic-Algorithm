@@ -235,13 +235,15 @@ vector<double> GeneticAlgorithm::gaAttack(Region ownRegion, Region enemyRegion, 
 
 			if (attack[2] > defend[1]) {
 				defendLoss++;
+				enemyTroops--;
 			}
 			else {
 				attackLoss++;
+				ownTroops--;
 			}
 
-			if (ownTroops == 2 || ownTroops == 3) {
-				if (enemyTroops == 2) {
+			if (attackingTroops == 2 || attackingTroops == 3) {
+				if (defendingTroops == 2) {
 					if (attack[1] > defend[0]) {
 						defendLoss++;
 						enemyTroops--;
