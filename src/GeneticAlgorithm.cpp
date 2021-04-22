@@ -28,8 +28,6 @@ bool sortcol(const vector<double>& v1, const vector<double>& v2) {
 // Constructor, randomizes all decision factors
 GeneticAlgorithm::GeneticAlgorithm()
 {
-	srand(time(NULL));
-
 	// Start troop weights between 0.0 and 1.0
 	troopRatioWeight = static_cast <double> (rand()) / (static_cast <double> (RAND_MAX / 1.0));
 	contBonusWeight = static_cast <double> (rand()) / (static_cast <double> (RAND_MAX / 1.0));
@@ -40,6 +38,8 @@ GeneticAlgorithm::GeneticAlgorithm()
 // NOTE: population size MUST be divisible by 4 in order for proper selection, cloning and mutation to occur.
 void GeneticAlgorithm::preEvolveAttack(int generations, int popSize, double mutationProb)
 {
+	srand(time(NULL));
+	
 	// Lots of temp vars
 	bool attackWon = false, firstGen = true;
 	// First col is troopWeight, second col is contWeight. Last column in these vectors will be the fitness score for the (whole) individual.
@@ -48,8 +48,8 @@ void GeneticAlgorithm::preEvolveAttack(int generations, int popSize, double muta
 	vector<vector<double>> results(popSize, vector<double>(2, 0));  
 
 	// Create a variety of Region pairs on which to train. trainingRegions[i][0] is the owned Region, trainingRegions[i][1] is the enemy Region
-	vector<vector<Region>> trainingRegions(10, vector<Region>(2, Region(0, "Alaska", vector<int>{1, 3, 24})));
-	for (int i = 0; i < 10; ++i) {
+	vector<vector<Region>> trainingRegions(1000, vector<Region>(2, Region(0, "Alaska", vector<int>{1, 3, 24})));
+	for (int i = 0; i < 1000; ++i) {
 		trainingRegions[i][0] = Region(0, "Alaska", vector<int>{1, 3, 24});
 		trainingRegions[i][0].addTroops(rand() % 35 + 2);
 		trainingRegions[i][1] = Region(1, "Northwest_Territory", vector<int>{0, 3, 4, 2});
@@ -77,11 +77,11 @@ void GeneticAlgorithm::preEvolveAttack(int generations, int popSize, double muta
 			results[i][1] = temp[1];
 		}
 
-		// Calculate fitness. Fitness is determined by 1 - (sent troops / return troops)
+		// Calculate fitness. Fitness is determined by 1 - (return troops / sent troops)
 		for (int i = 0; i < popSize; ++i) {
 			// If the attack was won
 			if (results[i][0] == 1.0) {
-				weightVals[i][2] = 1 - results[i][1];
+				weightVals[i][2] = results[i][1];
 			}
 			else {
 				weightVals[i][2] = 0;
