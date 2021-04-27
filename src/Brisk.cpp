@@ -355,7 +355,7 @@ void Brisk::beginningClaim(vector<Player*>* players) {
 				printf("Player %i, please choose next region ID for region to occupy.\n", currentPlayer);
 				if (players->at(currentPlayer)->getGA() != NULL)
 				{
-					regionChoice = stoi(players->at(currentPlayer)->getGA()->gaPlay(0, currentPlayer, board));
+					regionChoice = stoi(players->at(currentPlayer)->getGA()->gaPlay(0, currentPlayer, -1, board));
 				}
 				else
 				{
@@ -403,7 +403,7 @@ void Brisk::beginningClaim(vector<Player*>* players) {
 
 					if (players->at(currentPlayer)->getGA() != NULL)
 					{
-						regionChoice = stoi(players->at(currentPlayer)->getGA()->gaPlay(1, currentPlayer, board));
+						regionChoice = stoi(players->at(currentPlayer)->getGA()->gaPlay(1, currentPlayer, -1, board));
 					}
 					else
 					{
@@ -462,34 +462,69 @@ void Brisk::placeTroops(int currentPlayer, vector<Player*>* players)
 	// Now place troops
 	printf("It's player %i's turn. You have %i new troops to place.\nInput your troop placement in the form: <Region ID> <# of new troops>.\n", currentPlayer, newTroops);
 	string troopPlacement;
-	getline(cin, troopPlacement);
-	while (getline(cin, troopPlacement) && newTroops != 0) {
+	if (players->at(currentPlayer)->getGA() != NULL)
+	{
+		//getline(cin, troopPlacement);
+		while (newTroops != 0) {
 
 
-		vector<int> splitInt;
-		stringstream ss(troopPlacement);
-		string element;
-		while (getline(ss, element, ' '))
-		{
-			splitInt.push_back(stoi(element));
-		}
-		if (board.at(splitInt.at(0)).getCommander_id() != currentPlayer)
-		{
-			printf("You don't control that region.");
-			continue;
-		}
-		if (splitInt.at(1) <= newTroops)
-		{
-			board.at(splitInt.at(0)).addTroops(splitInt.at(1));
-			newTroops -= splitInt.at(1);
-			printf("%i new troops left to place.\n", newTroops);
-		}
-		else
-		{
-			printf("You don't have that many troops to place.\n");
-		}
+			vector<int> splitInt;
+			stringstream ss(stoi(players->at(currentPlayer)->getGA()->gaPlay(2, currentPlayer, newTroops, board)));
+			string element;
+			while (getline(ss, element, ' '))
+			{
+				splitInt.push_back(stoi(element));
+			}
+			if (board.at(splitInt.at(0)).getCommander_id() != currentPlayer)
+			{
+				printf("You don't control that region.");
+				continue;
+			}
+			if (splitInt.at(1) <= newTroops)
+			{
+				board.at(splitInt.at(0)).addTroops(splitInt.at(1));
+				newTroops -= splitInt.at(1);
+				printf("%i new troops left to place.\n", newTroops);
+			}
+			else
+			{
+				printf("You don't have that many troops to place.\n");
+			}
 
+		}
 	}
+	else
+	{
+		getline(cin, troopPlacement);
+		while (getline(cin, troopPlacement) && newTroops != 0) {
+
+
+			vector<int> splitInt;
+			stringstream ss(troopPlacement);
+			string element;
+			while (getline(ss, element, ' '))
+			{
+				splitInt.push_back(stoi(element));
+			}
+			if (board.at(splitInt.at(0)).getCommander_id() != currentPlayer)
+			{
+				printf("You don't control that region.");
+				continue;
+			}
+			if (splitInt.at(1) <= newTroops)
+			{
+				board.at(splitInt.at(0)).addTroops(splitInt.at(1));
+				newTroops -= splitInt.at(1);
+				printf("%i new troops left to place.\n", newTroops);
+			}
+			else
+			{
+				printf("You don't have that many troops to place.\n");
+			}
+
+		}
+	}
+	
 }
 
 // This handles the attack/defend sequence
