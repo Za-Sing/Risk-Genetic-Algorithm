@@ -29,7 +29,7 @@ public:
 	void preEvolveAttack(int generations, int popSize, double mutationProb);
 	void gaAttack();
 	vector<double> gaAttack(Region ownRegion, Region enemyRegion, double ratioWeight, double contBonusWeight);
-	string gaPlay(int gameState, vector<Region> board);
+	string gaPlay(int gameState, int currentPlayer, vector<Region> board);
 };
 
 #endif // !GENETICALGORITHM_H

@@ -328,12 +328,12 @@ vector<double> GeneticAlgorithm::gaAttack(Region ownRegion, Region enemyRegion, 
 * game input is being requested.
 * 
 */
-string GeneticAlgorithm::gaPlay(int gameState, vector<Region> board)
+string GeneticAlgorithm::gaPlay(int gameState, int currentPlayer, vector<Region> board)
 {
 	string x;
 	switch (gameState)
 	{
-	case(0):		//choose region to occupy
+	case(0):		//BeginningClaim: choose region to occupy
 	{
 		vector<Region> availableRegions;
 		for (int i = 0; i < board.size(); i++)
@@ -347,9 +347,19 @@ string GeneticAlgorithm::gaPlay(int gameState, vector<Region> board)
 		return to_string(availableRegions[pick].getID());
 		break;
 	}
-	case(1):
+	case(1):		//BeginningClaim: place a troop in a region
 	{
-		return x;
+		vector<Region> myRegions;
+		for (int i = 0; i < board.size(); i++)
+		{
+			if (board.at(i).getCommander_id() == currentPlayer)
+			{
+				myRegions.push_back(board.at(i));
+			}
+		}
+		int pick = rand() % myRegions.size();
+		return to_string(myRegions[pick].getID());
+		break;
 	}
 	case(2):
 	{
