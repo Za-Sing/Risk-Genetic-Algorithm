@@ -38,6 +38,7 @@ GeneticAlgorithm::GeneticAlgorithm()
 // NOTE: population size MUST be divisible by 4 in order for proper selection, cloning and mutation to occur.
 void GeneticAlgorithm::preEvolveAttack(int generations, int popSize, double mutationProb)
 {
+	isRandom = false;
 	srand(time(NULL));
 	
 	// Lots of temp vars
@@ -379,25 +380,67 @@ string GeneticAlgorithm::gaPlay(int gameState, int currentPlayer, int newTroops,
 		troopPlacement += to_string(numTroops);
 		break;
 	}
-	case(3):
+	case(3):		// Attack Sequence: pick Region to attack
+	{
+		vector<Region> myRegions;
+		for (int i = 0; i < board.size(); i++)
+		{
+			if (board.at(i).getCommander_id() == currentPlayer)
+			{
+				myRegions.push_back(board.at(i));
+			}
+		}
+		vector<Region> eligibleRegions;
+		for (int i = 0; i < board.size(); i++)
+		{
+			for (int j = 0; j < myRegions.size(); ++j) {
+				if (board.at(i).getCommander_id() != myRegions.at(j).getCommander_id()) {
+					for (int k = 0; k < myRegions.at(i).getBorder_ids().size(); ++k) {
+						// Add each eligible region to the vector if it is not already there
+						if (count(board.at(i).getBorder_ids().begin(), board.at(i).getBorder_ids().end(), myRegions.at(i).getBorder_ids().at(k)) == 1
+							&& count(eligibleRegions.begin(), eligibleRegions.end(), myRegions.at(i).getBorder_ids().at(k)) == 0) {
+							eligibleRegions.push_back(board.at(myRegions.at(i).getBorder_ids().at(k)));
+						}
+					}
+				}
+			}
+		}
+		// Now choose which of these to attack:
+		return to_string(eligibleRegions.at(rand() % (eligibleRegions.size() - 1)).getID());
+	}
+	case(4):		// Attack Sequence: choose the Region from which to attack:
 	{
 		return x;
 	}
-	case(4):
+	case(5):		// Attack Sequence: choose number of troops to attack with:
 	{
-		return x;
+		if (board.at(currentPlayer).getTroops() == 2) {
+			return to_string(1);
+		}
+		if (board.at(currentPlayer).getTroops() == 3) {
+			return to_string(rand() % 2 + 1);
+		}
+		if (board.at(currentPlayer).getTroops() >= 3) {
+			return to_string(rand() % 3 + 1);
+		}
 	}
-	case(5):
+	case(6):		// Attack Sequence: choose number of troops to defend with:
 	{
-		return x;
+		if (board.at(currentPlayer).getTroops() == 2) {
+			return to_string(1);
+		}
+		if (board.at(currentPlayer).getTroops() >= 3) {
+			return to_string(rand() % 2 + 1);
+		}
 	}
-	case(6):
+	case(7):		// Attack Sequence: choose whether or not to continue attacking:
 	{
-		return x;
-	}
-	case(7):
-	{
-		return x;
+		if ((rand() % 1) == 1) {
+			return "y";
+		}
+		else {
+			return "n";
+		}
 	}
 	case(8):
 	{

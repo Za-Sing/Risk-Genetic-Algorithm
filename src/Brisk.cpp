@@ -538,8 +538,14 @@ void Brisk::attackSequence(vector<Player*>* players, int currentPlayer, bool* ga
 
 	// Get the region to be attacked
 	printf("Player %i, which region would you like to attack?\n", currentPlayer);
-	getline(cin, input);
-	getline(cin, input);
+	// Check if the player is a GA
+	if (players->at(currentPlayer)->getGA() != NULL) {
+		input = players->at(currentPlayer)->getGA()->gaPlay(3, currentPlayer, board);
+	}
+	else {
+		getline(cin, input);
+		getline(cin, input);
+	}
 	attackTo = stoi(input);
 
 	// Make sure the player doesn't already own this region
@@ -560,7 +566,12 @@ void Brisk::attackSequence(vector<Player*>* players, int currentPlayer, bool* ga
 
 	// Now get the region from which to attack
 	printf("Where would you like to attack from?");
-	getline(cin, input);
+	if (players->at(currentPlayer)->getGA() != NULL) {
+		input = players->at(currentPlayer)->getGA()->gaPlay(4, currentPlayer, board);
+	}
+	else {
+		getline(cin, input);
+	}
 	attackFrom = stoi(input);
 
 	// Make sure the player owns this region, and that it borders the region to be attacked
@@ -597,10 +608,14 @@ void Brisk::attackSequence(vector<Player*>* players, int currentPlayer, bool* ga
 
 		// Now get number of troops to attack with
 		printf("How many troops would you like to use? choose 1 through 3.\n");
+		if (players->at(currentPlayer)->getGA() != NULL) {
+			input = players->at(currentPlayer)->getGA()->gaPlay(5, currentPlayer, board);
+		}
+		else {
+			getline(cin, input);
+		}
 
-		getline(cin, input);
 		int attackTroops = stoi(input);
-
 		//check that it's a valid number of troops
 		while (badChoice == true) {
 			if (attackTroops < 1 || attackTroops > 3) {
@@ -651,7 +666,12 @@ void Brisk::attackSequence(vector<Player*>* players, int currentPlayer, bool* ga
 		// Get attacker dice rolls
 		for (int i = 0; i < attackTroops; i++) {
 			printf("Player %i, Say something to roll! (press enter)\n", currentPlayer);
-			getline(cin, input);
+			if (players->at(currentPlayer)->getGA() != NULL) {
+				input = "";
+			}
+			else {
+				getline(cin, input);
+			}
 			//devtool
 			if (input == "ULTRA_CRITICAL_DICE_ROLL_FRICKAA") {
 				printf("What is thy bidding, my master?\n");
@@ -668,8 +688,12 @@ void Brisk::attackSequence(vector<Player*>* players, int currentPlayer, bool* ga
 		//get defender dice rolls
 		defender = board[attackTo].getCommander_id();
 		printf("Player %i, choose how many troops to defend with!\n", defender);
-
-		getline(cin, input);
+		if (players->at(defender)->getGA() != NULL) {
+			input = players->at(defender)->getGA()->gaPlay(6, defender, board);
+		}
+		else {
+			getline(cin, input);
+		}
 		int defendTroops = stoi(input);
 
 		//check that it's a valid number of troops
@@ -714,7 +738,12 @@ void Brisk::attackSequence(vector<Player*>* players, int currentPlayer, bool* ga
 		// Get defender dice rolls
 		for (int i = 0; i < defendTroops; i++) {
 			printf("Player %i, Say something to roll! (press enter)\n", defender);
-			getline(cin, input);
+			if (players->at(currentPlayer)->getGA() != NULL) {
+				input = "";
+			}
+			else {
+				getline(cin, input);
+			}
 			//devtool
 			if (input == "ULTRA_CRITICAL_DICE_ROLL_FRICKAA") {
 				printf("Hello There!\n");
@@ -818,7 +847,12 @@ void Brisk::attackSequence(vector<Player*>* players, int currentPlayer, bool* ga
 		string reAttack;
 		if ((captured == false) && (defended == false)) {
 			printf("attack again? y / n\n");
-			getline(cin, reAttack);
+			if (players->at(currentPlayer)->getGA() != NULL) {
+				reAttack = players->at(currentPlayer)->getGA()->gaPlay(7, currentPlayer, board);
+			}
+			else {
+				getline(cin, reAttack);
+			}
 			if (reAttack == "y") {
 				repeat = true;
 			}

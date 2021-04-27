@@ -10,6 +10,7 @@ class GeneticAlgorithm
 {
 private:
 	vector<Region> board;
+	bool isRandom = true;
 	int rollDie();
 	bool divByFour(string s);
 
