@@ -390,27 +390,48 @@ string GeneticAlgorithm::gaPlay(int gameState, int currentPlayer, int newTroops,
 				myRegions.push_back(board.at(i));
 			}
 		}
-		vector<Region> eligibleRegions;
+		vector<int> eligibleRegions;
 		for (int i = 0; i < board.size(); i++)
 		{
 			for (int j = 0; j < myRegions.size(); ++j) {
 				if (board.at(i).getCommander_id() != myRegions.at(j).getCommander_id()) {
-					for (int k = 0; k < myRegions.at(i).getBorder_ids().size(); ++k) {
+					for (int k = 0; k < myRegions.at(j).getBorder_ids().size(); ++k) {
 						// Add each eligible region to the vector if it is not already there
-						if (count(board.at(i).getBorder_ids().begin(), board.at(i).getBorder_ids().end(), myRegions.at(i).getBorder_ids().at(k)) == 1
-							&& count(eligibleRegions.begin(), eligibleRegions.end(), myRegions.at(i).getBorder_ids().at(k)) == 0) {
-							eligibleRegions.push_back(board.at(myRegions.at(i).getBorder_ids().at(k)));
+						if (count(board.at(i).getBorder_ids().begin(), board.at(i).getBorder_ids().end(), myRegions.at(j).getBorder_ids().at(k)) == 1
+							&& count(eligibleRegions.begin(), eligibleRegions.end(), myRegions.at(j).getBorder_ids().at(k)) == 0) {
+							eligibleRegions.push_back(myRegions.at(j).getBorder_ids().at(k));
 						}
 					}
 				}
 			}
 		}
 		// Now choose which of these to attack:
-		return to_string(eligibleRegions.at(rand() % (eligibleRegions.size() - 1)).getID());
+		regionToAttack = eligibleRegions.at(rand() % (eligibleRegions.size() - 1));
+		return to_string(regionToAttack);
+		break;
 	}
 	case(4):		// Attack Sequence: choose the Region from which to attack:
 	{
-		return x;
+		vector<Region> myRegions;
+		for (int i = 0; i < board.size(); i++)
+		{
+			if (board.at(i).getCommander_id() == currentPlayer)
+			{
+				myRegions.push_back(board.at(i));
+			}
+		}
+		vector<int> eligibleRegions;
+		for (int i = 0; i < myRegions.size(); i++)
+		{
+			// Add each eligible region to the vector if it is not already there
+			if (count(myRegions.at(i).getBorder_ids().begin(), myRegions.at(i).getBorder_ids().end(), regionToAttack) == 1
+				&& count(eligibleRegions.begin(), eligibleRegions.end(), myRegions.at(i).getID()) == 0) {
+				eligibleRegions.push_back(myRegions.at(i).getID());
+			}
+		}
+		// Now choose which of these to attack:
+		return to_string(eligibleRegions.at(rand() % (eligibleRegions.size() - 1)));
+		break;
 	}
 	case(5):		// Attack Sequence: choose number of troops to attack with:
 	{
@@ -423,6 +444,7 @@ string GeneticAlgorithm::gaPlay(int gameState, int currentPlayer, int newTroops,
 		if (board.at(currentPlayer).getTroops() >= 3) {
 			return to_string(rand() % 3 + 1);
 		}
+		break;
 	}
 	case(6):		// Attack Sequence: choose number of troops to defend with:
 	{
@@ -432,6 +454,7 @@ string GeneticAlgorithm::gaPlay(int gameState, int currentPlayer, int newTroops,
 		if (board.at(currentPlayer).getTroops() >= 3) {
 			return to_string(rand() % 2 + 1);
 		}
+		break;
 	}
 	case(7):		// Attack Sequence: choose whether or not to continue attacking:
 	{
@@ -441,6 +464,7 @@ string GeneticAlgorithm::gaPlay(int gameState, int currentPlayer, int newTroops,
 		else {
 			return "n";
 		}
+		break;
 	}
 	case(8):
 	{
