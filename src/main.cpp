@@ -15,7 +15,7 @@ int main()
 
 	// Pre-train the GA
 	GeneticAlgorithm GA = GeneticAlgorithm();
-	GA.preEvolveAttack(10, 1000, 0.30);
+	GA.preEvolveAttack(100, 100, 0.30);
 	
 	string input;
 	printf("Enter a number (3-5) of players.\n");
