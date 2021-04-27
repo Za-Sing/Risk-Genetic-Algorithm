@@ -47,7 +47,9 @@ void GeneticAlgorithm::preEvolveAttack(int generations, int popSize, double muta
 	// First column is win bool, second column is troops used / troops returned
 	vector<vector<double>> results(popSize, vector<double>(2, 0));  
 	// A vector to hold the top ten best values over all generations
-	vector<vector<double>> globalBest(10, vector<double>(3, 0));
+	vector<vector<double>> globalBest(generations, vector<double>(3, 0));
+	// A vector to track the average fitness of each generation
+	vector<double> avgGlobalFitness(generations, 0);
 
 	// Create a variety of Region pairs on which to train. trainingRegions[i][0] is the owned Region, trainingRegions[i][1] is the enemy Region
 	vector<vector<Region>> trainingRegions(1000, vector<Region>(2, Region(0, "Alaska", vector<int>{1, 3, 24})));
@@ -95,6 +97,13 @@ void GeneticAlgorithm::preEvolveAttack(int generations, int popSize, double muta
 			printf("%d: %f %f %f\n", i, weightVals[i][0], weightVals[i][1], weightVals[i][2]);
 		}
 
+		// Average the fitness of the population per gen
+		double fitSum = 0;
+		for (int i = 0; i < popSize; ++i) {
+			fitSum += weightVals[i][2];
+		}
+		avgGlobalFitness[g] = (fitSum / popSize);
+
 		// Select the best 25% of the population
 		// Sort the population based on the whole individual's fitness
 		sort(weightVals.begin(), weightVals.end(), sortcol);
@@ -104,26 +113,10 @@ void GeneticAlgorithm::preEvolveAttack(int generations, int popSize, double muta
 			bestWeightVals[i][2] = weightVals[popSize - 1 - i][2];
 		}
 
-		// Collect the best ten results and update them if necessary on future generations
-		if (firstGen) {
-			for (int i = 0; i < 10; ++i) {
-				globalBest[i][0] = bestWeightVals[(popSize / 4) - 1 - i][0];
-				globalBest[i][1] = bestWeightVals[(popSize / 4) - 1 - i][1];
-				globalBest[i][2] = bestWeightVals[(popSize / 4) - 1 - i][2];
-			}
-			firstGen = false;
-		}
-		else {
-			for (int i = 0; i < popSize / 4; ++i) {
-				for (int j = 0; j < 10; ++j) {
-					if (bestWeightVals[i][2] > globalBest[j][2]) {
-						globalBest[j][0] = bestWeightVals[i][0];
-						globalBest[j][1] = bestWeightVals[i][1];
-						globalBest[j][2] = bestWeightVals[i][2];
-					}
-				}
-			}
-		}
+		// Collect the best result from each generation
+		globalBest[g][0] = bestWeightVals[0][0];
+		globalBest[g][1] = bestWeightVals[0][1];
+		globalBest[g][2] = bestWeightVals[0][2];
 
 		// DEBUG
 		/*printf("Best 25%: \n");
@@ -187,10 +180,26 @@ void GeneticAlgorithm::preEvolveAttack(int generations, int popSize, double muta
 		}*/
 		printf("\\**********************/\n");
 	}
+
+	// Set the GA parameters by averaging the best 25% of the last generation
+	double weight1Sum = 0, weight2Sum = 0;
+	for (int i = 0; i < popSize / 4; ++i) {
+		weight1Sum += bestWeightVals[i][0];
+		weight2Sum += bestWeightVals[i][1];
+	}
+	troopRatioWeight = (weight1Sum / (popSize / 4));
+	contBonusWeight = (weight2Sum / (popSize / 4));
+
 	//DEBUG
-	printf("GLOBAL BEST 10: \n");
-	for (int i = 0; i < 10; ++i) {
+	printf("GLOBAL BEST FROM EACH GEN: \n");
+	for (int i = 0; i < generations; ++i) {
 		printf("%d: %f %f %f\n", i, globalBest[i][0], globalBest[i][1], globalBest[i][2]);
+	}
+
+	//DEBUG
+	printf("AVG FITNESS FROM EACH GEN: \n");
+	for (int i = 0; i < generations; ++i) {
+		printf("%d: %f\n", i, avgGlobalFitness[i]);
 	}
 }
 
