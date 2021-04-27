@@ -25,6 +25,9 @@ private:
 	// For TROOP MOVEMENT decision process
 	//blank 4 now
 
+	// For GA PLAY process
+	int regionToAttack;
+
 public:
 	GeneticAlgorithm();
 	void preEvolveAttack(int generations, int popSize, double mutationProb);
