@@ -399,5 +399,26 @@ string GeneticAlgorithm::gaPlay(int gameState, int currentPlayer, int newTroops,
 	{
 		return x;
 	}
+	case(8):
+	{
+		/*
+		string troopMovement;
+		vector<Region> myRegions;
+		for (int i = 0; i < board.size(); i++)
+		{
+			if (board.at(i).getCommander_id() == currentPlayer)
+			{
+				myRegions.push_back(board.at(i));
+			}
+		}
+		int pick = rand() % myRegions.size();
+		troopMovement += to_string(myRegions[pick].getID());
+		int numTroops = rand() % newTroops;
+		troopMovement += " ";
+		troopMovement += "0";
+		*/
+		return "-1 -1 -1";
+		break;
+	}
 	}
 }
