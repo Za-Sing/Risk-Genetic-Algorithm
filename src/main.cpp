@@ -91,36 +91,44 @@ int main()
 					{
 						splitInt.push_back(stoi(element));
 					}
-					if (game.board.at(splitInt.at(0)).getCommander_id() != currentPlayer || game.board.at(splitInt.at(1)).getCommander_id() != currentPlayer)
-					{
-						printf("You don't own at least one of those regions.\n");
-						continue;
-					}
-					else
+					if (splitInt.at(0) != -1)
 					{
 
-						vector<bool> falses(game.board.size(), false);
-						if (game.isChain(splitInt.at(0), splitInt.at(1), currentPlayer, falses))	// check for chain
+						if (game.board.at(splitInt.at(0)).getCommander_id() != currentPlayer || game.board.at(splitInt.at(1)).getCommander_id() != currentPlayer)
 						{
-							if (game.board.at(splitInt.at(0)).getTroops() > splitInt.at(2))
-							{
-								game.board.at(splitInt.at(0)).addTroops(-splitInt.at(2));
-								game.board.at(splitInt.at(1)).addTroops(splitInt.at(2));
-								inputing = false;
-							}
-							else
-							{
-								printf("You don't have that many troops to move.\n");
-								continue;
-							}
-
-
+							printf("You don't own at least one of those regions.\n");
+							continue;
 						}
 						else
 						{
-							printf("You don't have a chain of regions along which to move troops.\n");
-							continue;
+
+							vector<bool> falses(game.board.size(), false);
+							if (game.isChain(splitInt.at(0), splitInt.at(1), currentPlayer, falses))	// check for chain
+							{
+								if (game.board.at(splitInt.at(0)).getTroops() > splitInt.at(2))
+								{
+									game.board.at(splitInt.at(0)).addTroops(-splitInt.at(2));
+									game.board.at(splitInt.at(1)).addTroops(splitInt.at(2));
+									inputing = false;
+								}
+								else
+								{
+									printf("You don't have that many troops to move.\n");
+									continue;
+								}
+
+
+							}
+							else
+							{
+								printf("You don't have a chain of regions along which to move troops.\n");
+								continue;
+							}
 						}
+					}
+					else
+					{
+						inputing = false;
 					}
 				}
 			}
