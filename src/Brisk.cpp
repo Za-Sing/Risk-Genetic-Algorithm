@@ -355,7 +355,7 @@ void Brisk::beginningClaim(vector<Player*>* players) {
 				printf("Player %i, please choose next region ID for region to occupy.\n", currentPlayer);
 				if (players->at(currentPlayer)->getGA() != NULL)
 				{
-					regionChoice = stoi(players->at(currentPlayer)->getGA()->gaPlay(0, board));
+					regionChoice = stoi(players->at(currentPlayer)->getGA()->gaPlay(0, currentPlayer, board));
 				}
 				else
 				{
@@ -401,7 +401,14 @@ void Brisk::beginningClaim(vector<Player*>* players) {
 				succPlaceTroop = false;
 				while (succPlaceTroop == false) {
 
-					cin >> regionChoice;
+					if (players->at(currentPlayer)->getGA() != NULL)
+					{
+						regionChoice = stoi(players->at(currentPlayer)->getGA()->gaPlay(1, currentPlayer, board));
+					}
+					else
+					{
+						cin >> regionChoice;
+					}
 
 					// check that they own the region
 					if (board[regionChoice].getCommander_id() == currentPlayer) {
