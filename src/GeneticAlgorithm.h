@@ -9,7 +9,7 @@
 class GeneticAlgorithm
 {
 private:
-
+	vector<Region> board;
 	int rollDie();
 	bool divByFour(string s);
 
@@ -29,6 +29,7 @@ public:
 	void preEvolveAttack(int generations, int popSize, double mutationProb);
 	void gaAttack();
 	vector<double> gaAttack(Region ownRegion, Region enemyRegion, double ratioWeight, double contBonusWeight);
+	string gaPlay(int gameState, vector<Region> board);
 };
 
 #endif // !GENETICALGORITHM_H

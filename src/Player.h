@@ -29,6 +29,7 @@ public:
 	void playCards(vector<Card>* deck, vector<int> returnedCards);
 	void setDefeated(bool isDefeated);
 	bool getDefeated();
+	GeneticAlgorithm* getGA();
 };
 
 #endif // !PLAYER_H

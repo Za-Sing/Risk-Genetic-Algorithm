@@ -353,7 +353,14 @@ void Brisk::beginningClaim(vector<Player*>* players) {
 			while (succPlaceRegion == false) {
 				//print and take player's region choice
 				printf("Player %i, please choose next region ID for region to occupy.\n", currentPlayer);
-				cin >> regionChoice;
+				if (players->at(currentPlayer)->getGA() != NULL)
+				{
+					regionChoice = stoi(players->at(currentPlayer)->getGA()->gaPlay(0, board));
+				}
+				else
+				{
+					cin >> regionChoice;
+				}
 
 
 				// update each region to be owned by the player that chooses it

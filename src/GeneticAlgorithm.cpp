@@ -312,3 +312,59 @@ vector<double> GeneticAlgorithm::gaAttack(Region ownRegion, Region enemyRegion, 
 		return { -1.0, -1.0 };
 	}
 }
+
+/*
+* Method for getting GA decision for every game input. returns string to 
+* be used inplace of terminal input. Gamestate is used to determine which 
+* game input is being requested.
+* 
+*/
+string GeneticAlgorithm::gaPlay(int gameState, vector<Region> board)
+{
+	string x;
+	switch (gameState)
+	{
+	case(0):		//choose region to occupy
+	{
+		vector<Region> availableRegions;
+		for (int i = 0; i < board.size(); i++)
+		{
+			if (board.at(i).getCommander_id() == 99)
+			{
+				availableRegions.push_back(board.at(i));
+			}
+		}
+		int pick = rand() % availableRegions.size();
+		return to_string(availableRegions[pick].getID());
+		break;
+	}
+	case(1):
+	{
+		return x;
+	}
+	case(2):
+	{
+		return x;
+	}
+	case(3):
+	{
+		return x;
+	}
+	case(4):
+	{
+		return x;
+	}
+	case(5):
+	{
+		return x;
+	}
+	case(6):
+	{
+		return x;
+	}
+	case(7):
+	{
+		return x;
+	}
+	}
+}

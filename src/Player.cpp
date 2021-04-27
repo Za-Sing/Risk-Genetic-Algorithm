@@ -24,6 +24,11 @@ Player::Player(int numPlayers, bool isBot)
 
 // Good 'ol getters and setters
 
+GeneticAlgorithm* Player::getGA()
+{
+	return ga;
+}
+
 int Player::getTotalArmySize()
 {
 	return numTroops;
