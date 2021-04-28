@@ -469,7 +469,7 @@ void Brisk::placeTroops(int currentPlayer, vector<Player*>* players)
 
 
 			vector<int> splitInt;
-			stringstream ss(stoi(players->at(currentPlayer)->getGA()->gaPlay(2, currentPlayer, newTroops, board)));
+			stringstream ss(players->at(currentPlayer)->getGA()->gaPlay(2, currentPlayer, newTroops, board));
 			string element;
 			while (getline(ss, element, ' '))
 			{

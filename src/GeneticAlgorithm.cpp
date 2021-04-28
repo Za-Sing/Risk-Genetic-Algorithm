@@ -203,9 +203,9 @@ void GeneticAlgorithm::preEvolveAttack(int generations, int popSize, double muta
 	vector<vector<Region>> trainingRegions(1000, vector<Region>(2, Region(0, "Alaska", vector<int>{1, 3, 24})));
 	for (int i = 0; i < 1000; ++i) {
 		trainingRegions[i][0] = Region(0, "Alaska", vector<int>{1, 3, 24});
-		trainingRegions[i][0].addTroops(rand() % 35 + 2);
+		trainingRegions[i][0].addTroops(rand() % (35 + 1) + 2);
 		trainingRegions[i][1] = Region(1, "Northwest_Territory", vector<int>{0, 3, 4, 2});
-		trainingRegions[i][1].addTroops(rand() % 35 + 1);
+		trainingRegions[i][1].addTroops(rand() % (35 + 1) + 1);
 	}
 
 	// Will run for g generations
@@ -222,7 +222,7 @@ void GeneticAlgorithm::preEvolveAttack(int generations, int popSize, double muta
 		// Attack with current parameters
 		vector<double> temp = vector<double>();
 		for (int i = 0; i < popSize; ++i) {
-			temp = gaAttack(trainingRegions.at(rand() % (trainingRegions.size() - 1)).at(0), trainingRegions.at(rand() % (trainingRegions.size() - 1)).at(1), 
+			temp = gaAttack(trainingRegions.at(rand() % (trainingRegions.size())).at(0), trainingRegions.at(rand() % (trainingRegions.size())).at(1), 
 							weightVals[i][0], weightVals[i][1]);  
 			results[i][0] = temp[0];
 			results[i][1] = temp[1];
@@ -521,9 +521,10 @@ string GeneticAlgorithm::gaPlay(int gameState, int currentPlayer, int newTroops,
 		}
 		int pick = rand() % myRegions.size();
 		troopPlacement += to_string(myRegions[pick].getID());
-		int numTroops = rand() % newTroops;
+		int numTroops = rand() % (newTroops + 1);
 		troopPlacement += " ";
 		troopPlacement += to_string(numTroops);
+		return troopPlacement;
 		break;
 	}
 	case(3):		// Attack Sequence: pick Region to attack
@@ -554,7 +555,7 @@ string GeneticAlgorithm::gaPlay(int gameState, int currentPlayer, int newTroops,
 				}
 			}
 			// Now choose which of these to attack:
-			regionToAttack = eligibleRegions.at(rand() % (eligibleRegions.size() - 1));
+			regionToAttack = eligibleRegions.at(rand() % (eligibleRegions.size()));
 			return to_string(regionToAttack);
 		}
 		// The Brisk attackSequence() first chooses region to attack, and then region from which to attack.
@@ -590,7 +591,7 @@ string GeneticAlgorithm::gaPlay(int gameState, int currentPlayer, int newTroops,
 				}
 			}
 			// Now choose which of these to attack:
-			return to_string(eligibleRegions.at(rand() % (eligibleRegions.size() - 1)));
+			return to_string(eligibleRegions.at(rand() % (eligibleRegions.size())));
 		}
 		// As discussed above, this returns the already-determined home region
 		else 
@@ -605,10 +606,10 @@ string GeneticAlgorithm::gaPlay(int gameState, int currentPlayer, int newTroops,
 			return to_string(1);
 		}
 		if (board.at(currentPlayer).getTroops() == 3) {
-			return to_string(rand() % 2 + 1);
+			return to_string(rand() % (2 + 1) + 1);
 		}
 		if (board.at(currentPlayer).getTroops() >= 3) {
-			return to_string(rand() % 3 + 1);
+			return to_string(rand() % (3 + 1) + 1);
 		}
 		break;
 	}
@@ -618,13 +619,13 @@ string GeneticAlgorithm::gaPlay(int gameState, int currentPlayer, int newTroops,
 			return to_string(1);
 		}
 		if (board.at(currentPlayer).getTroops() >= 3) {
-			return to_string(rand() % 2 + 1);
+			return to_string(rand() % (2 + 1) + 1);
 		}
 		break;
 	}
 	case(7):		// Attack Sequence: choose whether or not to continue attacking:
 	{
-		if ((rand() % 1) == 1) {
+		if ((rand() % 2) == 1) {
 			return "y";
 		}
 		else {
