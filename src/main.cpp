@@ -14,8 +14,8 @@ int main()
 	Brisk game = Brisk();
 
 	// Pre-train the GA
-	GeneticAlgorithm GA = GeneticAlgorithm();
-	GA.preEvolveAttack(100, 100, 0.30);
+	//GeneticAlgorithm GA = GeneticAlgorithm();
+	//GA.preEvolveAttack(100, 100, 0.30);
 	
 	string input;
 	printf("Enter a number (3-5) of players.\n");
@@ -24,6 +24,9 @@ int main()
 	printf("Indicate how many will be bots.\n");
 	getline(cin, input);
 	int numBots = stoi(input);
+	printf("Indicate how many bots will be pretrained.\n");
+	getline(cin, input);
+	int numPretrainedBots = stoi(input);
 	// Make sure the range is correct
 	while (numPlayers < 3 || numPlayers > 5) {
 		printf("Please enter a number between 3 & 5.\n");
