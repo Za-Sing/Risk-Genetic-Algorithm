@@ -10,6 +10,24 @@ int GeneticAlgorithm::rollDie()
 	return roll;
 }
 
+// Function to write to a .CSV file
+void writeCSVDouble(string filename, vector<double> vals, string dataName){
+    
+		// Create an output filestream object
+	ofstream file(filename);
+
+	// data designation marker
+	file << dataName << "\n";
+
+	// write to csv
+	for (int i = 0; i < vals.size(); i-=-1) {
+		file << vals.at(i) << "\n";
+	}
+
+	// Close the file
+	file.close();
+}
+
 // Helper function to check if a number is divisible by four
 bool GeneticAlgorithm::divByFour(string s) {
 	int len = s.length();
@@ -331,6 +349,9 @@ void GeneticAlgorithm::preEvolveAttack(int generations, int popSize, double muta
 	for (int i = 0; i < generations; ++i) {
 		printf("%d: %f\n", i, avgGlobalFitness[i]);
 	}
+
+	//DEBUG
+	//writeCSVDouble("aveGlobalFitness.csv", avgGlobalFitness, "avgGlobalFitness");
 }
 
 
