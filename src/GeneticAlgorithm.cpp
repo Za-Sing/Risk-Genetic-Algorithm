@@ -1,8 +1,8 @@
 #include "GeneticAlgorithm.h"
 
-
 using namespace std;
-//function for random dice rolls
+
+// Function for random dice rolls
 int GeneticAlgorithm::rollDie()
 {
 	int roll;
@@ -10,6 +10,7 @@ int GeneticAlgorithm::rollDie()
 	return roll;
 }
 
+// Helper function to check if a number is divisible by four
 bool GeneticAlgorithm::divByFour(string s) {
 	int len = s.length();
 	// If there is single digit
@@ -21,8 +22,136 @@ bool GeneticAlgorithm::divByFour(string s) {
 	return ((secondLast * 10 + last) % 4 == 0);
 }
 
+// Helper function to aid sorting a 2D vector by column
 bool sortcol(const vector<double>& v1, const vector<double>& v2) {
 	return v1[2] < v2[2];
+}
+
+// Helper function to check if a player gets a continent bonus
+int GeneticAlgorithm::continentBonus(vector<Region> ownedRegions)
+{
+	int numRegions = ownedRegions.size();
+	int newTroops = 0;
+
+	// Check if player owns North America
+	int matches = 0;
+	for (int i = 0; i < NORTH_AMERICA.size(); ++i) {
+		for (int j = 0; j < numRegions; ++j) {
+			if (ownedRegions[j].getID() == NORTH_AMERICA.at(i).getID()) {
+				++matches;
+			}
+		}
+	}
+	if (matches == NORTH_AMERICA.size()) {
+		newTroops += 5;
+	}
+
+	// Check if player owns South America
+	matches = 0;
+	for (int i = 0; i < SOUTH_AMERICA.size(); ++i) {
+		for (int j = 0; j < numRegions; ++j) {
+			if (ownedRegions[j].getID() == SOUTH_AMERICA.at(i).getID()) {
+				++matches;
+			}
+		}
+	}
+	if (matches == SOUTH_AMERICA.size()) {
+		newTroops += 2;
+	}
+
+	// Check if player owns Europe
+	matches = 0;
+	for (int i = 0; i < EUROPE.size(); ++i) {
+		for (int j = 0; j < numRegions; ++j) {
+			if (ownedRegions[j].getID() == EUROPE.at(i).getID()) {
+				++matches;
+			}
+		}
+	}
+	if (matches == EUROPE.size()) {
+		newTroops += 5;
+	}
+
+	// Check if player owns Asia
+	matches = 0;
+	for (int i = 0; i < ASIA.size(); ++i) {
+		for (int j = 0; j < numRegions; ++j) {
+			if (ownedRegions[j].getID() == ASIA.at(i).getID()) {
+				++matches;
+			}
+		}
+	}
+	if (matches == ASIA.size()) {
+		newTroops += 7;
+	}
+
+	// Check if player owns Africa
+	matches = 0;
+	for (int i = 0; i < AFRICA.size(); ++i) {
+		for (int j = 0; j < numRegions; ++j) {
+			if (ownedRegions[j].getID() == AFRICA.at(i).getID()) {
+				++matches;
+			}
+		}
+	}
+	if (matches == AFRICA.size()) {
+		newTroops += 3;
+	}
+
+	// Check if player owns Australia
+	matches = 0;
+	for (int i = 0; i < AUSTRALIA.size(); ++i) {
+		for (int j = 0; j < numRegions; ++j) {
+			if (ownedRegions[j].getID() == AUSTRALIA.at(i).getID()) {
+				++matches;
+			}
+		}
+	}
+	if (matches == AUSTRALIA.size()) {
+		newTroops += 2;
+	}
+
+	return newTroops;
+}
+
+// Function to check all possible home/enemy region pairs for an attack 
+// and find the best option based on evolved parameters.
+void GeneticAlgorithm::findBestAttack(int currentPlayer, vector<Region> board) 
+{
+	// First step is make a vector that holds all the owned regions
+	vector<Region> myRegions;
+	for (int i = 0; i < board.size(); ++i) {
+		if (board.at(i).getCommander_id() == currentPlayer) {
+			myRegions.push_back(board.at(i));
+		}
+	}
+	// Now we look to find the best attackability score by looking through all possible region attacking combos
+	double bestAttackability = 0;
+	for (int i = 0; i < board.size(); ++i) {
+		for (int j = 0; j < myRegions.size(); ++j) {
+			if (board.at(i).getCommander_id() != currentPlayer) {
+				// If this region borders one of the owned regions
+				if (count(board.at(i).getBorder_ids().begin(), board.at(i).getBorder_ids().end(), myRegions.at(j).getID()) == 1) {
+					// Compute the attackability score of this attack possibility
+					double attackability = ((double)myRegions.at(j).getTroops() / (double)board.at(i).getTroops()) * troopRatioWeight;
+					// Check if winning this region would award a continent bonus.
+					double curBonus = continentBonus(myRegions);
+					vector<Region> temp = myRegions;
+					temp.push_back(board.at(i));
+					double possibleBonus = continentBonus(temp);
+					if (possibleBonus > curBonus) {
+						attackability + contBonusWeight;
+					}
+					// Now check if this is the best score and update the region choices appropriately
+					if (attackability > bestAttackability) {
+						bestAttackability = attackability;
+						regionToAttack = board.at(i).getID();
+						regionFromAttack = myRegions.at(j).getID();
+					}
+				}
+			}
+		}
+	}
 }
 
 // Constructor, randomizes all decision factors
@@ -204,10 +333,6 @@ void GeneticAlgorithm::preEvolveAttack(int generations, int popSize, double muta
 	}
 }
 
-void GeneticAlgorithm::gaAttack()
-{
-
-}
 
 // This function is for use in pre-training. It simulates an attack sequence and then returns a boolean and the ratio of troops lost
 vector<double> GeneticAlgorithm::gaAttack(Region ownRegion, Region enemyRegion, double troopRatioWeight, double contBonusWeight)
@@ -382,55 +507,75 @@ string GeneticAlgorithm::gaPlay(int gameState, int currentPlayer, int newTroops,
 	}
 	case(3):		// Attack Sequence: pick Region to attack
 	{
-		vector<Region> myRegions;
-		for (int i = 0; i < board.size(); i++)
+		if (isRandom) // If the bot is meant to operate completely randomly
 		{
-			if (board.at(i).getCommander_id() == currentPlayer)
+			vector<Region> myRegions;
+			for (int i = 0; i < board.size(); i++)
 			{
-				myRegions.push_back(board.at(i));
+				if (board.at(i).getCommander_id() == currentPlayer)
+				{
+					myRegions.push_back(board.at(i));
+				}
 			}
-		}
-		vector<int> eligibleRegions;
-		for (int i = 0; i < board.size(); i++)
-		{
-			for (int j = 0; j < myRegions.size(); ++j) {
-				if (board.at(i).getCommander_id() != myRegions.at(j).getCommander_id()) {
-					for (int k = 0; k < myRegions.at(j).getBorder_ids().size(); ++k) {
-						// Add each eligible region to the vector if it is not already there
-						if (count(board.at(i).getBorder_ids().begin(), board.at(i).getBorder_ids().end(), myRegions.at(j).getBorder_ids().at(k)) == 1
-							&& count(eligibleRegions.begin(), eligibleRegions.end(), myRegions.at(j).getBorder_ids().at(k)) == 0) {
-							eligibleRegions.push_back(myRegions.at(j).getBorder_ids().at(k));
+			vector<int> eligibleRegions;
+			for (int i = 0; i < board.size(); i++)
+			{
+				for (int j = 0; j < myRegions.size(); ++j) {
+					if (board.at(i).getCommander_id() != myRegions.at(j).getCommander_id()) {
+						for (int k = 0; k < myRegions.at(j).getBorder_ids().size(); ++k) {
+							// Add each eligible region to the vector if it is not already there
+							if (count(board.at(i).getBorder_ids().begin(), board.at(i).getBorder_ids().end(), myRegions.at(j).getBorder_ids().at(k)) == 1
+								&& count(eligibleRegions.begin(), eligibleRegions.end(), myRegions.at(j).getBorder_ids().at(k)) == 0) {
+								eligibleRegions.push_back(myRegions.at(j).getBorder_ids().at(k));
+							}
 						}
 					}
 				}
 			}
+			// Now choose which of these to attack:
+			regionToAttack = eligibleRegions.at(rand() % (eligibleRegions.size() - 1));
+			return to_string(regionToAttack);
 		}
-		// Now choose which of these to attack:
-		regionToAttack = eligibleRegions.at(rand() % (eligibleRegions.size() - 1));
-		return to_string(regionToAttack);
+		// The Brisk attackSequence() first chooses region to attack, and then region from which to attack.
+		// However, the GA will work best if it rates the attackability of all possible home/enemy region combos 
+		// and then picks the best one. To account for this inconsistency, there is a member var to hold both regions chosen.
+		// They will be returned here in the corresponding switch cases.
+		else 
+		{
+			findBestAttack(currentPlayer, board);
+			return to_string(regionToAttack);
+		}
 		break;
 	}
 	case(4):		// Attack Sequence: choose the Region from which to attack:
 	{
-		vector<Region> myRegions;
-		for (int i = 0; i < board.size(); i++)
+		if (isRandom) 
 		{
-			if (board.at(i).getCommander_id() == currentPlayer)
+			vector<Region> myRegions;
+			for (int i = 0; i < board.size(); i++)
 			{
-				myRegions.push_back(board.at(i));
+				if (board.at(i).getCommander_id() == currentPlayer)
+				{
+					myRegions.push_back(board.at(i));
+				}
 			}
+			vector<int> eligibleRegions;
+			for (int i = 0; i < myRegions.size(); i++)
+			{
+				// Add each eligible region to the vector if it is not already there
+				if (count(myRegions.at(i).getBorder_ids().begin(), myRegions.at(i).getBorder_ids().end(), regionToAttack) == 1
+					&& count(eligibleRegions.begin(), eligibleRegions.end(), myRegions.at(i).getID()) == 0) {
+					eligibleRegions.push_back(myRegions.at(i).getID());
+				}
+			}
+			// Now choose which of these to attack:
+			return to_string(eligibleRegions.at(rand() % (eligibleRegions.size() - 1)));
 		}
-		vector<int> eligibleRegions;
-		for (int i = 0; i < myRegions.size(); i++)
+		// As discussed above, this returns the already-determined home region
+		else 
 		{
-			// Add each eligible region to the vector if it is not already there
-			if (count(myRegions.at(i).getBorder_ids().begin(), myRegions.at(i).getBorder_ids().end(), regionToAttack) == 1
-				&& count(eligibleRegions.begin(), eligibleRegions.end(), myRegions.at(i).getID()) == 0) {
-				eligibleRegions.push_back(myRegions.at(i).getID());
-			}
+			return to_string(regionFromAttack);
 		}
-		// Now choose which of these to attack:
-		return to_string(eligibleRegions.at(rand() % (eligibleRegions.size() - 1)));
 		break;
 	}
 	case(5):		// Attack Sequence: choose number of troops to attack with:
