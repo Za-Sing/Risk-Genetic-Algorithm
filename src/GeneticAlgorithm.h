@@ -54,7 +54,8 @@ private:
 	double contBonusWeight;
 
 	// For TROOP PLACEMENT decision process
-	//blank 4 now
+	double placeEnemyRatWeight;
+	double placeFriendlyRatWeight;
 
 	// For TROOP MOVEMENT decision process
 	//blank 4 now
@@ -66,7 +67,8 @@ private:
 public:
 	GeneticAlgorithm();
 	void preEvolveAttack(int generations, int popSize, double mutationProb);
-	vector<double> gaAttack(Region ownRegion, Region enemyRegion, double ratioWeight, double contBonusWeight);
+	vector<double> gaPlace(Region ownRegion, vector<Region> enemyRegions, vector<Region> friendlyRegions, double placeEnemyRatWeight, double placeFriendlyRatWeight);
+	vector<double> gaAttack(Region ownRegion, Region enemyRegion, double troopRatioWeight, double contBonusWeight);
 	string gaPlay(int gameState, int currentPlayer, int newTroops, vector<Region> board);
 };
 
