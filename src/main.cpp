@@ -39,8 +39,12 @@ int main()
 	for (int i = 0; i < numPlayers; i++) {
 		if (numBots > 0) {
 			Player* newPlayer = new Player(numPlayers, true);
-			players->push_back(newPlayer);
 			--numBots;
+			if (numPretrainedBots > 0) {
+				newPlayer->getGA()->preEvolveAttack(10, 100, 0.30);
+				--numPretrainedBots;
+			}
+			players->push_back(newPlayer);
 		}
 		else {
 			Player* newPlayer = new Player(numPlayers, false);
@@ -64,11 +68,17 @@ int main()
 		  		bool gainedARegion = false;
 			
 
-			  // attack regions
-			  printf("Make an attack? y/n\n");
-			  char attackResponse;
-				cin >> attackResponse;
-				while (attackResponse == 'y')
+				// attack regions
+				printf("Make an attack? y/n\n");
+				string attackResponse;
+				if (players->at(currentPlayer)->getGA() != NULL) {
+					attackResponse = players->at(currentPlayer)->getGA()->gaPlay(3, currentPlayer, -1, game.board);
+				}
+				else {
+					cin >> attackResponse;
+
+				}
+				while (attackResponse == "y")
 				{
 
 					game.attackSequence(players, currentPlayer, &gainedARegion);
