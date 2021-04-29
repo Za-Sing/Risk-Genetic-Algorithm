@@ -95,7 +95,7 @@ int main()
 				{
 					string troopMovement;
 					printf("Move your troops, Player %i. Enter in the form <Origin Region ID> <Target Region ID> <# of Troops>.\n", currentPlayer);
-					getline(cin, troopMovement);
+					
 					if (players->at(currentPlayer)->getGA() != NULL) 
 					{
 						troopMovement = players->at(currentPlayer)->getGA()->gaPlay(8, currentPlayer, -1, game.board);
