@@ -855,7 +855,7 @@ void Brisk::attackSequence(vector<Player*>* players, int currentPlayer, bool* ga
 		if ((captured == false) && (defended == false)) {
 			printf("attack again? y / n\n");
 			if (players->at(currentPlayer)->getGA() != NULL) {
-				reAttack = players->at(currentPlayer)->getGA()->gaPlay(3, currentPlayer, -1, board);
+				reAttack = players->at(currentPlayer)->getGA()->gaPlay(8, currentPlayer, -1, board);
 			}
 			else {
 				getline(cin, reAttack);
