@@ -98,7 +98,7 @@ int main()
 					getline(cin, troopMovement);
 					if (players->at(currentPlayer)->getGA() != NULL) 
 					{
-						troopMovement = players->at(currentPlayer)->getGA()->gaPlay(8, currentPlayer, -1, game.board);
+						troopMovement = players->at(currentPlayer)->getGA()->gaPlay(9, currentPlayer, -1, game.board);
 					}
 					else 
 					{

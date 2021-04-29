@@ -148,8 +148,9 @@ void GeneticAlgorithm::findBestAttack(int currentPlayer, vector<Region> board)
 	for (int i = 0; i < board.size(); ++i) {
 		for (int j = 0; j < myRegions.size(); ++j) {
 			if (board.at(i).getCommander_id() != currentPlayer) {
+				vector<int> temp1 = board.at(i).getBorder_ids();
 				// If this region borders one of the owned regions
-				if (count(board.at(i).getBorder_ids().begin(), board.at(i).getBorder_ids().end(), myRegions.at(j).getID()) == 1) {
+				if (count(temp1.begin(), temp1.end(), myRegions.at(j).getID()) == 1) {
 					// Compute the attackability score of this attack possibility
 					double attackability = ((double)myRegions.at(j).getTroops() / (double)board.at(i).getTroops()) * troopRatioWeight;
 					// Check if winning this region would award a continent bonus.
@@ -550,16 +551,15 @@ string GeneticAlgorithm::gaPlay(int gameState, int currentPlayer, int newTroops,
 				}
 			}
 			vector<int> eligibleRegions;
-			for (int i = 0; i < board.size(); i++)
+			for (int i = 0; i < myRegions.size(); i++)
 			{
-				for (int j = 0; j < myRegions.size(); ++j) {
-					if (board.at(i).getCommander_id() != myRegions.at(j).getCommander_id()) {
-						for (int k = 0; k < myRegions.at(j).getBorder_ids().size(); ++k) {
-							// Add each eligible region to the vector if it is not already there
-							if (count(board.at(i).getBorder_ids().begin(), board.at(i).getBorder_ids().end(), myRegions.at(j).getBorder_ids().at(k)) == 1
-								&& count(eligibleRegions.begin(), eligibleRegions.end(), myRegions.at(j).getBorder_ids().at(k)) == 0) {
-								eligibleRegions.push_back(myRegions.at(j).getBorder_ids().at(k));
-							}
+				for (int j = 0; j < board.size(); ++j) {
+					if (board.at(j).getCommander_id() != myRegions.at(i).getCommander_id()) {
+						vector<int> temp = myRegions.at(i).getBorder_ids();
+						// Add each eligible region to the vector if it is not already there
+						if (count(temp.begin(), temp.end(), board.at(j).getID()) == 1
+							&& count(eligibleRegions.begin(), eligibleRegions.end(), board.at(j).getID()) == 0) {
+							eligibleRegions.push_back(board.at(j).getID());
 						}
 					}
 				}
@@ -595,7 +595,8 @@ string GeneticAlgorithm::gaPlay(int gameState, int currentPlayer, int newTroops,
 			for (int i = 0; i < myRegions.size(); i++)
 			{
 				// Add each eligible region to the vector if it is not already there
-				if (count(myRegions.at(i).getBorder_ids().begin(), myRegions.at(i).getBorder_ids().end(), regionToAttack) == 1
+				vector<int> temp = myRegions.at(i).getBorder_ids();
+				if (count(temp.begin(), temp.end(), regionToAttack) == 1
 					&& count(eligibleRegions.begin(), eligibleRegions.end(), myRegions.at(i).getID()) == 0) {
 					eligibleRegions.push_back(myRegions.at(i).getID());
 				}
