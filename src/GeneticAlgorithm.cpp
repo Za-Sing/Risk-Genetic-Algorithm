@@ -356,6 +356,7 @@ void GeneticAlgorithm::preEvolveAttack(int generations, int popSize, double muta
 }
 
 
+
 // This function is for use in pre-training. It simulates an attack sequence and then returns a boolean and the ratio of troops lost
 vector<double> GeneticAlgorithm::gaAttack(Region ownRegion, Region enemyRegion, double troopRatioWeight, double contBonusWeight)
 {
@@ -468,6 +469,39 @@ vector<double> GeneticAlgorithm::gaAttack(Region ownRegion, Region enemyRegion, 
 	else {
 		return { -1.0, -1.0 };
 	}
+}
+
+vector<double> GeneticAlgorithm::gaPlace(Region ownRegion, vector<Region> enemyRegions, vector<Region> friendlyRegions,
+	double placeEnemyRatWeight, double placeFriendlyRatWeight) {
+
+	bool bonus = false;
+	double placability = 0.0;
+	int ownTroops = ownRegion.getTroops(), enemyTroops = enemyRegions[0].getTroops() + enemyRegions[1].getTroops(),
+		friendlyTroops = friendlyRegions[0].getTroops() + friendlyRegions[1].getTroops();
+	vector<double> returnValue(2, 0);
+
+	this->troopRatioWeight;
+	this->contBonusWeight;
+
+	// Calculate Placability score using both enemy and friendly
+	placability = (((double)ownTroops / (double)enemyTroops) * placeEnemyRatWeight) +
+		(((double)ownTroops / (double)friendlyTroops) * placeFriendlyRatWeight);
+	printf("Placability: %f\n", placability);
+
+
+	if (placability >= 1) {
+		// index 0 is 1 if win and 0 if loss, index 1 is ratio remaining troops / original troops
+		returnValue = gaAttack(ownRegion, enemyRegions[0], this->troopRatioWeight, this->contBonusWeight);
+	}
+	else {
+		returnValue[0] = -1.0;
+		returnValue[1] = -1.0;
+	}
+
+	return returnValue;
+
+
+
 }
 
 /*
