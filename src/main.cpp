@@ -83,9 +83,13 @@ int main()
 
 					game.attackSequence(players, currentPlayer, &gainedARegion);
 					printf("Make another attack? y/n\n");
-					cin >> attackResponse;
+					if (players->at(currentPlayer)->getGA() != NULL) {
+						attackResponse = players->at(currentPlayer)->getGA()->gaPlay(3, currentPlayer, -1, game.board);
+					}
+					else {
+						cin >> attackResponse;
 
-
+					}
 				}
 
 				// move troops
@@ -98,7 +102,7 @@ int main()
 					
 					if (players->at(currentPlayer)->getGA() != NULL) 
 					{
-						troopMovement = players->at(currentPlayer)->getGA()->gaPlay(9, currentPlayer, -1, game.board);
+						troopMovement = players->at(currentPlayer)->getGA()->gaPlay(8, currentPlayer, -1, game.board);
 					}
 					else 
 					{
