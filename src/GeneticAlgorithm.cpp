@@ -564,11 +564,30 @@ string GeneticAlgorithm::gaPlay(int gameState, int currentPlayer, int newTroops,
 	}
 	case(3):
 	{
-		if ((static_cast <double> (rand()) / (static_cast <double> (RAND_MAX / 1.0)) <= 0.85)) {
-			return "y";
+		vector<Region> myRegions;
+		for (int i = 0; i < board.size(); i++)
+		{
+			if (board.at(i).getCommander_id() == currentPlayer)
+			{
+				myRegions.push_back(board.at(i));
+			}
+		}
+		bool eligibleRegion = false;
+		for (int i = 0; i < myRegions.size(); ++i) {
+			if (myRegions.at(i).getTroops() > 1) {
+				eligibleRegion = true;
+			}
+		}
+		if (!eligibleRegion) {
+			return "n";
 		}
 		else {
-			return "n";
+			if ((static_cast <double> (rand()) / (static_cast <double> (RAND_MAX / 1.0)) <= 0.85)) {
+				return "y";
+			}
+			else {
+				return "n";
+			}
 		}
 		break;
 	}
@@ -631,7 +650,8 @@ string GeneticAlgorithm::gaPlay(int gameState, int currentPlayer, int newTroops,
 				// Add each eligible region to the vector if it is not already there
 				vector<int> temp = myRegions.at(i).getBorder_ids();
 				if (count(temp.begin(), temp.end(), regionToAttack) == 1
-					&& count(eligibleRegions.begin(), eligibleRegions.end(), myRegions.at(i).getID()) == 0) {
+					&& count(eligibleRegions.begin(), eligibleRegions.end(), myRegions.at(i).getID()) == 0
+					&& myRegions.at(i).getTroops() > 1) {
 					eligibleRegions.push_back(myRegions.at(i).getID());
 				}
 			}
@@ -651,10 +671,10 @@ string GeneticAlgorithm::gaPlay(int gameState, int currentPlayer, int newTroops,
 			return to_string(1);
 		}
 		if (board.at(regionFromAttack).getTroops() == 3) {
-			return to_string(rand() % (2 + 1) + 1);
+			return to_string(rand() % 2 + 1);
 		}
 		if (board.at(regionFromAttack).getTroops() >= 3) {
-			return to_string(rand() % (3 + 1) + 1);
+			return to_string(rand() % 3 + 1);
 		}
 		break;
 	}
@@ -669,6 +689,21 @@ string GeneticAlgorithm::gaPlay(int gameState, int currentPlayer, int newTroops,
 		break;
 	}
 	case(8):
+	{
+		if (board.at(regionToAttack).getTroops() <= 1) {
+			return "n";
+		}
+		else {
+			if ((static_cast <double> (rand()) / (static_cast <double> (RAND_MAX / 1.0)) <= 0.85)) {
+				return "y";
+			}
+			else {
+				return "n";
+			}
+		}
+		break;
+	}
+	case(9):
 	{
 		/*
 		string troopMovement;
