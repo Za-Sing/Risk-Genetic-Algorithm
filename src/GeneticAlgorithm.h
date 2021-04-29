@@ -4,7 +4,10 @@
 #include <vector>
 #include <algorithm>
 #include <ctime>
+#include <fstream>
+#include <string>
 #include "Region.h"
+
 
 class GeneticAlgorithm
 {
