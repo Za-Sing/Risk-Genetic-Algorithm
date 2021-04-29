@@ -814,7 +814,14 @@ void Brisk::attackSequence(vector<Player*>* players, int currentPlayer, bool* ga
 			printf("Player %i has lost the region!\nPlayer %i now owns the region.\n\n", defender, currentPlayer);
 
 			vector<Region> currentRegions = players->at(defender)->getOwnedRegions();
-			currentRegions.erase(currentRegions.begin() + attackTo);
+			int deleteI = 0;
+			for (int i = 0; i < currentRegions.size(); ++i) {
+				if (currentRegions.at(i).getID() == attackTo) {
+					deleteI = i;
+					break;
+				}
+			}
+			currentRegions.erase(currentRegions.begin() + deleteI);
 			players->at(defender)->updateOwnedRegions(currentRegions);
 
 			currentRegions = players->at(currentPlayer)->getOwnedRegions();
@@ -848,7 +855,7 @@ void Brisk::attackSequence(vector<Player*>* players, int currentPlayer, bool* ga
 		if ((captured == false) && (defended == false)) {
 			printf("attack again? y / n\n");
 			if (players->at(currentPlayer)->getGA() != NULL) {
-				reAttack = players->at(currentPlayer)->getGA()->gaPlay(8, currentPlayer, -1, board);
+				reAttack = players->at(currentPlayer)->getGA()->gaPlay(3, currentPlayer, -1, board);
 			}
 			else {
 				getline(cin, reAttack);

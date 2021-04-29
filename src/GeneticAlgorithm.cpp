@@ -613,38 +613,28 @@ string GeneticAlgorithm::gaPlay(int gameState, int currentPlayer, int newTroops,
 	}
 	case(6):		// Attack Sequence: choose number of troops to attack with:
 	{
-		if (board.at(currentPlayer).getTroops() == 2) {
+		if (board.at(regionFromAttack).getTroops() == 2) {
 			return to_string(1);
 		}
-		if (board.at(currentPlayer).getTroops() == 3) {
+		if (board.at(regionFromAttack).getTroops() == 3) {
 			return to_string(rand() % (2 + 1) + 1);
 		}
-		if (board.at(currentPlayer).getTroops() >= 3) {
+		if (board.at(regionFromAttack).getTroops() >= 3) {
 			return to_string(rand() % (3 + 1) + 1);
 		}
 		break;
 	}
 	case(7):		// Attack Sequence: choose number of troops to defend with:
 	{
-		if (board.at(currentPlayer).getTroops() == 2) {
+		if (board.at(regionToAttack).getTroops() == 2) {
 			return to_string(1);
 		}
-		if (board.at(currentPlayer).getTroops() >= 3) {
-			return to_string(rand() % (2 + 1) + 1);
+		if (board.at(regionToAttack).getTroops() >= 3) {
+			return to_string(rand() % 2 + 1);
 		}
 		break;
 	}
-	case(8):		// Attack Sequence: choose whether or not to continue attacking:
-	{
-		if ((static_cast <double> (rand()) / (static_cast <double> (RAND_MAX / 1.0)) <= 0.85)) {
-			return "y";
-		}
-		else {
-			return "n";
-		}
-		break;
-	}
-	case(9):
+	case(8):
 	{
 		/*
 		string troopMovement;
