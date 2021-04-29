@@ -527,7 +527,17 @@ string GeneticAlgorithm::gaPlay(int gameState, int currentPlayer, int newTroops,
 		return troopPlacement;
 		break;
 	}
-	case(3):		// Attack Sequence: pick Region to attack
+	case(3):
+	{
+		if ((static_cast <double> (rand()) / (static_cast <double> (RAND_MAX / 1.0)) <= 0.85)) {
+			return "y";
+		}
+		else {
+			return "n";
+		}
+		break;
+	}
+	case(4):		// Attack Sequence: pick Region to attack
 	{
 		if (isRandom) // If the bot is meant to operate completely randomly
 		{
@@ -569,7 +579,7 @@ string GeneticAlgorithm::gaPlay(int gameState, int currentPlayer, int newTroops,
 		}
 		break;
 	}
-	case(4):		// Attack Sequence: choose the Region from which to attack:
+	case(5):		// Attack Sequence: choose the Region from which to attack:
 	{
 		if (isRandom) 
 		{
@@ -600,7 +610,7 @@ string GeneticAlgorithm::gaPlay(int gameState, int currentPlayer, int newTroops,
 		}
 		break;
 	}
-	case(5):		// Attack Sequence: choose number of troops to attack with:
+	case(6):		// Attack Sequence: choose number of troops to attack with:
 	{
 		if (board.at(currentPlayer).getTroops() == 2) {
 			return to_string(1);
@@ -613,7 +623,7 @@ string GeneticAlgorithm::gaPlay(int gameState, int currentPlayer, int newTroops,
 		}
 		break;
 	}
-	case(6):		// Attack Sequence: choose number of troops to defend with:
+	case(7):		// Attack Sequence: choose number of troops to defend with:
 	{
 		if (board.at(currentPlayer).getTroops() == 2) {
 			return to_string(1);
@@ -623,9 +633,9 @@ string GeneticAlgorithm::gaPlay(int gameState, int currentPlayer, int newTroops,
 		}
 		break;
 	}
-	case(7):		// Attack Sequence: choose whether or not to continue attacking:
+	case(8):		// Attack Sequence: choose whether or not to continue attacking:
 	{
-		if ((rand() % 2) == 1) {
+		if ((static_cast <double> (rand()) / (static_cast <double> (RAND_MAX / 1.0)) <= 0.85)) {
 			return "y";
 		}
 		else {
@@ -633,7 +643,7 @@ string GeneticAlgorithm::gaPlay(int gameState, int currentPlayer, int newTroops,
 		}
 		break;
 	}
-	case(8):
+	case(9):
 	{
 		/*
 		string troopMovement;

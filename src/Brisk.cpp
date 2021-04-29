@@ -540,7 +540,7 @@ void Brisk::attackSequence(vector<Player*>* players, int currentPlayer, bool* ga
 	printf("Player %i, which region would you like to attack?\n", currentPlayer);
 	// Check if the player is a GA
 	if (players->at(currentPlayer)->getGA() != NULL) {
-		input = players->at(currentPlayer)->getGA()->gaPlay(3, currentPlayer, -1, board);
+		input = players->at(currentPlayer)->getGA()->gaPlay(4, currentPlayer, -1, board);
 	}
 	else {
 		getline(cin, input);
@@ -567,7 +567,7 @@ void Brisk::attackSequence(vector<Player*>* players, int currentPlayer, bool* ga
 	// Now get the region from which to attack
 	printf("Where would you like to attack from?");
 	if (players->at(currentPlayer)->getGA() != NULL) {
-		input = players->at(currentPlayer)->getGA()->gaPlay(4, currentPlayer, -1, board);
+		input = players->at(currentPlayer)->getGA()->gaPlay(5, currentPlayer, -1, board);
 	}
 	else {
 		getline(cin, input);
@@ -609,7 +609,7 @@ void Brisk::attackSequence(vector<Player*>* players, int currentPlayer, bool* ga
 		// Now get number of troops to attack with
 		printf("How many troops would you like to use? choose 1 through 3.\n");
 		if (players->at(currentPlayer)->getGA() != NULL) {
-			input = players->at(currentPlayer)->getGA()->gaPlay(5, currentPlayer, -1, board);
+			input = players->at(currentPlayer)->getGA()->gaPlay(6, currentPlayer, -1, board);
 		}
 		else {
 			getline(cin, input);
@@ -689,7 +689,7 @@ void Brisk::attackSequence(vector<Player*>* players, int currentPlayer, bool* ga
 		defender = board[attackTo].getCommander_id();
 		printf("Player %i, choose how many troops to defend with!\n", defender);
 		if (players->at(defender)->getGA() != NULL) {
-			input = players->at(defender)->getGA()->gaPlay(6, defender, -1, board);
+			input = players->at(defender)->getGA()->gaPlay(7, defender, -1, board);
 		}
 		else {
 			getline(cin, input);
@@ -848,7 +848,7 @@ void Brisk::attackSequence(vector<Player*>* players, int currentPlayer, bool* ga
 		if ((captured == false) && (defended == false)) {
 			printf("attack again? y / n\n");
 			if (players->at(currentPlayer)->getGA() != NULL) {
-				reAttack = players->at(currentPlayer)->getGA()->gaPlay(7, currentPlayer, -1, board);
+				reAttack = players->at(currentPlayer)->getGA()->gaPlay(8, currentPlayer, -1, board);
 			}
 			else {
 				getline(cin, reAttack);
