@@ -715,7 +715,7 @@ vector<double> GeneticAlgorithm::gaPlace(Region ownRegion, vector<Region> enemyR
 		(((double)ownTroops / (double)friendlyTroops) * placeFriendlyWeight);
 	printf("Placability: %f\n", placeability);
 
-	if (placeability >= 2.0) {
+	if (placeability >= 1.0) {
 		// index 0 is 1 if win and 0 if loss, index 1 is ratio remaining troops / original troops
 		ownRegion.addTroops(rand() % 5 + 1);
 		returnValue = gaAttack(ownRegion, enemyRegions[0], this->troopRatioWeight, this->contBonusWeight);
