@@ -15,8 +15,8 @@ int main()
 
 	// GA TEST
 	/*GeneticAlgorithm GA = GeneticAlgorithm();
-	GA.preEvolveAttack(10, 100, 0.2);
-	GA.preEvolvePlacement(10, 100, 0.2);*/
+	GA.preEvolveAttack(100, 100, 0.2);
+	GA.preEvolvePlacement(100, 100, 0.2);*/
 	
 	string input;
 	printf("Enter a number (3-5) of players.\n");
