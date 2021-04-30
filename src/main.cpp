@@ -14,9 +14,9 @@ int main()
 	Brisk game = Brisk();
 
 	// GA TEST
-	//GeneticAlgorithm GA = GeneticAlgorithm();
-	//GA.preEvolveAttack(100, 100, 0.30);
-	//GA.preEvolvePlacement(100, 100, 0.30);
+	/*GeneticAlgorithm GA = GeneticAlgorithm();
+	GA.preEvolveAttack(10, 100, 0.2);
+	GA.preEvolvePlacement(10, 100, 0.2);*/
 	
 	string input;
 	printf("Enter a number (3-5) of players.\n");
@@ -42,8 +42,8 @@ int main()
 			Player* newPlayer = new Player(numPlayers, true);
 			--numBots;
 			if (numPretrainedBots > 0) {
-				newPlayer->getGA()->preEvolveAttack(10, 100, 0.30);
-				newPlayer->getGA()->preEvolvePlacement(10, 100, 0.30);
+				newPlayer->getGA()->preEvolveAttack(10, 100, 0.20);
+				newPlayer->getGA()->preEvolvePlacement(10, 100, 0.20);
 				--numPretrainedBots;
 			}
 			players->push_back(newPlayer);
@@ -74,7 +74,7 @@ int main()
 				printf("Make an attack? y/n\n");
 				string attackResponse;
 				if (players->at(currentPlayer)->getGA() != NULL) {
-					attackResponse = players->at(currentPlayer)->getGA()->gaPlay(3, currentPlayer, -1, game.board);
+					attackResponse = players->at(currentPlayer)->getGA()->gaPlay(3, currentPlayer, -1, &(game.board));
 				}
 				else {
 					cin >> attackResponse;
@@ -86,7 +86,7 @@ int main()
 					game.attackSequence(players, currentPlayer, &gainedARegion);
 					printf("Make another attack? y/n\n");
 					if (players->at(currentPlayer)->getGA() != NULL) {
-						attackResponse = players->at(currentPlayer)->getGA()->gaPlay(8, currentPlayer, -1, game.board);
+						attackResponse = players->at(currentPlayer)->getGA()->gaPlay(8, currentPlayer, -1, &(game.board));
 					}
 					else {
 						cin >> attackResponse;
@@ -104,7 +104,7 @@ int main()
 					
 					if (players->at(currentPlayer)->getGA() != NULL) 
 					{
-						troopMovement = players->at(currentPlayer)->getGA()->gaPlay(9, currentPlayer, -1, game.board);
+						troopMovement = players->at(currentPlayer)->getGA()->gaPlay(9, currentPlayer, -1, &(game.board));
 					}
 					else 
 					{
