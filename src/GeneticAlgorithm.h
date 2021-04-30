@@ -46,14 +46,13 @@ private:
 	int rollDie();
 	bool divByFour(string s);
 	int continentBonus(vector<Region> ownedRegions);
-	void findBestAttack(int currentPlayer, vector<Region> board);
 
 	// For ATTACK decision process
 	double troopRatioWeight;
 	bool contributeContBonus;
 	double contBonusWeight;
 	vector<double> gaAttack(Region ownRegion, Region enemyRegion, double troopRatioWeight, double contBonusWeight);
-
+	
 	// For TROOP PLACEMENT decision process
 	double placeEnemyRatWeight;
 	double placeFriendlyRatWeight;
@@ -64,13 +63,15 @@ private:
 
 	// For GA PLAY process
 	vector<Region> board;
-	int regionToAttack = 0, regionFromAttack = 0;
+	int regionToAttack = 0, regionFromAttack = 0, regionToPlace;
+	void findBestAttack(int currentPlayer, vector<Region>* board);
+	void findBestPlacement(int currentPlayer, int newTroops, vector<Region>* board);
 
 public:
 	GeneticAlgorithm();
 	void preEvolveAttack(int generations, int popSize, double mutationProb);
 	void preEvolvePlacement(int generations, int popSize, double mutationProb);
-	string gaPlay(int gameState, int currentPlayer, int newTroops, vector<Region> board);
+	string gaPlay(int gameState, int currentPlayer, int newTroops, vector<Region>* board);
 };
 
 #endif // !GENETICALGORITHM_H

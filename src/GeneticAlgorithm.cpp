@@ -134,29 +134,29 @@ int GeneticAlgorithm::continentBonus(vector<Region> ownedRegions)
 
 // Function to check all possible home/enemy region pairs for an attack 
 // and find the best option based on evolved parameters.
-void GeneticAlgorithm::findBestAttack(int currentPlayer, vector<Region> board) 
+void GeneticAlgorithm::findBestAttack(int currentPlayer, vector<Region>* board) 
 {
 	// First step is make a vector that holds all the owned regions
 	vector<Region> myRegions;
-	for (int i = 0; i < board.size(); ++i) {
-		if (board.at(i).getCommander_id() == currentPlayer) {
-			myRegions.push_back(board.at(i));
+	for (int i = 0; i < board->size(); ++i) {
+		if (board->at(i).getCommander_id() == currentPlayer) {
+			myRegions.push_back(board->at(i));
 		}
 	}
 	// Now we look to find the best attackability score by looking through all possible region attacking combos
 	double bestAttackability = 0;
-	for (int i = 0; i < board.size(); ++i) {
+	for (int i = 0; i < board->size(); ++i) {
 		for (int j = 0; j < myRegions.size(); ++j) {
-			if (board.at(i).getCommander_id() != currentPlayer) {
-				vector<int> temp1 = board.at(i).getBorder_ids();
+			if (board->at(i).getCommander_id() != currentPlayer) {
+				vector<int> temp1 = board->at(i).getBorder_ids();
 				// If this region borders one of the owned regions
 				if (count(temp1.begin(), temp1.end(), myRegions.at(j).getID()) == 1) {
 					// Compute the attackability score of this attack possibility
-					double attackability = ((double)myRegions.at(j).getTroops() / (double)board.at(i).getTroops()) * troopRatioWeight;
+					double attackability = ((double)myRegions.at(j).getTroops() / (double)board->at(i).getTroops()) * troopRatioWeight;
 					// Check if winning this region would award a continent bonus.
 					double curBonus = continentBonus(myRegions);
 					vector<Region> temp = myRegions;
-					temp.push_back(board.at(i));
+					temp.push_back(board->at(i));
 					double possibleBonus = continentBonus(temp);
 					if (possibleBonus > curBonus) {
 						attackability + contBonusWeight;
@@ -164,13 +164,57 @@ void GeneticAlgorithm::findBestAttack(int currentPlayer, vector<Region> board)
 					// Now check if this is the best score and update the region choices appropriately
 					if (attackability > bestAttackability) {
 						bestAttackability = attackability;
-						regionToAttack = board.at(i).getID();
+						regionToAttack = board->at(i).getID();
 						regionFromAttack = myRegions.at(j).getID();
 					}
 				}
 			}
 		}
 	}
+}
+
+// Helper function for gaPlay() to use evolved parameters to find the best troop placement
+void GeneticAlgorithm::findBestPlacement(int currentPlayer, int newTroops, vector<Region>* board)
+{
+	// Get this player's regions
+	vector<Region> myRegions;
+	for (int i = 0; i < board->size(); ++i) {
+		if (board->at(i).getCommander_id() == currentPlayer) {
+			myRegions.push_back(board->at(i));
+		}
+	}
+
+	// Find the region that needs troops the most; place one troop, then repeat
+	double bestPlaceability = 0.0;
+	double placeability = 0.0;
+	while (newTroops > 0) {
+		bestPlaceability = 0.0;
+		for (int i = 0; i < myRegions.size(); ++i) {
+			// Find the number of troops in adjacent friendly and enemy territories
+			int ownTroops = myRegions.at(i).getTroops();
+			int enemyTroops = 0, friendlyTroops = 0;
+			vector<int> myBorders = myRegions.at(i).getBorder_ids();
+			for (int j = 0; j < myBorders.size(); ++j) {
+				if (board->at(myBorders.at(j)).getCommander_id() == currentPlayer) {
+					friendlyTroops += board->at(myBorders.at(j)).getTroops();
+				}
+				else {
+					enemyTroops += board->at(myBorders.at(j)).getTroops();
+				}
+			}
+			// Calculate placeability for this region
+			placeability = (((double)ownTroops / (double)enemyTroops) * placeEnemyRatWeight) +
+							(((double)ownTroops / (double)friendlyTroops) * placeFriendlyRatWeight);
+			// Assign the best placeability if appropriate
+			if (placeability > bestPlaceability) {
+				bestPlaceability = placeability;
+				regionToPlace = myRegions.at(i).getID();
+			}
+		}
+		board->at(regionToPlace).addTroops(1);
+		--newTroops;
+	}
+	
 }
 
 // Constructor, randomizes all decision factors
@@ -231,7 +275,7 @@ void GeneticAlgorithm::preEvolveAttack(int generations, int popSize, double muta
 			results[i][1] = temp[1];
 		}
 
-		// Calculate fitness. Fitness is determined by 1 - (return troops / sent troops)
+		// Calculate fitness. Fitness is determined by return troops / sent troops
 		for (int i = 0; i < popSize; ++i) {
 			// If the attack was won
 			if (results[i][0] == 1.0) {
@@ -388,7 +432,7 @@ void GeneticAlgorithm::preEvolvePlacement(int generations, int popSize, double m
 	vector<Region> trainingOwnRegions(1000, Region(0, "Alaska", vector<int>{1, 3, 24}));
 	for (int i = 0; i < 1000; ++i) {
 		trainingOwnRegions[i] = Region(0, "Alaska", vector<int>{1, 3, 24});
-		trainingOwnRegions[i].addTroops(rand() % 25 + 2);
+		trainingOwnRegions[i].addTroops(rand() % 20 + 2);
 	}
 
 	// Will run for g generations
@@ -402,7 +446,7 @@ void GeneticAlgorithm::preEvolvePlacement(int generations, int popSize, double m
 			}
 		}
 
-		// Attack with current parameters
+		// Place with current parameters
 		vector<double> temp = vector<double>();
 		for (int i = 0; i < popSize; ++i) {
 			vector<Region> friendlyRegions = { trainingRegions.at(rand() % trainingRegions.size()).at(0), trainingRegions.at(rand() % trainingRegions.size()).at(0) };
@@ -412,7 +456,7 @@ void GeneticAlgorithm::preEvolvePlacement(int generations, int popSize, double m
 			results[i][1] = temp[1];
 		}
 
-		// Calculate fitness. Fitness is determined by 1 - (return troops / sent troops)
+		// Calculate fitness. Fitness is determined by return troops / sent troops
 		for (int i = 0; i < popSize; ++i) {
 			// If the attack was won
 			if (results[i][0] == 1.0) {
@@ -424,10 +468,10 @@ void GeneticAlgorithm::preEvolvePlacement(int generations, int popSize, double m
 		}
 
 		// DEBUG
-		printf("Population and fitness: \n");
+		/*printf("Population and fitness: \n");
 		for (int i = 0; i < popSize; ++i) {
 			printf("%d: %f %f %f\n", i, weightVals[i][0], weightVals[i][1], weightVals[i][2]);
-		}
+		}*/
 
 		// Average the fitness of the population per gen
 		double fitSum = 0;
@@ -540,7 +584,7 @@ void GeneticAlgorithm::preEvolvePlacement(int generations, int popSize, double m
 
 
 // This function is for use in pre-training. It simulates an attack sequence and then returns a boolean and the ratio of troops lost
-vector<double> GeneticAlgorithm::gaAttack(Region ownRegion, Region enemyRegion, double troopRatioWeight, double contBonusWeight)
+vector<double> GeneticAlgorithm::gaAttack(Region ownRegion, Region enemyRegion, double troopWeight, double contWeight)
 {
 	bool bonus = false, attackWon = false;
 	double attackability = 0, troopLostRatio = 0, continueProb = 0.7;
@@ -554,9 +598,9 @@ vector<double> GeneticAlgorithm::gaAttack(Region ownRegion, Region enemyRegion, 
 	}
 
 	// Calculate attackability score
-	attackability = ((double) ownTroops / (double)enemyTroops) * troopRatioWeight;
+	attackability = ((double) ownTroops / (double)enemyTroops) * troopWeight;
 	if (bonus) {
-		attackability + contBonusWeight;
+		attackability + contWeight;
 	}
 	printf("Attackability: %f\n", attackability);
 
@@ -655,7 +699,7 @@ vector<double> GeneticAlgorithm::gaAttack(Region ownRegion, Region enemyRegion, 
 
 
 vector<double> GeneticAlgorithm::gaPlace(Region ownRegion, vector<Region> enemyRegions, vector<Region> friendlyRegions,
-	double placeEnemyRatWeight, double placeFriendlyRatWeight) {
+	double placeEnemyWeight, double placeFriendlyWeight) {
 
 	bool bonus = false;
 	double placeability = 0.0;
@@ -667,11 +711,11 @@ vector<double> GeneticAlgorithm::gaPlace(Region ownRegion, vector<Region> enemyR
 	this->contBonusWeight;
 
 	// Calculate Placability score using both enemy and friendly
-	placeability = (((double)ownTroops / (double)enemyTroops) * placeEnemyRatWeight) +
-		(((double)ownTroops / (double)friendlyTroops) * placeFriendlyRatWeight);
+	placeability = (((double)ownTroops / (double)enemyTroops) * placeEnemyWeight) +
+		(((double)ownTroops / (double)friendlyTroops) * placeFriendlyWeight);
 	printf("Placability: %f\n", placeability);
 
-	if (placeability >= 1) {
+	if (placeability >= 2.0) {
 		// index 0 is 1 if win and 0 if loss, index 1 is ratio remaining troops / original troops
 		ownRegion.addTroops(rand() % 5 + 1);
 		returnValue = gaAttack(ownRegion, enemyRegions[0], this->troopRatioWeight, this->contBonusWeight);
@@ -689,7 +733,7 @@ vector<double> GeneticAlgorithm::gaPlace(Region ownRegion, vector<Region> enemyR
 * game input is being requested.
 * 
 */
-string GeneticAlgorithm::gaPlay(int gameState, int currentPlayer, int newTroops, vector<Region> board)
+string GeneticAlgorithm::gaPlay(int gameState, int currentPlayer, int newTroops, vector<Region>* board)
 {
 	string x;
 	switch (gameState)
@@ -697,11 +741,11 @@ string GeneticAlgorithm::gaPlay(int gameState, int currentPlayer, int newTroops,
 	case(0):		//BeginningClaim: choose region to occupy
 	{
 		vector<Region> availableRegions;
-		for (int i = 0; i < board.size(); i++)
+		for (int i = 0; i < board->size(); i++)
 		{
-			if (board.at(i).getCommander_id() == 99)
+			if (board->at(i).getCommander_id() == 99)
 			{
-				availableRegions.push_back(board.at(i));
+				availableRegions.push_back(board->at(i));
 			}
 		}
 		int pick = rand() % availableRegions.size();
@@ -711,11 +755,11 @@ string GeneticAlgorithm::gaPlay(int gameState, int currentPlayer, int newTroops,
 	case(1):		//BeginningClaim: place a troop in a region
 	{
 		vector<Region> myRegions;
-		for (int i = 0; i < board.size(); i++)
+		for (int i = 0; i < board->size(); i++)
 		{
-			if (board.at(i).getCommander_id() == currentPlayer)
+			if (board->at(i).getCommander_id() == currentPlayer)
 			{
-				myRegions.push_back(board.at(i));
+				myRegions.push_back(board->at(i));
 			}
 		}
 		int pick = rand() % myRegions.size();
@@ -724,31 +768,39 @@ string GeneticAlgorithm::gaPlay(int gameState, int currentPlayer, int newTroops,
 	}
 	case(2):	//placeTroops
 	{
-		string troopPlacement;
-		vector<Region> myRegions;
-		for (int i = 0; i < board.size(); i++)
+		if (isRandom) 
 		{
-			if (board.at(i).getCommander_id() == currentPlayer)
+			string troopPlacement;
+			vector<Region> myRegions;
+			for (int i = 0; i < board->size(); i++)
 			{
-				myRegions.push_back(board.at(i));
+				if (board->at(i).getCommander_id() == currentPlayer)
+				{
+					myRegions.push_back(board->at(i));
+				}
 			}
+			int pick = rand() % myRegions.size();
+			troopPlacement += to_string(myRegions[pick].getID());
+			int numTroops = rand() % (newTroops + 1);
+			troopPlacement += " ";
+			troopPlacement += to_string(numTroops);
+			return troopPlacement;
 		}
-		int pick = rand() % myRegions.size();
-		troopPlacement += to_string(myRegions[pick].getID());
-		int numTroops = rand() % (newTroops + 1);
-		troopPlacement += " ";
-		troopPlacement += to_string(numTroops);
-		return troopPlacement;
+		else 
+		{
+			findBestPlacement(currentPlayer, newTroops, board);
+			return "";
+		}
 		break;
 	}
 	case(3):
 	{
 		vector<Region> myRegions;
-		for (int i = 0; i < board.size(); i++)
+		for (int i = 0; i < board->size(); i++)
 		{
-			if (board.at(i).getCommander_id() == currentPlayer)
+			if (board->at(i).getCommander_id() == currentPlayer)
 			{
-				myRegions.push_back(board.at(i));
+				myRegions.push_back(board->at(i));
 			}
 		}
 		bool eligibleRegion = false;
@@ -775,23 +827,23 @@ string GeneticAlgorithm::gaPlay(int gameState, int currentPlayer, int newTroops,
 		if (isRandom) // If the bot is meant to operate completely randomly
 		{
 			vector<Region> myRegions;
-			for (int i = 0; i < board.size(); i++)
+			for (int i = 0; i < board->size(); i++)
 			{
-				if (board.at(i).getCommander_id() == currentPlayer)
+				if (board->at(i).getCommander_id() == currentPlayer)
 				{
-					myRegions.push_back(board.at(i));
+					myRegions.push_back(board->at(i));
 				}
 			}
 			vector<int> eligibleRegions;
 			for (int i = 0; i < myRegions.size(); i++)
 			{
-				for (int j = 0; j < board.size(); ++j) {
-					if (board.at(j).getCommander_id() != myRegions.at(i).getCommander_id()) {
+				for (int j = 0; j < board->size(); ++j) {
+					if (board->at(j).getCommander_id() != myRegions.at(i).getCommander_id()) {
 						vector<int> temp = myRegions.at(i).getBorder_ids();
 						// Add each eligible region to the vector if it is not already there
-						if (count(temp.begin(), temp.end(), board.at(j).getID()) == 1
-							&& count(eligibleRegions.begin(), eligibleRegions.end(), board.at(j).getID()) == 0) {
-							eligibleRegions.push_back(board.at(j).getID());
+						if (count(temp.begin(), temp.end(), board->at(j).getID()) == 1
+							&& count(eligibleRegions.begin(), eligibleRegions.end(), board->at(j).getID()) == 0) {
+							eligibleRegions.push_back(board->at(j).getID());
 						}
 					}
 				}
@@ -816,11 +868,11 @@ string GeneticAlgorithm::gaPlay(int gameState, int currentPlayer, int newTroops,
 		if (isRandom) 
 		{
 			vector<Region> myRegions;
-			for (int i = 0; i < board.size(); i++)
+			for (int i = 0; i < board->size(); i++)
 			{
-				if (board.at(i).getCommander_id() == currentPlayer)
+				if (board->at(i).getCommander_id() == currentPlayer)
 				{
-					myRegions.push_back(board.at(i));
+					myRegions.push_back(board->at(i));
 				}
 			}
 			vector<int> eligibleRegions;
@@ -846,30 +898,30 @@ string GeneticAlgorithm::gaPlay(int gameState, int currentPlayer, int newTroops,
 	}
 	case(6):		// Attack Sequence: choose number of troops to attack with:
 	{
-		if (board.at(regionFromAttack).getTroops() == 2) {
+		if (board->at(regionFromAttack).getTroops() == 2) {
 			return to_string(1);
 		}
-		if (board.at(regionFromAttack).getTroops() == 3) {
+		if (board->at(regionFromAttack).getTroops() == 3) {
 			return to_string(rand() % 2 + 1);
 		}
-		if (board.at(regionFromAttack).getTroops() >= 3) {
+		if (board->at(regionFromAttack).getTroops() >= 3) {
 			return to_string(rand() % 3 + 1);
 		}
 		break;
 	}
 	case(7):		// Attack Sequence: choose number of troops to defend with:
 	{
-		if (board.at(regionToAttack).getTroops() == 2) {
+		if (board->at(regionToAttack).getTroops() == 2) {
 			return to_string(1);
 		}
-		if (board.at(regionToAttack).getTroops() >= 3) {
+		if (board->at(regionToAttack).getTroops() >= 3) {
 			return to_string(rand() % 2 + 1);
 		}
 		break;
 	}
 	case(8):
 	{
-		if (board.at(regionToAttack).getTroops() <= 1) {
+		if (board->at(regionToAttack).getTroops() <= 1) {
 			return "n";
 		}
 		else {
