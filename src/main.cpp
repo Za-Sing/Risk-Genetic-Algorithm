@@ -13,9 +13,10 @@ int main()
 	//game setup
 	Brisk game = Brisk();
 
-	// Pre-train the GA
+	// GA TEST
 	//GeneticAlgorithm GA = GeneticAlgorithm();
 	//GA.preEvolveAttack(100, 100, 0.30);
+	//GA.preEvolvePlacement(100, 100, 0.30);
 	
 	string input;
 	printf("Enter a number (3-5) of players.\n");
@@ -42,6 +43,7 @@ int main()
 			--numBots;
 			if (numPretrainedBots > 0) {
 				newPlayer->getGA()->preEvolveAttack(10, 100, 0.30);
+				newPlayer->getGA()->preEvolvePlacement(10, 100, 0.30);
 				--numPretrainedBots;
 			}
 			players->push_back(newPlayer);
