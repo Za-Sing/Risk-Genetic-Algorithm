@@ -179,6 +179,8 @@ GeneticAlgorithm::GeneticAlgorithm()
 	// Start troop weights between 0.0 and 1.0
 	troopRatioWeight = static_cast <double> (rand()) / (static_cast <double> (RAND_MAX / 1.0));
 	contBonusWeight = static_cast <double> (rand()) / (static_cast <double> (RAND_MAX / 1.0));
+	placeEnemyRatWeight = static_cast <double> (rand()) / (static_cast <double> (RAND_MAX / 1.0));
+	placeFriendlyRatWeight = static_cast <double> (rand()) / (static_cast <double> (RAND_MAX / 1.0));
 }
 
 
@@ -356,6 +358,186 @@ void GeneticAlgorithm::preEvolveAttack(int generations, int popSize, double muta
 }
 
 
+// Function to pre-evolve the TROOP PLACEMENT decision parameters.
+// NOTE: population size MUST be divisible by 4 in order for proper selection, cloning and mutation to occur.
+void GeneticAlgorithm::preEvolvePlacement(int generations, int popSize, double mutationProb)
+{
+	isRandom = false;
+	srand(time(NULL));
+
+	// Lots of temp vars
+	bool attackWon = false, firstGen = true;
+	// First col is troopWeight, second col is contWeight. Last column in these vectors will be the fitness score for the (whole) individual.
+	vector<vector<double>> weightVals(popSize, vector<double>(3, 0)), bestWeightVals(popSize / 4, vector<double>(3, 0));
+	// First column is win bool, second column is troops used / troops returned
+	vector<vector<double>> results(popSize, vector<double>(2, 0));
+	// A vector to hold the top ten best values over all generations
+	vector<vector<double>> globalBest(generations, vector<double>(3, 0));
+	// A vector to track the average fitness of each generation
+	vector<double> avgGlobalFitness(generations, 0);
+
+	// Create a variety of Region pairs on which to train. trainingRegions[i][0] is the friendly Regions, trainingRegions[i][1] is the enemy Regions
+	vector<vector<Region>> trainingRegions(1000, vector<Region>(2, Region(0, "Alaska", vector<int>{1, 3, 24})));
+	for (int i = 0; i < 1000; ++i) {
+		trainingRegions[i][0] = Region(0, "Alaska", vector<int>{1, 3, 24});
+		trainingRegions[i][0].addTroops(rand() % 35 + 2);
+		trainingRegions[i][1] = Region(1, "Northwest_Territory", vector<int>{0, 3, 4, 2});
+		trainingRegions[i][1].addTroops(rand() % 35 + 1);
+	}
+	// Also create a variety of target regions for troop placement; these will have less troops than surrounding regions
+	vector<Region> trainingOwnRegions(1000, Region(0, "Alaska", vector<int>{1, 3, 24}));
+	for (int i = 0; i < 1000; ++i) {
+		trainingOwnRegions[i] = Region(0, "Alaska", vector<int>{1, 3, 24});
+		trainingOwnRegions[i].addTroops(rand() % 25 + 2);
+	}
+
+	// Will run for g generations
+	for (int g = 0; g < generations; ++g) {
+		printf("/*****GENERATION %d*****\\\n", g);
+		// Create the initial population
+		if (firstGen) {
+			for (int i = 0; i < popSize; ++i) {
+				weightVals[i][0] = static_cast <double> (rand()) / (static_cast <double> (RAND_MAX / 1.0));
+				weightVals[i][1] = static_cast <double> (rand()) / (static_cast <double> (RAND_MAX / 1.0));
+			}
+		}
+
+		// Attack with current parameters
+		vector<double> temp = vector<double>();
+		for (int i = 0; i < popSize; ++i) {
+			vector<Region> friendlyRegions = { trainingRegions.at(rand() % trainingRegions.size()).at(0), trainingRegions.at(rand() % trainingRegions.size()).at(0) };
+			vector<Region> enemyRegions = { trainingRegions.at(rand() % trainingRegions.size()).at(1), trainingRegions.at(rand() % trainingRegions.size()).at(1) };
+			temp = gaPlace(trainingOwnRegions.at(rand() % trainingOwnRegions.size()), enemyRegions, friendlyRegions, weightVals[i][0], weightVals[i][1]);
+			results[i][0] = temp[0];
+			results[i][1] = temp[1];
+		}
+
+		// Calculate fitness. Fitness is determined by 1 - (return troops / sent troops)
+		for (int i = 0; i < popSize; ++i) {
+			// If the attack was won
+			if (results[i][0] == 1.0) {
+				weightVals[i][2] = results[i][1];
+			}
+			if (results[i][0] == 0.0) {
+				weightVals[i][2] = 0;
+			}
+		}
+
+		// DEBUG
+		printf("Population and fitness: \n");
+		for (int i = 0; i < popSize; ++i) {
+			printf("%d: %f %f %f\n", i, weightVals[i][0], weightVals[i][1], weightVals[i][2]);
+		}
+
+		// Average the fitness of the population per gen
+		double fitSum = 0;
+		for (int i = 0; i < popSize; ++i) {
+			fitSum += weightVals[i][2];
+		}
+		avgGlobalFitness[g] = (fitSum / popSize);
+
+		// Select the best 25% of the population
+		// Sort the population based on the whole individual's fitness
+		sort(weightVals.begin(), weightVals.end(), sortcol);
+		for (int i = 0; i < popSize / 4; ++i) {
+			bestWeightVals[i][0] = weightVals[popSize - 1 - i][0];
+			bestWeightVals[i][1] = weightVals[popSize - 1 - i][1];
+			bestWeightVals[i][2] = weightVals[popSize - 1 - i][2];
+		}
+
+		// Collect the best result from each generation
+		globalBest[g][0] = bestWeightVals[0][0];
+		globalBest[g][1] = bestWeightVals[0][1];
+		globalBest[g][2] = bestWeightVals[0][2];
+
+		// DEBUG
+		/*printf("Best 25%: \n");
+		for (int i = 0; i < popSize / 4; ++i) {
+			printf("%d: %f %f\n", i, bestWeightVals[i][0], bestWeightVals[i][1]);
+		}*/
+
+		// Perform cloning on best 25% of the population
+		int h = 0;
+		for (int i = 0; i < popSize / 4; ++i) {
+			// Each value will be cloned 4 times
+			weightVals[i + h][0] = bestWeightVals[i][0];
+			weightVals[i + h][1] = bestWeightVals[i][1];
+			weightVals[i + h][2] = bestWeightVals[i][2]; ++h;
+
+			weightVals[i + h][0] = bestWeightVals[i][0];
+			weightVals[i + h][1] = bestWeightVals[i][1];
+			weightVals[i + h][2] = bestWeightVals[i][2]; ++h;
+
+			weightVals[i + h][0] = bestWeightVals[i][0];
+			weightVals[i + h][1] = bestWeightVals[i][1];
+			weightVals[i + h][2] = bestWeightVals[i][2]; ++h;
+
+			weightVals[i + h][0] = bestWeightVals[i][0];
+			weightVals[i + h][1] = bestWeightVals[i][1];
+			weightVals[i + h][2] = bestWeightVals[i][2];
+		}
+
+		// DEBUG
+		/*printf("Cloned population\n");
+		for (int i = 0; i < popSize; ++i) {
+			printf("%d: %f %f\n", i, weightVals[i][0], weightVals[i][1]);
+		}*/
+
+		// Perform mutation on all but the parents
+		for (int i = 0; i < popSize; ++i) {
+			// Skip the 25% of the population that is the parents.
+			if (divByFour(to_string(i + 4))) {
+				continue;
+			}
+			if ((static_cast <double> (rand()) / (static_cast <double> (RAND_MAX / 1.0)) <= mutationProb)) {
+				// Adds a random number between [-0.1, 0.1]
+				double randVal = static_cast <double> (rand()) / (static_cast <double> (RAND_MAX / 0.1 - 0.1));
+				if (weightVals[i][0] + randVal >= 0.0 && weightVals[i][0] + randVal <= 1.0) {
+					weightVals[i][0] += randVal;
+				}
+			}
+			if ((static_cast <double> (rand()) / (static_cast <double> (RAND_MAX / 1.0)) <= mutationProb)) {
+				// Adds a random number between [-0.1, 0.1]
+				double randVal = static_cast <double> (rand()) / (static_cast <double> (RAND_MAX / 0.1 - 0.1));
+				if (weightVals[i][1] + randVal >= 0.0 && weightVals[i][1] + randVal <= 1.0) {
+					weightVals[i][1] += randVal;
+				}
+			}
+		}
+
+		// DEBUG
+		/*printf("Mutated population\n");
+		for (int i = 0; i < popSize; ++i) {
+			printf("%d: %f %f\n", i, weightVals[i][0], weightVals[i][1]);
+		}*/
+		printf("\\**********************/\n");
+	}
+
+	// Set the GA parameters by averaging the best 25% of the last generation
+	double weight1Sum = 0, weight2Sum = 0;
+	for (int i = 0; i < popSize / 4; ++i) {
+		weight1Sum += bestWeightVals[i][0];
+		weight2Sum += bestWeightVals[i][1];
+	}
+	placeEnemyRatWeight = (weight1Sum / (popSize / 4));
+	placeFriendlyRatWeight = (weight2Sum / (popSize / 4));
+
+	//DEBUG
+	printf("GLOBAL BEST FROM EACH GEN: \n");
+	for (int i = 0; i < generations; ++i) {
+		printf("%d: %f %f %f\n", i, globalBest[i][0], globalBest[i][1], globalBest[i][2]);
+	}
+
+	//DEBUG
+	printf("AVG FITNESS FROM EACH GEN: \n");
+	for (int i = 0; i < generations; ++i) {
+		printf("%d: %f\n", i, avgGlobalFitness[i]);
+	}
+
+	//DEBUG
+	//writeCSVDouble("aveGlobalFitness.csv", avgGlobalFitness, "avgGlobalFitness");
+}
+
 
 // This function is for use in pre-training. It simulates an attack sequence and then returns a boolean and the ratio of troops lost
 vector<double> GeneticAlgorithm::gaAttack(Region ownRegion, Region enemyRegion, double troopRatioWeight, double contBonusWeight)
@@ -471,11 +653,12 @@ vector<double> GeneticAlgorithm::gaAttack(Region ownRegion, Region enemyRegion, 
 	}
 }
 
+
 vector<double> GeneticAlgorithm::gaPlace(Region ownRegion, vector<Region> enemyRegions, vector<Region> friendlyRegions,
 	double placeEnemyRatWeight, double placeFriendlyRatWeight) {
 
 	bool bonus = false;
-	double placability = 0.0;
+	double placeability = 0.0;
 	int ownTroops = ownRegion.getTroops(), enemyTroops = enemyRegions[0].getTroops() + enemyRegions[1].getTroops(),
 		friendlyTroops = friendlyRegions[0].getTroops() + friendlyRegions[1].getTroops();
 	vector<double> returnValue(2, 0);
@@ -484,24 +667,20 @@ vector<double> GeneticAlgorithm::gaPlace(Region ownRegion, vector<Region> enemyR
 	this->contBonusWeight;
 
 	// Calculate Placability score using both enemy and friendly
-	placability = (((double)ownTroops / (double)enemyTroops) * placeEnemyRatWeight) +
+	placeability = (((double)ownTroops / (double)enemyTroops) * placeEnemyRatWeight) +
 		(((double)ownTroops / (double)friendlyTroops) * placeFriendlyRatWeight);
-	printf("Placability: %f\n", placability);
+	printf("Placability: %f\n", placeability);
 
-
-	if (placability >= 1) {
+	if (placeability >= 1) {
 		// index 0 is 1 if win and 0 if loss, index 1 is ratio remaining troops / original troops
+		ownRegion.addTroops(rand() % 5 + 1);
 		returnValue = gaAttack(ownRegion, enemyRegions[0], this->troopRatioWeight, this->contBonusWeight);
 	}
 	else {
 		returnValue[0] = -1.0;
 		returnValue[1] = -1.0;
 	}
-
 	return returnValue;
-
-
-
 }
 
 /*
