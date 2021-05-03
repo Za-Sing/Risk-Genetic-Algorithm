@@ -322,7 +322,7 @@ bool Brisk::isChain(int startID, int endID, int currentPlayer, vector<bool> visi
 void Brisk::beginningClaim(vector<Player*>* players) {
 
 	//For dice roll, need only call this once so this is a good place for it.
-	srand(time(NULL));
+	//srand(time(NULL));
 
 
 	numPlayers = players->size();

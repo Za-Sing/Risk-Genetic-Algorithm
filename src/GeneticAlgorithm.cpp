@@ -233,7 +233,6 @@ GeneticAlgorithm::GeneticAlgorithm()
 void GeneticAlgorithm::preEvolveAttack(int generations, int popSize, double mutationProb)
 {
 	isRandom = false;
-	srand(time(NULL));
 	
 	// Lots of temp vars
 	bool attackWon = false, firstGen = true;
@@ -250,9 +249,9 @@ void GeneticAlgorithm::preEvolveAttack(int generations, int popSize, double muta
 	vector<vector<Region>> trainingRegions(1000, vector<Region>(2, Region(0, "Alaska", vector<int>{1, 3, 24})));
 	for (int i = 0; i < 1000; ++i) {
 		trainingRegions[i][0] = Region(0, "Alaska", vector<int>{1, 3, 24});
-		trainingRegions[i][0].addTroops(rand() % (35 + 1) + 2);
+		trainingRegions[i][0].addTroops(rand() % 35 + 2);
 		trainingRegions[i][1] = Region(1, "Northwest_Territory", vector<int>{0, 3, 4, 2});
-		trainingRegions[i][1].addTroops(rand() % (35 + 1) + 1);
+		trainingRegions[i][1].addTroops(rand() % 35 + 1);
 	}
 
 	// Will run for g generations
@@ -407,7 +406,7 @@ void GeneticAlgorithm::preEvolveAttack(int generations, int popSize, double muta
 void GeneticAlgorithm::preEvolvePlacement(int generations, int popSize, double mutationProb)
 {
 	isRandom = false;
-	srand(time(NULL));
+	//srand(time(NULL));
 
 	// Lots of temp vars
 	bool attackWon = false, firstGen = true;
@@ -834,7 +833,7 @@ string GeneticAlgorithm::gaPlay(int gameState, int currentPlayer, int newTroops,
 					myRegions.push_back(board->at(i));
 				}
 			}
-			vector<int> eligibleRegions;
+			vector<int> eligibleRegions = vector<int>();
 			for (int i = 0; i < myRegions.size(); i++)
 			{
 				for (int j = 0; j < board->size(); ++j) {
@@ -842,7 +841,8 @@ string GeneticAlgorithm::gaPlay(int gameState, int currentPlayer, int newTroops,
 						vector<int> temp = myRegions.at(i).getBorder_ids();
 						// Add each eligible region to the vector if it is not already there
 						if (count(temp.begin(), temp.end(), board->at(j).getID()) == 1
-							&& count(eligibleRegions.begin(), eligibleRegions.end(), board->at(j).getID()) == 0) {
+							&& count(eligibleRegions.begin(), eligibleRegions.end(), board->at(j).getID()) == 0
+							&& myRegions.at(i).getTroops() > 1) {
 							eligibleRegions.push_back(board->at(j).getID());
 						}
 					}
@@ -875,13 +875,12 @@ string GeneticAlgorithm::gaPlay(int gameState, int currentPlayer, int newTroops,
 					myRegions.push_back(board->at(i));
 				}
 			}
-			vector<int> eligibleRegions;
+			vector<int> eligibleRegions = vector<int>();
 			for (int i = 0; i < myRegions.size(); i++)
 			{
 				// Add each eligible region to the vector if it is not already there
 				vector<int> temp = myRegions.at(i).getBorder_ids();
 				if (count(temp.begin(), temp.end(), regionToAttack) == 1
-					&& count(eligibleRegions.begin(), eligibleRegions.end(), myRegions.at(i).getID()) == 0
 					&& myRegions.at(i).getTroops() > 1) {
 					eligibleRegions.push_back(myRegions.at(i).getID());
 				}
@@ -911,10 +910,10 @@ string GeneticAlgorithm::gaPlay(int gameState, int currentPlayer, int newTroops,
 	}
 	case(7):		// Attack Sequence: choose number of troops to defend with:
 	{
-		if (board->at(regionToAttack).getTroops() == 2) {
+		if (board->at(regionToAttack).getTroops() == 1) {
 			return to_string(1);
 		}
-		if (board->at(regionToAttack).getTroops() >= 3) {
+		else if (board->at(regionToAttack).getTroops() >= 2) {
 			return to_string(rand() % 2 + 1);
 		}
 		break;

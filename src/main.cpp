@@ -10,6 +10,8 @@ using namespace std;
 
 int main()
 {
+	srand(time(NULL));
+	
 	//game setup
 	Brisk game = Brisk();
 
