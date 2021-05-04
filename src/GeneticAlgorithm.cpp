@@ -954,5 +954,6 @@ string GeneticAlgorithm::gaPlay(int gameState, int currentPlayer, int newTroops,
 		return "-1 -1 -1";
 		break;
 	}
+	
 	}
 }
