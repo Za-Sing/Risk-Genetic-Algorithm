@@ -91,18 +91,37 @@ Brisk::Brisk()
 int Brisk::cardBonus(Player* currentPlayer, vector<int>* plusTwoRegions, int turn) 
 {
 	int newTroops = 0;
+	string strReturn = "";
+	int numCards = 0;
+	vector<int> returnedCards;
 	vector<Card> currentHand = currentPlayer->getHand();
 	// Determine what types of cards the player has
+	int infPlace = -1;
+	int cavPlace = -1;
+	int artPlace = -1;
+	int wildPlace = -1;
 	int numInf = 0, numCav = 0, numArt = 0, numWild = 0;
 	for (int i = 0; i < currentHand.size(); ++i) {
 		if (currentHand[i].troop == TROOP::Infantry)
+		{
+			infPlace = i;
 			++numInf;
+		}
 		if (currentHand[i].troop == TROOP::Cavalry)
+		{
+			cavPlace = i;
 			++numCav;
+		}
 		if (currentHand[i].troop == TROOP::Artillery)
+		{
+			artPlace = i;
 			++numArt;
+		}
 		if (currentHand[i].troop == TROOP::WiLD)
+		{
+			wildPlace = i;
 			++numWild;
+		}
 	}
 	// Now determine what combinations they have
 	string comboType = "";
@@ -126,14 +145,135 @@ int Brisk::cardBonus(Player* currentPlayer, vector<int>* plusTwoRegions, int tur
 			printf("You have five cards, so a set must be traded in.\n");
 			printf("Which cards would you like to trade in?\n");
 			string cards;
-			getline(cin, cards);
-			vector<int> returnedCards;
-			stringstream ss(cards);
-			string element;
-			while (getline(ss, element, ' '))
+			if (currentPlayer->getGA() != NULL)
 			{
-				returnedCards.push_back(stoi(element));
+				if (numInf >= 3)
+				{
+					for (int i = 0; i < currentHand.size(); ++i) 
+					{
+						if (currentHand[i].troop == TROOP::Infantry)
+						{
+							returnedCards.push_back(i);
+							numCards++;
+						}
+						if (numCards == 3)
+						{
+							break;
+						}
+					}
+					
+				}
+					
+				if (numCav >= 3)
+				{
+					for (int i = 0; i < currentHand.size(); ++i)
+					{
+						if (currentHand[i].troop == TROOP::Cavalry)
+						{
+							returnedCards.push_back(i);
+							numCards++;
+						}
+						if (numCards == 3)
+						{
+							break;
+						}
+					}
+
+				}
+				if (numArt >= 3)
+				{
+					for (int i = 0; i < currentHand.size(); ++i)
+					{
+						if (currentHand[i].troop == TROOP::Artillery)
+						{
+							returnedCards.push_back(i);
+							numCards++;
+						}
+						if (numCards == 3)
+						{
+							break;
+						}
+					}
+
+				}
+				if (numInf == 2 && numWild >= 1)
+				{
+					for (int i = 0; i < currentHand.size(); ++i)
+					{
+						if (currentHand[i].troop == TROOP::Infantry || currentHand[i].troop == TROOP::WiLD)
+						{
+							returnedCards.push_back(i);
+							numCards++;
+						}
+						if (numCards == 3)
+						{
+							break;
+						}
+					}
+
+				}
+				if (numCav == 2 && numWild >= 1)
+				{
+					for (int i = 0; i < currentHand.size(); ++i)
+					{
+						if (currentHand[i].troop == TROOP::Cavalry || currentHand[i].troop == TROOP::WiLD)
+						{
+							returnedCards.push_back(i);
+							numCards++;
+						}
+						if (numCards == 3)
+						{
+							break;
+						}
+					}
+
+				}
+				if (numArt == 2 && numWild >= 1)
+				{
+					for (int i = 0; i < currentHand.size(); ++i)
+					{
+						if (currentHand[i].troop == TROOP::Artillery || currentHand[i].troop == TROOP::WiLD)
+						{
+							returnedCards.push_back(i);
+							numCards++;
+						}
+						if (numCards == 3)
+						{
+							break;
+						}
+					}
+
+				}
+				if (numInf >= 1 && numCav >= 1 && numArt >= 1)
+				{
+					for (int i = 0; i < currentHand.size(); ++i)
+					{
+						if (i == infPlace || i == artPlace || i == cavPlace)
+						{
+							returnedCards.push_back(i);
+							numCards++;
+						}
+						if (numCards == 3)
+						{
+							break;
+						}
+					}
+
+				}
 			}
+			else
+			{
+				getline(cin, cards);
+				stringstream ss(cards);
+				string element;
+				while (getline(ss, element, ' '))
+				{
+					returnedCards.push_back(stoi(element));
+				}
+			}
+			
+			
+			
 			for (int i = 0; i < 3; i++)
 			{
 				if (board.at(currentPlayer->getHand().at(i).territory).getCommander_id() == turn)
