@@ -801,8 +801,8 @@ void Brisk::attackSequence(vector<Player*>* players, int currentPlayer, bool* ga
 		//get defender dice rolls
 		defender = board[attackTo].getCommander_id();
 		printf("Player %i, choose how many troops to defend with!\n", defender);
-		if (players->at(defender)->getGA() != NULL) {
-			input = players->at(defender)->getGA()->gaPlay(7, defender, -1, &board);
+		if (players->at(currentPlayer)->getGA() != NULL) {
+			input = players->at(currentPlayer)->getGA()->gaPlay(7, defender, -1, &board);
 		}
 		else {
 			getline(cin, input);

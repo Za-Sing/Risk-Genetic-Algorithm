@@ -132,6 +132,49 @@ int GeneticAlgorithm::continentBonus(vector<Region> ownedRegions)
 	return newTroops;
 }
 
+
+// Function to pick a random region to attack and one from which to attack
+void GeneticAlgorithm::findRandomAttack(int currentPlayer, vector<Region>* board) 
+{
+	// First step is make a vector that holds all the owned regions
+	vector<Region> myRegions;
+	vector<int> myIDs;
+	for (int i = 0; i < board->size(); ++i) {
+		if (board->at(i).getCommander_id() == currentPlayer) {
+			myRegions.push_back(board->at(i));
+			myIDs.push_back(board->at(i).getID());
+		}
+	}
+	// First pick a region from which to attack
+	vector<int> eligibleRegions = vector<int>();
+	for (int i = 0; i < myRegions.size(); ++i) {
+		vector<int> temp = myRegions.at(i).getBorder_ids();
+		if (myRegions.at(i).getTroops() > 1) {
+			// Make sure the region is not only surrounded by friendly regions
+			int friendlyBorders = 0;
+			for (int k = 0; k < temp.size(); ++k) {
+				if (count(myIDs.begin(), myIDs.end(), board->at(k).getID()) >= 1) {
+					++friendlyBorders;
+				}
+			}
+			if (friendlyBorders != temp.size()) {
+				eligibleRegions.push_back(myRegions.at(i).getID());
+			}
+		}
+	}
+	regionFromAttack = eligibleRegions.at(rand() % (eligibleRegions.size()));
+	// Now pick a region to attack
+	vector<int> temp = board->at(regionFromAttack).getBorder_ids();
+	eligibleRegions = vector<int>();
+	for (int i = 0; i < temp.size(); ++i) {
+		if (board->at(temp.at(i)).getCommander_id() != currentPlayer) {
+			eligibleRegions.push_back(temp.at(i));
+		}
+	}
+	regionToAttack = eligibleRegions.at(rand() % (eligibleRegions.size()));
+}
+
+
 // Function to check all possible home/enemy region pairs for an attack 
 // and find the best option based on evolved parameters.
 void GeneticAlgorithm::findBestAttack(int currentPlayer, vector<Region>* board) 
@@ -825,31 +868,7 @@ string GeneticAlgorithm::gaPlay(int gameState, int currentPlayer, int newTroops,
 	{
 		if (isRandom) // If the bot is meant to operate completely randomly
 		{
-			vector<Region> myRegions;
-			for (int i = 0; i < board->size(); i++)
-			{
-				if (board->at(i).getCommander_id() == currentPlayer)
-				{
-					myRegions.push_back(board->at(i));
-				}
-			}
-			vector<int> eligibleRegions = vector<int>();
-			for (int i = 0; i < myRegions.size(); i++)
-			{
-				for (int j = 0; j < board->size(); ++j) {
-					if (board->at(j).getCommander_id() != myRegions.at(i).getCommander_id()) {
-						vector<int> temp = myRegions.at(i).getBorder_ids();
-						// Add each eligible region to the vector if it is not already there
-						if (count(temp.begin(), temp.end(), board->at(j).getID()) == 1
-							&& count(eligibleRegions.begin(), eligibleRegions.end(), board->at(j).getID()) == 0
-							&& myRegions.at(i).getTroops() > 1) {
-							eligibleRegions.push_back(board->at(j).getID());
-						}
-					}
-				}
-			}
-			// Now choose which of these to attack:
-			regionToAttack = eligibleRegions.at(rand() % (eligibleRegions.size()));
+			findRandomAttack(currentPlayer, board);
 			return to_string(regionToAttack);
 		}
 		// The Brisk attackSequence() first chooses region to attack, and then region from which to attack.
@@ -867,26 +886,7 @@ string GeneticAlgorithm::gaPlay(int gameState, int currentPlayer, int newTroops,
 	{
 		if (isRandom) 
 		{
-			vector<Region> myRegions;
-			for (int i = 0; i < board->size(); i++)
-			{
-				if (board->at(i).getCommander_id() == currentPlayer)
-				{
-					myRegions.push_back(board->at(i));
-				}
-			}
-			vector<int> eligibleRegions = vector<int>();
-			for (int i = 0; i < myRegions.size(); i++)
-			{
-				// Add each eligible region to the vector if it is not already there
-				vector<int> temp = myRegions.at(i).getBorder_ids();
-				if (count(temp.begin(), temp.end(), regionToAttack) == 1
-					&& myRegions.at(i).getTroops() > 1) {
-					eligibleRegions.push_back(myRegions.at(i).getID());
-				}
-			}
-			// Now choose which of these to attack:
-			return to_string(eligibleRegions.at(rand() % (eligibleRegions.size())));
+			return to_string(regionFromAttack);
 		}
 		// As discussed above, this returns the already-determined home region
 		else 
@@ -900,10 +900,10 @@ string GeneticAlgorithm::gaPlay(int gameState, int currentPlayer, int newTroops,
 		if (board->at(regionFromAttack).getTroops() == 2) {
 			return to_string(1);
 		}
-		if (board->at(regionFromAttack).getTroops() == 3) {
+		else if (board->at(regionFromAttack).getTroops() == 3) {
 			return to_string(rand() % 2 + 1);
 		}
-		if (board->at(regionFromAttack).getTroops() >= 3) {
+		else if (board->at(regionFromAttack).getTroops() >= 3) {
 			return to_string(rand() % 3 + 1);
 		}
 		break;
