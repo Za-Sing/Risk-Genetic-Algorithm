@@ -64,6 +64,7 @@ private:
 	// For GA PLAY process
 	vector<Region> board;
 	int regionToAttack = 0, regionFromAttack = 0, regionToPlace;
+	void findRandomAttack(int currentPlayer, vector<Region>* board);
 	void findBestAttack(int currentPlayer, vector<Region>* board);
 	void findBestPlacement(int currentPlayer, int newTroops, vector<Region>* board);
 
