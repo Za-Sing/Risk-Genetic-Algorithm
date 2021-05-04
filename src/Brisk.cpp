@@ -276,9 +276,9 @@ int Brisk::cardBonus(Player* currentPlayer, vector<int>* plusTwoRegions, int tur
 			
 			for (int i = 0; i < 3; i++)
 			{
-				if (board.at(currentPlayer->getHand().at(i).territory).getCommander_id() == turn)
+				if (board.at(returnedCards.at(i)).getCommander_id() == turn)
 				{
-					plusTwoRegions->push_back(board.at(currentPlayer->getHand().at(i).territory).getID());
+					plusTwoRegions->push_back(board.at(returnedCards.at(i)).getID());
 				}
 			}
 			currentPlayer->playCards(deck, returnedCards);
@@ -292,7 +292,9 @@ int Brisk::cardBonus(Player* currentPlayer, vector<int>* plusTwoRegions, int tur
 			default: newTroops += (setsTraded - 2) * 5;
 			}
 		}
-		else {
+		/*
+		else 
+		{
 			string choice;
 			bool choiceMade = false;
 			printf("Would you like to trade a set of cards? Enter y or n.\n");
@@ -336,6 +338,7 @@ int Brisk::cardBonus(Player* currentPlayer, vector<int>* plusTwoRegions, int tur
 				}
 			}
 		}
+		*/
 	}
 	return newTroops;
 }
@@ -573,6 +576,10 @@ void Brisk::placeTroops(int currentPlayer, vector<Player*>* players)
 	vector<Region> ownedRegions = players->at(currentPlayer)->getOwnedRegions();
 	int numRegions = ownedRegions.size();
 	int newTroops = numRegions / 3;		//Fix to align with rules
+	if (newTroops < 4)
+	{
+		newTroops = 3;
+	}
 	
 
 

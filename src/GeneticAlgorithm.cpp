@@ -143,23 +143,40 @@ void GeneticAlgorithm::findRandomAttack(int currentPlayer, vector<Region>* board
 		if (board->at(i).getCommander_id() == currentPlayer) {
 			myRegions.push_back(board->at(i));
 			myIDs.push_back(board->at(i).getID());
+
+			printf("My regions:  %i    # of troops:  %i\n", i, board->at(i).getTroops());
 		}
 	}
 	// First pick a region from which to attack
 	vector<int> eligibleRegions = vector<int>();
 	for (int i = 0; i < myRegions.size(); ++i) {
 		vector<int> temp = myRegions.at(i).getBorder_ids();
+		
 		if (myRegions.at(i).getTroops() > 1) {
 			// Make sure the region is not only surrounded by friendly regions
+
+			for (int x = 0; x < temp.size(); ++x)
+			{
+				if (board->at(temp[x]).getCommander_id() != currentPlayer)
+				{
+					eligibleRegions.push_back(myRegions.at(i).getID());
+					printf("Eligible regions:   %i\n", myRegions.at(i).getID());
+					break;
+				}
+			}
+
+			/*
 			int friendlyBorders = 0;
 			for (int k = 0; k < temp.size(); ++k) {
-				if (count(myIDs.begin(), myIDs.end(), board->at(k).getID()) >= 1) {
+				if (count(temp.begin(), temp.end(), ) >= 1) {
 					++friendlyBorders;
 				}
 			}
 			if (friendlyBorders != temp.size()) {
 				eligibleRegions.push_back(myRegions.at(i).getID());
 			}
+			*/
+
 		}
 	}
 	regionFromAttack = eligibleRegions.at(rand() % (eligibleRegions.size()));
