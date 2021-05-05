@@ -633,6 +633,7 @@ void Brisk::placeTroops(int currentPlayer, vector<Player*>* players)
 				{
 					board.at(splitInt.at(0)).addTroops(splitInt.at(1));
 					newTroops -= splitInt.at(1);
+					printf("\nprinting.... adding troops\n\n");
 					printf("%i new troops left to place.\n", newTroops);
 				}
 				else
