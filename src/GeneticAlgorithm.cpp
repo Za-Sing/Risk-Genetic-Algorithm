@@ -17,7 +17,7 @@ void writeCSVDouble(string filename, vector<double> vals, string dataName){
 	ofstream file(filename);
 
 	// data designation marker
-	file << dataName << "\n";
+	//file << dataName << "\n";
 
 	// write to csv
 	for (int i = 0; i < vals.size(); i-=-1) {
@@ -458,7 +458,7 @@ void GeneticAlgorithm::preEvolveAttack(int generations, int popSize, double muta
 	}
 
 	//DEBUG
-	//writeCSVDouble("aveGlobalFitness.csv", avgGlobalFitness, "avgGlobalFitness");
+	//writeCSVDouble("aveGlobalFitnessAttack.csv", avgGlobalFitness, "avgGlobalFitness");
 }
 
 
@@ -639,7 +639,7 @@ void GeneticAlgorithm::preEvolvePlacement(int generations, int popSize, double m
 	}
 
 	//DEBUG
-	//writeCSVDouble("aveGlobalFitness.csv", avgGlobalFitness, "avgGlobalFitness");
+	//writeCSVDouble("aveGlobalFitnessPlacement.csv", avgGlobalFitness, "avgGlobalFitness");
 }
 
 
