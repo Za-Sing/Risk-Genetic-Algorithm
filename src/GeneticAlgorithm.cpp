@@ -994,6 +994,58 @@ string GeneticAlgorithm::gaPlay(int gameState, int currentPlayer, int newTroops,
 		if (board->at(regionToAttack).getTroops() <= 1) {
 			return "n";
 		}
+
+		// CRINGE ALERT! copied and pasted nonsense below
+
+		// First step is make a vector that holds all the owned regions
+		vector<Region> myRegions;
+		vector<int> myIDs;
+		for (int i = 0; i < board->size(); ++i) {
+			if (board->at(i).getCommander_id() == currentPlayer) {
+				myRegions.push_back(board->at(i));
+				myIDs.push_back(board->at(i).getID());
+
+				printf("My regions:  %i    # of troops:  %i\n", i, board->at(i).getTroops());
+			}
+		}
+		// First pick a region from which to attack
+		vector<int> eligibleRegions = vector<int>();
+		vector<int> temp;
+		for (int i = 0; i < myRegions.size(); ++i) {
+			temp = myRegions.at(i).getBorder_ids();
+
+			if (myRegions.at(i).getTroops() > 1) {
+				// Make sure the region is not only surrounded by friendly regions
+
+				for (int x = 0; x < temp.size(); ++x)
+				{
+					if (board->at(temp[x]).getCommander_id() != currentPlayer)
+					{
+						eligibleRegions.push_back(myRegions.at(i).getID());
+						printf("Eligible regions:   %i\n", myRegions.at(i).getID());
+						break;
+					}
+				}
+
+				/*
+				int friendlyBorders = 0;
+				for (int k = 0; k < temp.size(); ++k) {
+					if (count(temp.begin(), temp.end(), ) >= 1) {
+						++friendlyBorders;
+					}
+				}
+				if (friendlyBorders != temp.size()) {
+					eligibleRegions.push_back(myRegions.at(i).getID());
+				}
+				*/
+
+			}
+		}
+		if (eligibleRegions.size() == 0)
+		{
+			return "n";
+		}
+
 		else {
 			if ((static_cast <double> (rand()) / (static_cast <double> (RAND_MAX / 1.0)) <= 0.85)) {
 				return "y";

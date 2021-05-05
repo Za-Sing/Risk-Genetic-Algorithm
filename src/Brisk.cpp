@@ -84,7 +84,7 @@ Brisk::Brisk()
 	board.push_back(Region(41, "Eastern_Australia", vector<int>{39, 40})); //GOOD
 
 	// Initialize shuffled deck
-	initDeck("../Resources/card_deck.txt");
+	initDeck("Resources/card_deck.txt");
 }
 
 // Helper function to handle player card bonus
