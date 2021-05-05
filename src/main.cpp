@@ -66,6 +66,9 @@ int main()
 	{
 		for (int currentPlayer = 0; currentPlayer < numPlayers; currentPlayer++)
 		{
+			bool thing = players->at(currentPlayer)->getDefeated();
+			printf("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n");
+			cout << thing;
 			if (!players->at(currentPlayer)->getDefeated()) {
 
 				game.placeTroops(currentPlayer, players);
