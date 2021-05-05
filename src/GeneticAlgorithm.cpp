@@ -149,8 +149,9 @@ void GeneticAlgorithm::findRandomAttack(int currentPlayer, vector<Region>* board
 	}
 	// First pick a region from which to attack
 	vector<int> eligibleRegions = vector<int>();
+	vector<int> temp;
 	for (int i = 0; i < myRegions.size(); ++i) {
-		vector<int> temp = myRegions.at(i).getBorder_ids();
+		temp = myRegions.at(i).getBorder_ids();
 		
 		if (myRegions.at(i).getTroops() > 1) {
 			// Make sure the region is not only surrounded by friendly regions
@@ -181,7 +182,7 @@ void GeneticAlgorithm::findRandomAttack(int currentPlayer, vector<Region>* board
 	}
 	regionFromAttack = eligibleRegions.at(rand() % (eligibleRegions.size()));
 	// Now pick a region to attack
-	vector<int> temp = board->at(regionFromAttack).getBorder_ids();
+	temp = board->at(regionFromAttack).getBorder_ids();
 	eligibleRegions = vector<int>();
 	for (int i = 0; i < temp.size(); ++i) {
 		if (board->at(temp.at(i)).getCommander_id() != currentPlayer) {
