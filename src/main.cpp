@@ -7,6 +7,23 @@
 
 using namespace std;
 
+// Function to write to a .CSV file
+void writeCSVDouble(string filename, vector<double> vals) {
+
+	// Create an output filestream object
+	ofstream file(filename);
+
+	// data designation marker
+	//file << dataName << "\n";
+
+	// write to csv
+	for (int i = 0; i < vals.size(); i -= -1) {
+		file << vals.at(i) << "\n";
+	}
+
+	// Close the file
+	file.close();
+}
 
 int main()
 {
@@ -19,6 +36,13 @@ int main()
 	/*GeneticAlgorithm GA = GeneticAlgorithm();
 	GA.preEvolveAttack(100, 100, 0.2);
 	GA.preEvolvePlacement(100, 100, 0.2);*/
+
+	//Graph making
+	vector<double> player0;
+	vector<double> player1;
+	vector<double> player2;
+
+
 	
 	string input;
 	printf("Enter a number (3-5) of players.\n");
@@ -66,6 +90,35 @@ int main()
 	{
 		for (int currentPlayer = 0; currentPlayer < numPlayers; currentPlayer++)
 		{
+			//Gather data for region number ownership
+
+			switch (currentPlayer) {
+
+			case 0:
+				//file0 << players->at(currentPlayer)->getOwnedRegions().size() << "\n";
+				player0.push_back(players->at(currentPlayer)->getOwnedRegions().size());
+				writeCSVDouble("Player0.csv", player0);
+				printf("CURRENT REGIONS PLAYER 0: %d\n", players->at(currentPlayer)->getOwnedRegions().size());
+				break;
+
+			case 1:
+				//file1 << players->at(currentPlayer)->getOwnedRegions().size() << "\n";
+				player1.push_back(players->at(currentPlayer)->getOwnedRegions().size());
+				writeCSVDouble("Player1.csv", player1);
+				printf("CURRENT REGIONS PLAYER 1: %d\n", players->at(currentPlayer)->getOwnedRegions().size());
+				break;
+
+			case 2:
+				//file2 << players->at(currentPlayer)->getOwnedRegions().size() << "\n";
+				player2.push_back(players->at(currentPlayer)->getOwnedRegions().size());
+				writeCSVDouble("Player2.csv", player2);
+				printf("CURRENT REGIONS PLAYER 2: %d\n", players->at(currentPlayer)->getOwnedRegions().size());
+				break;
+			}
+
+
+
+
 			if (!players->at(currentPlayer)->getDefeated()) {
 
 				game.placeTroops(currentPlayer, players);
@@ -176,4 +229,5 @@ int main()
 		delete players->at(i);
 	}
 	delete players;
+
 }
