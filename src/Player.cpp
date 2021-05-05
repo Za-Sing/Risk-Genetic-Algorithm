@@ -75,11 +75,40 @@ void Player::drawCard(vector<Card>* deck)
 // This method plays a set of three cards and adds them back to the deck
 void Player::playCards(vector<Card>* deck, vector<int> returnedCards)
 {
+	int remFirst = returnedCards.at(0);
+	int remSecond;
+	int remThird;
+	int currentLargest = 0;
 	for (int i = 0; i < 3; i++)
 	{
-		deck->push_back(hand.at(returnedCards.at(i)));
-		hand.erase(hand.begin() + returnedCards.at(i));
+		if (returnedCards.at(i) > remFirst)
+		{
+			remFirst = returnedCards.at(i);
+			currentLargest = i;
+
+		}
 	}
+	returnedCards.erase(returnedCards.begin() + currentLargest);
+	if (returnedCards.at(0) > returnedCards.at(1))
+	{
+		remSecond = returnedCards.at(0);
+		remThird = returnedCards.at(1);
+	}
+	else
+	{
+		remSecond = returnedCards.at(1);
+		remThird = returnedCards.at(0);
+	}
+	deck->push_back(hand.at(remFirst));
+	hand.erase(hand.begin() + remFirst);
+
+	deck->push_back(hand.at(remSecond));
+	hand.erase(hand.begin() + remSecond);
+
+	deck->push_back(hand.at(remThird));
+	hand.erase(hand.begin() + remThird);
+
+
 	// Handle each possible combination of cards
 	/*
 	if (comboType == "3inf") {
