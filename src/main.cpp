@@ -90,6 +90,7 @@ int main()
 	{
 		for (int currentPlayer = 0; currentPlayer < numPlayers; currentPlayer++)
 		{
+
 			//Gather data for region number ownership
 
 			switch (currentPlayer) {
@@ -115,9 +116,6 @@ int main()
 				printf("CURRENT REGIONS PLAYER 2: %d\n", players->at(currentPlayer)->getOwnedRegions().size());
 				break;
 			}
-
-
-
 
 			if (!players->at(currentPlayer)->getDefeated()) {
 

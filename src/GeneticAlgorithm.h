@@ -67,6 +67,7 @@ private:
 	void findRandomAttack(int currentPlayer, vector<Region>* board);
 	void findBestAttack(int currentPlayer, vector<Region>* board);
 	void findBestPlacement(int currentPlayer, int newTroops, vector<Region>* board);
+	bool atLeastOneRegionIsEligableToAttackFrom;
 
 public:
 	GeneticAlgorithm();
