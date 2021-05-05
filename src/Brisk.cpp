@@ -611,7 +611,36 @@ void Brisk::placeTroops(int currentPlayer, vector<Player*>* players)
 	string troopPlacement;
 	if (players->at(currentPlayer)->getGA() != NULL)
 	{
-		players->at(currentPlayer)->getGA()->gaPlay(2, currentPlayer, newTroops, &board);
+		while (newTroops != 0) {
+			vector<int> splitInt;
+			troopPlacement = players->at(currentPlayer)->getGA()->gaPlay(2, currentPlayer, newTroops, &board);
+			if (troopPlacement == "") {
+				newTroops = 0;
+			}
+			else {
+				stringstream ss(troopPlacement);
+				string element;
+				while (getline(ss, element, ' '))
+				{
+					splitInt.push_back(stoi(element));
+				}
+				if (board.at(splitInt.at(0)).getCommander_id() != currentPlayer)
+				{
+					printf("You don't control that region.");
+					continue;
+				}
+				if (splitInt.at(1) <= newTroops)
+				{
+					board.at(splitInt.at(0)).addTroops(splitInt.at(1));
+					newTroops -= splitInt.at(1);
+					printf("%i new troops left to place.\n", newTroops);
+				}
+				else
+				{
+					printf("You don't have that many troops to place.\n");
+				}
+			}
+		}
 	}
 	else
 	{
@@ -644,7 +673,6 @@ void Brisk::placeTroops(int currentPlayer, vector<Player*>* players)
 
 		}
 	}
-	
 }
 
 // This handles the attack/defend sequence
