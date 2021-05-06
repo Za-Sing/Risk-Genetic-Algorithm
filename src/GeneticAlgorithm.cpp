@@ -144,7 +144,7 @@ void GeneticAlgorithm::findRandomAttack(int currentPlayer, vector<Region>* board
 			myRegions.push_back(board->at(i));
 			myIDs.push_back(board->at(i).getID());
 
-			printf("My regions:  %i    # of troops:  %i\n", i, board->at(i).getTroops());
+			//printf("My regions:  %i    # of troops:  %i\n", i, board->at(i).getTroops());
 		}
 	}
 	// First pick a region from which to attack
@@ -161,7 +161,7 @@ void GeneticAlgorithm::findRandomAttack(int currentPlayer, vector<Region>* board
 				if (board->at(temp[x]).getCommander_id() != currentPlayer)
 				{
 					eligibleRegions.push_back(myRegions.at(i).getID());
-					printf("Eligible regions:   %i\n", myRegions.at(i).getID());
+					//printf("Eligible regions:   %i\n", myRegions.at(i).getID());
 					break;
 				}
 			}
@@ -264,8 +264,8 @@ void GeneticAlgorithm::findBestPlacement(int currentPlayer, int newTroops, vecto
 				}
 			}
 			// Calculate placeability for this region
-			placeability = (((double)ownTroops / (double)enemyTroops) * placeEnemyRatWeight) +
-							(((double)ownTroops / (double)friendlyTroops) * placeFriendlyRatWeight);
+			placeability = (((double)friendlyTroops / (double)ownTroops) * placeFriendlyRatWeight) - 
+							(((double)enemyTroops / (double)ownTroops) * placeEnemyRatWeight);
 			// Assign the best placeability if appropriate
 			if (placeability > bestPlaceability) {
 				bestPlaceability = placeability;
@@ -662,7 +662,7 @@ vector<double> GeneticAlgorithm::gaAttack(Region ownRegion, Region enemyRegion, 
 	if (bonus) {
 		attackability + contWeight;
 	}
-	printf("Attackability: %f\n", attackability);
+	//printf("Attackability: %f\n", attackability);
 
 
 	int ogOwnTroops = ownTroops;
@@ -770,10 +770,10 @@ vector<double> GeneticAlgorithm::gaPlace(Region ownRegion, vector<Region> enemyR
 	this->troopRatioWeight;
 	this->contBonusWeight;
 
-	// Calculate Placability score using both enemy and friendly
-	placeability = (((double)ownTroops / (double)enemyTroops) * placeEnemyWeight) +
-		(((double)ownTroops / (double)friendlyTroops) * placeFriendlyWeight);
-	printf("Placability: %f\n", placeability);
+	// Calculate Placeability score using both enemy and friendly
+	placeability = (((double)friendlyTroops / (double)ownTroops) * placeFriendlyWeight) - 
+				(((double)enemyTroops / (double)ownTroops) * placeEnemyWeight);
+	//printf("Placeability: %f\n", placeability);
 
 	if (placeability >= 1.0) {
 		// index 0 is 1 if win and 0 if loss, index 1 is ratio remaining troops / original troops
@@ -881,7 +881,7 @@ string GeneticAlgorithm::gaPlay(int gameState, int currentPlayer, int newTroops,
 				myRegions.push_back(board->at(i));
 				myIDs.push_back(board->at(i).getID());
 
-				printf("My regions:  %i    # of troops:  %i\n", i, board->at(i).getTroops());
+				//printf("My regions:  %i    # of troops:  %i\n", i, board->at(i).getTroops());
 			}
 		}
 		// First pick a region from which to attack
@@ -898,7 +898,7 @@ string GeneticAlgorithm::gaPlay(int gameState, int currentPlayer, int newTroops,
 					if (board->at(temp[x]).getCommander_id() != currentPlayer)
 					{
 						eligibleRegions.push_back(myRegions.at(i).getID());
-						printf("Eligible regions:   %i\n", myRegions.at(i).getID());
+						//printf("Eligible regions:   %i\n", myRegions.at(i).getID());
 						break;
 					}
 				}
@@ -1005,7 +1005,7 @@ string GeneticAlgorithm::gaPlay(int gameState, int currentPlayer, int newTroops,
 				myRegions.push_back(board->at(i));
 				myIDs.push_back(board->at(i).getID());
 
-				printf("My regions:  %i    # of troops:  %i\n", i, board->at(i).getTroops());
+				//printf("My regions:  %i    # of troops:  %i\n", i, board->at(i).getTroops());
 			}
 		}
 		// First pick a region from which to attack
@@ -1022,7 +1022,7 @@ string GeneticAlgorithm::gaPlay(int gameState, int currentPlayer, int newTroops,
 					if (board->at(temp[x]).getCommander_id() != currentPlayer)
 					{
 						eligibleRegions.push_back(myRegions.at(i).getID());
-						printf("Eligible regions:   %i\n", myRegions.at(i).getID());
+						//printf("Eligible regions:   %i\n", myRegions.at(i).getID());
 						break;
 					}
 				}
