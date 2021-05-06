@@ -208,25 +208,27 @@ void GeneticAlgorithm::findBestAttack(int currentPlayer, vector<Region>* board)
 	double bestAttackability = 0;
 	for (int i = 0; i < board->size(); ++i) {
 		for (int j = 0; j < myRegions.size(); ++j) {
-			if (board->at(i).getCommander_id() != currentPlayer) {
-				vector<int> temp1 = board->at(i).getBorder_ids();
-				// If this region borders one of the owned regions
-				if (count(temp1.begin(), temp1.end(), myRegions.at(j).getID()) == 1) {
-					// Compute the attackability score of this attack possibility
-					double attackability = ((double)myRegions.at(j).getTroops() / (double)board->at(i).getTroops()) * troopRatioWeight;
-					// Check if winning this region would award a continent bonus.
-					double curBonus = continentBonus(myRegions);
-					vector<Region> temp = myRegions;
-					temp.push_back(board->at(i));
-					double possibleBonus = continentBonus(temp);
-					if (possibleBonus > curBonus) {
-						attackability + contBonusWeight;
-					}
-					// Now check if this is the best score and update the region choices appropriately
-					if (attackability > bestAttackability) {
-						bestAttackability = attackability;
-						regionToAttack = board->at(i).getID();
-						regionFromAttack = myRegions.at(j).getID();
+			if (myRegions.at(j).getTroops() > 1) {
+				if (board->at(i).getCommander_id() != currentPlayer) {
+					vector<int> temp1 = board->at(i).getBorder_ids();
+					// If this region borders one of the owned regions
+					if (count(temp1.begin(), temp1.end(), myRegions.at(j).getID()) == 1) {
+						// Compute the attackability score of this attack possibility
+						double attackability = ((double)myRegions.at(j).getTroops() / (double)board->at(i).getTroops()) * troopRatioWeight;
+						// Check if winning this region would award a continent bonus.
+						double curBonus = continentBonus(myRegions);
+						vector<Region> temp = myRegions;
+						temp.push_back(board->at(i));
+						double possibleBonus = continentBonus(temp);
+						if (possibleBonus > curBonus) {
+							attackability + contBonusWeight;
+						}
+						// Now check if this is the best score and update the region choices appropriately
+						if (attackability > bestAttackability) {
+							bestAttackability = attackability;
+							regionToAttack = board->at(i).getID();
+							regionFromAttack = myRegions.at(j).getID();
+						}
 					}
 				}
 			}
@@ -977,9 +979,6 @@ string GeneticAlgorithm::gaPlay(int gameState, int currentPlayer, int newTroops,
 		else if (board->at(regionFromAttack).getTroops() >= 3) {
 			return to_string(rand() % 3 + 1);
 		}
-		else {
-			return "shite";
-		}
 		break;
 	}
 	case(7):		// Attack Sequence: choose number of troops to defend with:
@@ -994,7 +993,7 @@ string GeneticAlgorithm::gaPlay(int gameState, int currentPlayer, int newTroops,
 	}
 	case(8):
 	{
-		if (board->at(regionToAttack).getTroops() <= 1) {
+		if (board->at(regionFromAttack).getTroops() <= 1) {
 			return "n";
 		}
 
