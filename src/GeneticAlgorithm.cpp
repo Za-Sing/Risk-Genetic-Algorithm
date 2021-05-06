@@ -977,6 +977,9 @@ string GeneticAlgorithm::gaPlay(int gameState, int currentPlayer, int newTroops,
 		else if (board->at(regionFromAttack).getTroops() >= 3) {
 			return to_string(rand() % 3 + 1);
 		}
+		else {
+			return "shite";
+		}
 		break;
 	}
 	case(7):		// Attack Sequence: choose number of troops to defend with:
