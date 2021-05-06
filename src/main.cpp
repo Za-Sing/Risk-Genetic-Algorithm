@@ -33,9 +33,9 @@ int main()
 	Brisk game = Brisk();
 
 	// GA TEST
-	/*GeneticAlgorithm GA = GeneticAlgorithm();
+	GeneticAlgorithm GA = GeneticAlgorithm();
 	GA.preEvolveAttack(100, 100, 0.2);
-	GA.preEvolvePlacement(100, 100, 0.2);*/
+	GA.preEvolvePlacement(100, 100, 0.2);
 
 	//Graph making
 	vector<double> player0;
@@ -69,8 +69,8 @@ int main()
 			Player* newPlayer = new Player(numPlayers, true);
 			--numBots;
 			if (numPretrainedBots > 0) {
-				newPlayer->getGA()->preEvolveAttack(10, 100, 0.20);
-				newPlayer->getGA()->preEvolvePlacement(10, 100, 0.20);
+				newPlayer->getGA()->preEvolveAttack(100, 100, 0.20);
+				newPlayer->getGA()->preEvolvePlacement(100, 100, 0.20);
 				--numPretrainedBots;
 			}
 			players->push_back(newPlayer);
