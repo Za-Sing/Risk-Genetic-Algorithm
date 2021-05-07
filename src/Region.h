@@ -11,8 +11,7 @@ using namespace std;
 class Region
 {
 private:
-	int id;  // label regions with integer ID's for easier vector access
-	int num_borders;
+	int id;  // label regions with integer IDs for easier vector access
 	int troops;
 	vector<int> border_ids;
 	int commander_id;

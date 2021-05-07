@@ -7,14 +7,11 @@
 
 using namespace std;
 
-// Function to write to a .CSV file
+// Helper function to write to a .CSV file for data collection
 void writeCSVDouble(string filename, vector<double> vals) {
 
 	// Create an output filestream object
 	ofstream file(filename);
-
-	// data designation marker
-	//file << dataName << "\n";
 
 	// write to csv
 	for (int i = 0; i < vals.size(); i -= -1) {
@@ -29,7 +26,7 @@ int main()
 {
 	srand(time(NULL));
 	
-	//game setup
+	// Game setup
 	Brisk game = Brisk();
 
 	// GA TEST
@@ -37,14 +34,14 @@ int main()
 	GA.preEvolveAttack(100, 100, 0.2);
 	GA.preEvolvePlacement(100, 100, 0.2);
 
-	//Graph making
+	// Graph making
 	vector<double> player0;
 	vector<double> player1;
 	vector<double> player2;
 	vector<double> player3;
 	vector<double> player4;
 
-	
+	// Initial game setup
 	string input;
 	printf("Enter a number (3-5) of players.\n");
 	getline(cin, input);
@@ -65,9 +62,11 @@ int main()
 	// Initialize Players vector
 	vector<Player*>* players = new vector<Player*>();
 	for (int i = 0; i < numPlayers; i++) {
+		// Initialize GeneticAlgorithm object if there are bots to be created
 		if (numBots > 0) {
 			Player* newPlayer = new Player(numPlayers, true);
 			--numBots;
+			// Pre-evolve bots if appropriate
 			if (numPretrainedBots > 0) {
 				newPlayer->getGA()->preEvolveAttack(100, 100, 0.20);
 				newPlayer->getGA()->preEvolvePlacement(100, 100, 0.20);
@@ -84,14 +83,14 @@ int main()
 	
 	game.beginningClaim(players);
 
-    //main game loop
+    // Main game loop
 	bool inPlay = true;
 	int roundIndex = 0;
 	while (inPlay && roundIndex < 200)
 	{
 		for (int currentPlayer = 0; currentPlayer < numPlayers; currentPlayer++)
 		{
-			//Gather data for region number ownership
+			// Gather data for region number ownership
 
 			switch (currentPlayer) {
 
@@ -132,7 +131,7 @@ int main()
 		  		bool gainedARegion = false;
 			
 
-				// attack regions
+				// Attack regions
 				printf("Make an attack? y/n\n");
 				string attackResponse;
 				if (players->at(currentPlayer)->getGA() != NULL) {
@@ -156,7 +155,7 @@ int main()
 					}
 				}
 
-				// move troops
+				// Move troops
 				bool inputing = true;
 				bool chainExists = false;
 				while (inputing)
@@ -224,17 +223,15 @@ int main()
 		}
 
 
-		//how to intialize Card
-		//Card testy{ TERRITORY::China, TROOP::Artillery };
+		// How to intialize Card
+		// Card testy{ TERRITORY::China, TROOP::Artillery };
 
-
-
-		++roundIndex; // end of round
+		++roundIndex; // End of round
 	}
 	// De-allocate memory
 	for (int i = 0; i < players->size(); ++i) {
+		delete players->at(i)->getGA();
 		delete players->at(i);
 	}
 	delete players;
-
 }

@@ -12,7 +12,7 @@
 class GeneticAlgorithm
 {
 private:
-	// Declare the continents here
+	// Declare the continents here. Needed for AUTOMATED play
 	const vector<Region> NORTH_AMERICA = { Region(0, "Alaska", vector<int>{1, 3, 24}), Region(1, "Northwest_Territory", vector<int>{0, 3, 4, 2}),
 		Region(2, "Greenland", vector<int>{1, 4, 5, 13}), Region(3, "Alberta", vector<int>{0, 1, 4, 6}),
 		Region(4, "Ontario", vector<int>{1, 2, 5, 7, 6, 3}), Region(5, "Eastern_Canada", vector<int>{4, 2, 7}),
@@ -42,6 +42,7 @@ private:
 	const vector<Region> AUSTRALIA = { Region(38, "Indonesia", vector<int>{31, 39, 40}), Region(39, "New_Guinea", vector<int>{38, 41}),
 		Region(40, "Western_Australia", vector<int>{38, 41}), Region(41, "Eastern_Australia", vector<int>{39, 40}) };
 
+	// Helper functions
 	bool isRandom = true;
 	int rollDie();
 	bool divByFour(string s);
@@ -56,10 +57,8 @@ private:
 	// For TROOP PLACEMENT decision process
 	double placeEnemyRatWeight;
 	double placeFriendlyRatWeight;
-	vector<double> gaPlace(Region ownRegion, vector<Region> enemyRegions, vector<Region> friendlyRegions, double placeEnemyRatWeight, double placeFriendlyRatWeight);
-
-	// For TROOP MOVEMENT decision process
-	//blank 4 now
+	vector<double> gaPlace(Region ownRegion, vector<Region> enemyRegions, vector<Region> friendlyRegions, 
+							double placeEnemyWeight, double placeFriendlyWeight);
 
 	// For GA PLAY process
 	int regionToAttack = 0, regionFromAttack = 0, regionToPlace = 0;
