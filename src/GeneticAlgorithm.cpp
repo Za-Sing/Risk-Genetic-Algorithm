@@ -2,7 +2,7 @@
 
 using namespace std;
 
-// Function for random dice rolls
+// Helper function for random dice rolls
 int GeneticAlgorithm::rollDie()
 {
 	int roll;
@@ -10,7 +10,7 @@ int GeneticAlgorithm::rollDie()
 	return roll;
 }
 
-// Function to write to a .CSV file
+// Helper function to write to a .CSV file for data collection
 void writeCSVDouble(string filename, vector<double> vals, string dataName){
     
 		// Create an output filestream object
@@ -800,7 +800,7 @@ string GeneticAlgorithm::gaPlay(int gameState, int currentPlayer, int newTroops,
 	string x;
 	switch (gameState)
 	{
-	case(0):		//BeginningClaim: choose region to occupy
+	case(0):		// BeginningClaim: choose region to occupy
 	{
 		vector<Region> availableRegions;
 		for (int i = 0; i < board->size(); i++)
@@ -814,7 +814,7 @@ string GeneticAlgorithm::gaPlay(int gameState, int currentPlayer, int newTroops,
 		return to_string(availableRegions[pick].getID());
 		break;
 	}
-	case(1):		//BeginningClaim: place a troop in a region
+	case(1):		// BeginningClaim: place a troop in a region
 	{
 		vector<Region> myRegions;
 		for (int i = 0; i < board->size(); i++)
@@ -828,7 +828,7 @@ string GeneticAlgorithm::gaPlay(int gameState, int currentPlayer, int newTroops,
 		return to_string(myRegions[pick].getID());
 		break;
 	}
-	case(2):	//placeTroops
+	case(2):	// Place troops
 	{
 		if (isRandom) 
 		{
@@ -855,7 +855,7 @@ string GeneticAlgorithm::gaPlay(int gameState, int currentPlayer, int newTroops,
 		}
 		break;
 	}
-	case(3):
+	case(3): // Decide whether or not to attack
 	{
 		vector<Region> myRegions;
 		for (int i = 0; i < board->size(); i++)
@@ -904,19 +904,6 @@ string GeneticAlgorithm::gaPlay(int gameState, int currentPlayer, int newTroops,
 						break;
 					}
 				}
-
-				/*
-				int friendlyBorders = 0;
-				for (int k = 0; k < temp.size(); ++k) {
-					if (count(temp.begin(), temp.end(), ) >= 1) {
-						++friendlyBorders;
-					}
-				}
-				if (friendlyBorders != temp.size()) {
-					eligibleRegions.push_back(myRegions.at(i).getID());
-				}
-				*/
-
 			}
 		}
 		if (eligibleRegions.size() == 0)
@@ -991,7 +978,7 @@ string GeneticAlgorithm::gaPlay(int gameState, int currentPlayer, int newTroops,
 		}
 		break;
 	}
-	case(8):
+	case(8):	// Decide whether or not to continue attacking
 	{
 		if (board->at(regionFromAttack).getTroops() <= 1) {
 			return "n";
@@ -1028,19 +1015,6 @@ string GeneticAlgorithm::gaPlay(int gameState, int currentPlayer, int newTroops,
 						break;
 					}
 				}
-
-				/*
-				int friendlyBorders = 0;
-				for (int k = 0; k < temp.size(); ++k) {
-					if (count(temp.begin(), temp.end(), ) >= 1) {
-						++friendlyBorders;
-					}
-				}
-				if (friendlyBorders != temp.size()) {
-					eligibleRegions.push_back(myRegions.at(i).getID());
-				}
-				*/
-
 			}
 		}
 		if (eligibleRegions.size() == 0)
@@ -1058,27 +1032,10 @@ string GeneticAlgorithm::gaPlay(int gameState, int currentPlayer, int newTroops,
 		}
 		break;
 	}
-	case(9):
+	case(9):	// "Troop movement" (doesn't move troops)
 	{
-		/*
-		string troopMovement;
-		vector<Region> myRegions;
-		for (int i = 0; i < board.size(); i++)
-		{
-			if (board.at(i).getCommander_id() == currentPlayer)
-			{
-				myRegions.push_back(board.at(i));
-			}
-		}
-		int pick = rand() % myRegions.size();
-		troopMovement += to_string(myRegions[pick].getID());
-		int numTroops = rand() % newTroops;
-		troopMovement += " ";
-		troopMovement += "0";
-		*/
 		return "-1 -1 -1";
 		break;
 	}
-	
 	}
 }

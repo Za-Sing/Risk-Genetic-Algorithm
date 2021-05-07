@@ -1,5 +1,6 @@
 #include "Region.h"
 
+// Simple constructors
 Region::Region(int id, string name, vector<int> border_ids)
 {
 	this->id = id;
@@ -10,9 +11,9 @@ Region::Region(int id, string name, vector<int> border_ids)
 
 }
 
-//getters and setters
+// Getters and setters
 
-// ID's, names, and borders will not be changed after initialization
+// IDs, names, and borders will not be changed after initialization
 // so they do not have setters (they should also probably be constants).
 int Region::getID() const
 {
