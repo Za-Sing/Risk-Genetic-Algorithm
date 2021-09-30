@@ -1,4 +1,7 @@
-# CS5073-Large-Project
+# Genetic Algorithm to Play Risk
+
+This is a collaborative project between Tate Smith, Joshua Gonzales, and Zachary Singleton.
+This was created as a semester project in Spring 2021 for CS 5073 - Artifical Neural Networks and Evolution at the University of Oklahoma.
 
 ## GA Design:
 
